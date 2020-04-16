@@ -1,0 +1,14 @@
+MAS room_experiment {
+
+	infrastructure: Centralised
+
+	environment: RoomEnvironment
+
+	agents:
+		synthesizer [mindinspector="gui(cycle,html,history)"];
+		agent #8;
+	//	agent1 sample_agent;
+
+	aslSourcePath:
+		"src/asl";
+}
