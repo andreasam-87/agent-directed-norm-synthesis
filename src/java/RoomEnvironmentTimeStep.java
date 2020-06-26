@@ -8,28 +8,24 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.*;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import SomewhatTransparentAgents.JASON.STLogger;
 
 //import ExpUtility.instal.InstalQuery;
 
 //import ExpUtility.instal.InstalGrounding;
 //import ExpUtility.instal.InstalModel;
 
-public class RoomEnvironment extends StepSynchedEnvironment {
+public class RoomEnvironmentTimeStep extends TimeSteppedEnvironment {
 
-    private Logger logger = Logger.getLogger("room_experiment."+RoomEnvironment.class.getName());
+    private Logger logger = Logger.getLogger("room_experiment."+RoomEnvironmentTimeStep.class.getName());
 
-    InstalModel room_inst = new InstalModel(new String[] { getFileContents("rooms.ial")  }, new String[] {}, new String[] {});
+    InstalModel room_inst = new InstalModel(new String[] { getFileContents("roomsV2.ial")  }, new String[] {}, new String[] {});
     
     public InstalModel[] institutions = new InstalModel[] {};
     
@@ -66,25 +62,6 @@ public class RoomEnvironment extends StepSynchedEnvironment {
     		this.grounding = toGrounding();
     		}
        // addPercept(ASSyntax.parseLiteral("percept(demo)"));
-        
-        
-//        jason.asSemantics.CPatch.getInstance().register( new jason.asSemantics.CPatchListener(){
-//
-//         	@Override
-//         	public void onInfo (String ag, String ev, String[] evMeta, int rc) {
-//         	    STLogger mxLogger = STLogger.getInstance(ag);
-//         	    mxLogger.onExternallyCapturedEvent(ag, ev, evMeta, rc);
-//         	}
-//
-//         	@Override
-//         	public void onLogEntered(String s, String s1) {
-//         	}
-//
-//         	@Override
-//         	public void onFineLogReceived(String agent, String s1, String s2, String s3, String s4) {
-//         	}
-//             }); 
-        
     }
     
 
@@ -132,6 +109,45 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		return names;
 	}
 	
+	
+	 @Override
+	protected void stepFinished(int step, long elapsedTime, boolean byTimeout) {
+		 
+		 //Move to the next state and update the facts of the institution
+		 inst_state++;
+		 
+		 //System.out.println("Checking to see if all the facts stored for each agent: \n");
+		 //System.out.println(facts_store);
+
+		 if(step >=2)
+		 {
+			 System.out.println("Current inst_state is: "+inst_state);
+			 System.out.println("Checking to see if all the facts stored for each agent: ");
+			 System.out.println(facts_store);
+			 
+			 this.stop();
+		 }
+	
+		 
+			//
+		//Storing the state
+		  //  stateList.put(inst_state, new State(occurred,holdsat));
+		    	
+		 
+		//System.out.println("Step finished: "+step);
+//		if (step >= TOTAL_TIMESTEPS) {
+//			System.out.println("Terminating simulation at step "+step);
+//			for (String ag : getAgentNames()) {
+//				System.out.println("Final score for agent: "+ag+" = "+getScore(ag));
+//			}
+//			System.out.println("House messiness: "+messiness);
+//			if (!output_file.equals("")) {
+//				write_results();
+//				System.exit(0);
+//			}
+//			this.stop();
+//		}
+	}
 
 	
     
@@ -228,22 +244,12 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 				int whenOcc = jsonExtractor.checkStateForEvent(eventOccurred,stateList);
 				System.out.println("Event occurred in state: "+whenOcc);
 				String data = jsonExtractor.getStateFacts(whenOcc-1,stateList);
-			
-				//addPercept(agName, Literal.parseLiteral("datafromagents"));
-				//String d = "hellohello(howare,you),good";
-				//String d = data.substring(0,40).toString().split("\\),")[0]+")";
-				
-				String d = "stateOccurred("+eventOccurred+","+whenOcc+")";
-				//System.out.println("D - "+d);
-				//addPercept(agName, Literal.parseLiteral(data));
-				//addPercept(agName, Literal.parseLiteral(data.substring(0,50)));
-				addPercept(agName, Literal.parseLiteral(d));
-						
-				//System.out.println("Data - "+data);
+				addPercept(agName, Literal.parseLiteral(data));
+				System.out.println("Data - "+data);
 				
 				//probably should just do something that puts the facts of the previous 
 				//state back in to the new slot 
-				inst_state--;
+				//inst_state--;
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -261,7 +267,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		}
 		
 		
-		inst_state++;
+		//inst_state++;
         return true; // the action was executed with success
     }
     
@@ -279,7 +285,8 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		ArrayList<String> facts = new ArrayList<String>();
 		//ArrayList<String> query = getQuery(state);
 		ArrayList<String> query = new ArrayList<String>();
-		facts.addAll(facts_store.get(state));
+		//facts.addAll(facts_store.get(state));
+		facts.addAll(facts_store.get(0));
 		
 		//System.out.println("facts: "+facts_store.get(state));
 		
@@ -298,7 +305,6 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 			//institutionStates.add(array_json);
 			// #### State Keeping ends #### / 
 			
-			//System.out.println(queryOutput);
 			JSONArray occurred = queryOutput.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
 	    	boolean success = false;
 	    	boolean success2 = false;
@@ -309,10 +315,6 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	    		}
 	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("exit")) {
 	    			success2 = true;
-	    		}
-	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("capacityExceeded")) {
-	    			//System.out.println("this is here");
-	    			success3 = true;
 	    		}
 //	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("setpermenteri")) {
 //	    			success3 = true;
@@ -338,10 +340,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)")});
 	        		//inroom = true;
 	        		//System.out.println(("I can now wave"));
-	        		if(success3)
-	        		{
-	        			m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)"), Literal.parseLiteral("roomCapacityExceeded")});
-	        		}
+	        		
 	        	} else {
 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(enter)")});
 	        	}
@@ -353,10 +352,6 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(idle)")});
 	        		//inroom = true;
 	        		//System.out.println(("I just waved can now leave"));
-	        		if(success3)
-	        		{
-	        			m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)"), Literal.parseLiteral("roomCapacityExceeded")});
-	        		}
 	        		
 	        	} else {
 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(leave)")});
@@ -392,43 +387,13 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	    	
 	    	facts_store.add(jsonExtractor.extractHoldsatJson(holdsat));
 	    	//extractJson(holdsat);
-	    	
-	    	
-	    	ArrayList<String> tempValues = jsonExtractor.extractHoldsatJson(holdsat);
-	    	String add = "";	
-	//    	Literal[] inst_sense = new Literal[15];
-	    	int c=0;
-	    //	int noOfOccurs = Collections.frequency(tempValues, ag);
-	    	int count = StringUtils.countMatches(tempValues.toString(), ag);
-	    	//System.out.println("Occurences: "+ noOfOccurs+ " "+count);
-	    	Literal[] inst_sense = new Literal[count+1];
-	    	for (String var : tempValues) 
-	    	{ 
-	    		if (var.contains(ag))
-	    		{
-	    			var = var.substring(10, var.length());
-	    			var = var.substring(0, var.length()-7);
-	    			inst_sense[c] = Literal.parseLiteral(var);
-	    			c++;
-	    			//System.out.println(var);
-	    		}
-	    	    //add+=var;
-	    	}
-	    	if (success3)
-	    	{
-	    		inst_sense[c] = Literal.parseLiteral("roomCapacityExceeded");
-	    	}else
-	    	{
-	    		inst_sense[c] = Literal.parseLiteral("roomCapacityOkay");
-	    	}
-	    	
-	    	m.put(ag,inst_sense);
+
 		
 		//System.out.println("Agents: "+getNamesAgents());
 		
 		
     	//Storing the state
-	    stateList.put(inst_state, new State(occurred,holdsat));
+	  //  stateList.put(inst_state, new State(occurred,holdsat));
 	    	
 	    	
     	return m;
@@ -505,7 +470,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		facts.add("initially(count_type(room1,y,0),rooms)");
 		facts.add("initially(count_type(room1,x,0),rooms)");
 		
-		facts.add("initially(max(room1,3),rooms)");
+		facts.add("initially(max(room1,5),rooms)");
 		facts.add("initially(max(room2,3),rooms)");
 //		facts.add("initially(addone(0,1),rooms)");
 //		facts.add("initially(addone(1,2),rooms)");
@@ -544,12 +509,10 @@ public class RoomEnvironment extends StepSynchedEnvironment {
     	
 	}
     
+  
     /** Called before the end of MAS execution */
     @Override
     public void stop() {
         super.stop();
     }
-  
-  
-  
 }

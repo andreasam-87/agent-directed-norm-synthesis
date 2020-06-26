@@ -264,13 +264,25 @@ public class JsonExtractor {
             State state = (State)mapElement.getValue();
             
             JSONArray ar = state.getEvents();
-           // System.out.println(ar);
+          //  System.out.println(ar);
             
             for (int i=0;i<ar.length();i++)
     		{
 	            String st = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0);
-				String st2 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
-				String st3 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
+	            String st2,st3;
+	            if (ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).length()==1)
+	            {
+	            	st2 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+					st3 = "";
+	            }
+	            else
+	            {
+	            	st2 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+					st3 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
+//					 
+	            }
+//				st2 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+//				st3 = ar.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
 //				 String st = ar.getJSONArray(0).getJSONArray(1).getJSONArray(0).getString(0);
 //					String st2 = ar.getJSONArray(0).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
 //					String st3 = ar.getJSONArray(0).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);

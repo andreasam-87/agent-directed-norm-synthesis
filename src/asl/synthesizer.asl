@@ -11,6 +11,10 @@
 +!start : true <- .print("hello world.").
 				 //experiment5.myPrint('hello world'). 
 
++stateOccurred(Ev,WhenEv) : true <- .print("Event: ",Ev, " occurred at state: ",WhenEv);
+									. 
+
+ 
 @request[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : not handling <- .print('Message received from ', Ag , ', will handle');
 										.print('Action attempted ', ActAtmpt);

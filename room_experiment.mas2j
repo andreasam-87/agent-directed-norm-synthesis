@@ -3,11 +3,17 @@ MAS room_experiment {
 	infrastructure: Centralised
 
 	environment: RoomEnvironment
+	//environment: RoomEnvironmentTimeStep
 
 	agents:
 		synthesizer [mindinspector="gui(cycle,html,history)"];
-		agent #8;
-	//	agent1 sample_agent;
+//		agentArchClass SomewhatTransparentAgents.JASON.STAgArch
+// 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
+		agent [mindinspector="gui(cycle,html,history)"] #8;
+//		agent
+//		agentArchClass  SomewhatTransparentAgents.JASON.STAgArch
+//  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
+//		//agent1 sample_agent;
 
 	aslSourcePath:
 		"src/asl";
