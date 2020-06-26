@@ -244,13 +244,26 @@ public class JsonExtractor {
 //			String st2 = facts.getJSONArray(0).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
 //			String st3 = facts.getJSONArray(0).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
 			String st = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0);
-			String st2 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
-			String st3 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
+			String st2,st3;
+			//			String st2 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+//			String st3 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
+			
+            if (facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).length()==1)
+            {
+            	st2 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+				st3 = "";
+            }
+            else
+            {
+            	st2 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(0);
+				st3 = facts.getJSONArray(i).getJSONArray(1).getJSONArray(0).getJSONArray(1).getString(1);
+//				 
+            }
 			
 			String ev = st+ "("+st2+","+st3+"),";
 			sb.append(ev);
 		}
-		System.out.println("Facts string: "+sb);
+		//System.out.println("Facts string: "+sb);
 		return sb.toString();
 	}
 	

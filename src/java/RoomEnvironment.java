@@ -220,6 +220,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 				//	.toString();
 			//String eventOccurred =(String)(StringTerm) act.getTerm(0)).getString();
 			//int x=0;
+			//System.out.println("reached here");
 			try {
 				//x = (int) ((NumberTerm) act.getTerm(0)).solve();
 				String eventOccurred = (action.getTerm(0)).toString();
@@ -244,10 +245,11 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 				//probably should just do something that puts the facts of the previous 
 				//state back in to the new slot 
 				inst_state--;
-				
+				//System.out.println("reached here too");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println("Error here ");
 			}
 			//System.out.println("Checking state for: "+eventOccurred);
 			//System.out.println("Checking state for: "+x);

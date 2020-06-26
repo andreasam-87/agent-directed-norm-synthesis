@@ -22,17 +22,29 @@
 										+handle_request;
 										//+to_handle(request(Ag,ActRes,ActAtmpt,Exp));
 										//checkState(0);
+									//	findall(r(A,Ac,E),request(Act,AcAtmp,Exp),Reqs); 
+									//	.print(Reqs); 
 										checkState(ActAtmpt);
-										
+										//-request(ActRes, ActAtmpt,Exp)[source(Ag)];
+									
+										//wait(1000);
+										//!handle;
 										. 
+//
+//+request(ActRes, ActAtmpt,Exp)[source(Ag)] : handling <- .print('Queued request for ',Ag);
+//										//experiment5.myPrint("Action attempted ", ActAtmpt);
+//										//+handling;
+//										+to_handle(request(Ag,ActRes,ActAtmpt,Exp));
+//										//checkState(ActAtmpt);
+//										
+//										. 
 
-+request(ActRes, ActAtmpt,Exp)[source(Ag)] : handling <- .print('Queued request for ',Ag);
-										//experiment5.myPrint("Action attempted ", ActAtmpt);
-										//+handling;
-										+to_handle(request(Ag,ActRes,ActAtmpt,Exp));
-										//checkState(ActAtmpt);
-										
-										. 
+
+ 
+  +!handle: true <- .print("Handling the others");
+					findall(r(A,Ac,E),request(Act,AcAtmp,Exp),Reqs);  					
+  					.print(Reqs);
+  					.
 
 
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
@@ -40,5 +52,5 @@
 									//experiment5.myPrint(msg). 
 									//checkState.
 					//.send(Ag,tell,msg(M)).
-  
+ 
  
