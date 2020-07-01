@@ -48,8 +48,8 @@ enter(P,L) generates deniedEntry(P,L) if not permEntry(P,L);
 
 
 %I prefer a fluent rather than an event because so that it is initiated after the nif is calculated (aggregates)
-arrive(P,L) generates capacityExceeded(Location) if occupancy(L,X), max(L,Y), bigger(X,Y);
-arrive(P,L) generates capacityExceeded(Location) if occupancy(L,X), max(L,Y), equal(X,Y);
+arrive(P,L) generates capacityExceeded(L) if occupancy(L,X), max(L,Y), bigger(X,Y);
+arrive(P,L) generates capacityExceeded(L) if occupancy(L,X), max(L,Y), equal(X,Y);
 
 
 arrive(P,L) initiates in_room(P,L);
@@ -96,7 +96,7 @@ exit(P,L) terminates count_type(L,R,M) if role(P,R);
 
 
 %viol event initiates the viol fluent
-capacityExceeded(Location) initiates capacityExceededViol(Location);
+capacityExceeded(L) initiates capacityExceededViol(L);
 
 %I suggest instead (maybe use arithmetic operations from ASP rather than having to define smallerOrNotEqualTo(X,Y);)
 %capacityExceeded(Location) when occupancy(L,X), max(L,Y), not smallerOrNotEqualTo(X,Y);

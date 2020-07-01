@@ -134,6 +134,54 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	
 
 	
+	 @Override
+	protected void stepFinished(int step, long elapsedTime, boolean byTimeout) {
+		 
+		 //State now = stateList.get(inst_state);
+		 
+	//	 JSONObject nowfacts = now.getFacts();
+		// String array size number of rooms
+		 String [] noRooms = new String[2];
+		 
+		 ArrayList<String> factsnow = facts_store.get(inst_state);
+		// System.out.println("State:" +inst_state+ " facts: "+ factsnow);
+		 int cRooms=0;
+		 for(String s: factsnow)
+		 {
+			 if(s.contains("capacityExceeded"))
+			 {
+				 s = s.substring(10, s.length());
+	    		s = s.substring(0, s.length()-7);
+				s = StringUtils.substringBetween(s, "(", ")");
+				
+				noRooms[cRooms]=s;
+				cRooms++;
+				 //System.out.println("Room with exceeded capacity is " + s);
+				 
+			 }
+		 }
+		 
+		 for(String s: factsnow)
+		 {
+			 if(s.contains("in_room"))
+			 {
+				 s = s.substring(10, s.length());
+	    		s = s.substring(0, s.length()-7);
+				String s1 = StringUtils.substringBetween(s, "(", ",");
+				String s2 = StringUtils.substringBetween(s, ",", ")");
+				if ((s2.equals(noRooms[0])) || (s2.equals(noRooms[1])))
+				{
+					///<<<<This gets added after so may cause some trouble, look into it>>>>>
+					addPercept(s1, Literal.parseLiteral("roomCapacityExceeded"));
+					 //System.out.println("Agents affected " + s1);
+				}
+				
+				 
+			 }
+		 }		 
+	
+	}
+	
     
     
     @Override
@@ -260,6 +308,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		else
 		{
 			System.out.println("Dunno what action was executed");
+			//inst_state--;
 		}
 		
 		
@@ -408,6 +457,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	    	{ 
 	    		if (var.contains(ag))
 	    		{
+	    			//strip initiallys and rooms from the string.
 	    			var = var.substring(10, var.length());
 	    			var = var.substring(0, var.length()-7);
 	    			inst_sense[c] = Literal.parseLiteral(var);
