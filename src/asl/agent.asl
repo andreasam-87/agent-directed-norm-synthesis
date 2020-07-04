@@ -42,7 +42,7 @@
 					.print('I am in Room ', Rm,' but it is full, I may need to leave the room');
 			
 					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
-						
+						.print(request(roomCapacityExceededViol, A, noViol));
 						.
 
 

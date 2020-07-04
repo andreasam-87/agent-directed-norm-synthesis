@@ -3,8 +3,9 @@
 /* Initial beliefs and rules */
 
 /* Initial goals */
-
+entered(0).
 !start.
+
 
 /* Plans */
 
@@ -19,11 +20,29 @@
  
 //@request[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : true <- //.print('Message received from ', Ag , ', will handle');
-											.findall(agentReq(A,Ac,E),request(_,_,_),Reqs); 
-											.count(request(_,_,_),C); 	
-											.length(Reqs,Ct)	
-											.print('Message received from ', Ct, ' ',C, ' agents, will handle');			
-  											.print(Reqs);
+											
+											.count(request(_,_,_)[source(_)],C); 
+											?entered(T);
+											-+entered(T+1);	
+											.print('T is ', T, 'C is ',C);
+											if ((T+1)==C)
+											{
+												.print('Message received from ', C, ' agents, will handle');
+												.findall([A,Ac,E],request(A,Ac,E),Reqs); 
+												.print(Reqs);
+												for (.member(Z,Reqs))
+	  											{
+	  												//.nth(0,Z,Xn);
+	  												//.print(Xn);
+	  												.print(Z);
+	  											}
+											}
+											
+											//.length(Reqs,Ct);
+												
+											//	.print('Message received from ', Ct, ' ',C, ' agents, will handle');		
+  						//					.print(Reqs);
+//  											
 											//.abolish(request(_,_,_));
 									
 										//.print('Action attempted ', ActAtmpt);
