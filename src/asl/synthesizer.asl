@@ -18,9 +18,9 @@ entered(0).
 
 
  
-//@request[atomic]
+@request[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : true <- //.print('Message received from ', Ag , ', will handle');
-											
+											.wait(1000);
 											.count(request(_,_,_)[source(_)],C); 
 											?entered(T);
 											-+entered(T+1);	
@@ -29,7 +29,7 @@ entered(0).
 											{
 												.print('Message received from ', C, ' agents, will handle');
 												.findall([A,Ac,E],request(A,Ac,E),Reqs); 
-												.print(Reqs);
+												//.print(Reqs);
 												for (.member(Z,Reqs))
 	  											{
 	  												//.nth(0,Z,Xn);

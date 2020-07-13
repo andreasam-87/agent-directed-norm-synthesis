@@ -42,7 +42,7 @@
 					.print('I am in Room ', Rm,' but it is full, I may need to leave the room');
 			
 					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
-						.print(request(roomCapacityExceededViol, A, noViol));
+					//	.print(request(roomCapacityExceededViol, A, noViol));
 						.
 
 
@@ -50,11 +50,35 @@
 					?room_entered(Rm);
 					.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
 					.my_name(N);
-					leave(N,Rm); 
-						
-					 -+current_action(leave(N,RM));
+					
+					.random(Rd);
+					//.print('random: ',Rd);
+					
+					if (Rd>0.5)
+					{
+					 	!leave_now;				
+					}
+					else
+					{
+						!idle_now;
+					}								
+											
+					//leave(N,Rm); 
+				//	 -+current_action(leave(N,RM));
 					.
 	
+	
++!leave_now: true <- .print('Decided to leave, leaving now');
+					?room_entered(Rm);
+					.my_name(N);
+					leave(N,Rm); 
+					-+current_action(leave(N,RM));
+					+perm(idle);
+					.	
+					
+	
++!idle_now: true <- .print('Decided to remain in room for now');
+					.						
 
 //maybe an error with trying to do two actions, will check with Fahid on how the environment works or something					 
 //+perm(leave(_,_)) : true <- ?role(R);
