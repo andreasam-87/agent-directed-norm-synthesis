@@ -3,6 +3,8 @@ import instal.*;
 import jason.asSyntax.*;
 import jason.environment.*;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,6 +53,9 @@ public class RoomEnvironment extends StepSynchedEnvironment {
  	HashMap <Integer,State> stateList = new HashMap<>();
  	
  	JsonExtractor jsonExtractor = new JsonExtractor();
+ 	
+ 	Processes pross = new Processes();
+ 	
  	
     /** Called before the MAS execution with the args informed in .mas2j */
     @Override
@@ -209,6 +214,47 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 	    		
 	    		}
 	    	}
+//			try {
+//				String processStr = Processes.run("ping -c 3 www.google.com");
+//
+//
+//				//String processStr = Processes.execCmd("/system/bin/ping -c 1 www.google.com");
+//				System.out.println("Process try a thing");
+//				System.out.println(processStr);
+//			}
+//		    catch(Exception e) {System.out.println("Nothing happened smh" ); e.printStackTrace();};
+			
+			try {
+				Processes.runShellCmd("/usr/local/bin/clingo /Users/andreasamartin/Documents/ClingoResources/examples/bird.lp");
+				//Processes.runShellCmd("clingo /Users/andreasamartin/Documents/Clingo Resources/examples/bird.lp");
+				//Processes.runShellCmd("/usr/local/bin/clingo -v");
+				
+				System.out.println("Clingo run done" ); 
+				//Processes.runShellCmd("ping -c 3 www.google.com");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				 
+					System.out.println("Err"); 
+				
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				
+					System.out.println("Errr 1" ); 
+				
+				e.printStackTrace();
+			}
+			
+//			String[] args = new String[] {"/bin/bash", "-c", "ping", "www.google.com"};
+//			try {
+//				Process proc = new ProcessBuilder(args).start();
+//				OutputStream out = proc.getOutputStream();  
+//				out.write(50);  
+//				//out.flush();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 			//System.out.println("The action is "+ex);
 		
