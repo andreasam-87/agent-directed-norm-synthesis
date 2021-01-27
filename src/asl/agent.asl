@@ -4,9 +4,14 @@
 
 /* Initial goals */
 
-!start.
+!initialise_logger_and_start.
+
+//!start.
 
 /* Plans */
+
++!initialise_logger_and_start : true  <- jason.launcher; 
+										!start.
 
 +!start : true <-  .print("hello world.");
 					//experiment5.myPrint('hello world');

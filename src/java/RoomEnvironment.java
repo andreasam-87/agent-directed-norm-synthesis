@@ -224,26 +224,26 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 //			}
 //		    catch(Exception e) {System.out.println("Nothing happened smh" ); e.printStackTrace();};
 			
-			try {
-				Processes.runShellCmd("/usr/local/bin/clingo /Users/andreasamartin/Documents/ClingoResources/examples/bird.lp");
-				//Processes.runShellCmd("clingo /Users/andreasamartin/Documents/Clingo Resources/examples/bird.lp");
-				//Processes.runShellCmd("/usr/local/bin/clingo -v");
-				
-				System.out.println("Clingo run done" ); 
-				//Processes.runShellCmd("ping -c 3 www.google.com");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				 
-					System.out.println("Err"); 
-				
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				
-					System.out.println("Errr 1" ); 
-				
-				e.printStackTrace();
-			}
+//			try {
+//				Processes.runShellCmd("/usr/local/bin/clingo /Users/andreasamartin/Documents/ClingoResources/examples/bird.lp");
+//				//Processes.runShellCmd("clingo /Users/andreasamartin/Documents/Clingo Resources/examples/bird.lp");
+//				//Processes.runShellCmd("/usr/local/bin/clingo -v");
+//				
+//				System.out.println("Clingo run done" ); 
+//				//Processes.runShellCmd("ping -c 3 www.google.com");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				 
+//					System.out.println("Err"); 
+//				
+//				e.printStackTrace();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				
+//					System.out.println("Errr 1" ); 
+//				
+//				e.printStackTrace();
+//			}
 			
 //			String[] args = new String[] {"/bin/bash", "-c", "ping", "www.google.com"};
 //			try {

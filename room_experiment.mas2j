@@ -9,11 +9,13 @@ MAS room_experiment {
 		synthesizer [mindinspector="gui(cycle,html,history)"];
 //		agentArchClass SomewhatTransparentAgents.JASON.STAgArch
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
-		agent [mindinspector="gui(cycle,html,history)"] #8;
-//		agent
-//		agentArchClass  SomewhatTransparentAgents.JASON.STAgArch
+//		agent [mindinspector="gui(cycle,html,history)"] #8;
+		agent
+		agentArchClass SomewhatTransparentAgents.JASON.STAgArch #4;
 //  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
 //		//agent1 sample_agent;
+
+// agentArchClassSomewhatTransparentAgents.JASON.STAgArch beliefBaseClassSomewhatTransparentAgents.JASON.STBelBase;
 
 	aslSourcePath:
 		"src/asl";

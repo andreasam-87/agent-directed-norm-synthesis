@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="/Users/andreasamartin/eclipse-workspace/rooms/libs/stag.jar"/>
 	<classpathentry kind="lib" path="libs/json.jar"/>
 	<classpathentry kind="lib" path="/Users/andreasamartin/eclipse-workspace/rooms/libs/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/andreasamartin/eclipse-workspace/rooms/libs/jason-mod.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

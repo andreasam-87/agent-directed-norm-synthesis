@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.simple.parser.JSONParser;
 
 import instal.InstalModel;
@@ -17,8 +19,11 @@ import instal.InstalQuery;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 
+
 public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
+	JsonExtractor jsonExtractor_prev = new JsonExtractor();
+	JsonExtractorOrgSimple jsonExtractor = new JsonExtractorOrgSimple();
 	
 	public void init(String[] args) {
 	       // super.init(args);
@@ -372,44 +377,146 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	public void getJSONObjectFromFile(String file)
 	{
-		JSONParser parser = new JSONParser();
 		try {
-			Object obj = parser.parse(new FileReader(file));
+			JSONTokener token = new JSONTokener(new FileReader(file));
+			 //JSONArray object = (JSONArray) token.nextValue();
+			 JSONArray object = new JSONArray (token);
+		//	System.out.println("Got: "+object + " \nclass "+ object.getClass());
+			JSONObject occurred = (JSONObject)object.get(1); //.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
+			System.out.println("Got: "+occurred.getJSONObject("state").getJSONArray("occurred") ); 
 			
-			System.out.println("reached here " + obj.getClass());
-			// A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
-		//	JSONObject jsonObject = (JSONObject) obj;
-			org.json.simple.JSONArray jArr = (org.json.simple.JSONArray) obj;
-			System.out.println(jArr);
-			//System.out.println(jArr.);
-			for (int i = 0; i < jArr.size(); i++) {
- 	    		
- 	    		System.out.println(jArr.get(i));
- 	    	}
-		//	String text = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
-			//JSONObject obj = new JSONObject(text);
+			//System.out.println("Got: "+occurred + " \nclass "+ occurred.getClass());
+	//		while(!token.end())
+//			{
+//				JSONArray object = (JSONArray) token.nextValue();
+//				System.out.println("Got: "+object + " \nclass "+ object.getClass());
+//			}
+		//	while(token.more()) {
+			    //System.out.println(token.next());
+//			    JSONArray object = (JSONArray) token.nextValue();
+				//System.out.println("Got: "+object + " \nclass "+ object.getClass());
+	//		}
+			System.out.println("Done ");
 			
-			//JSONArray occurred = jsonObject.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
- 	    	
-			//JSONArray occurred = jArr("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
-// 	    	
-//			
-//			
-// 	    	for (int i = 0; i < occurred.length(); i++) {
-// 	    		
-// 	    		System.out.println("Occurred: " + occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0));
-// 	    	}
-//			
-		//	System.out.println("got the JSON");
-		//	return jsonObject;
-		} catch (Exception e) {
-			System.out.println("Error from the inception");
-			e.printStackTrace();
+			
+			JSONObject state = (JSONObject) occurred.get("state");
+			
+			//jsonExtractor_prev.loopThroughJson(state);
+			
+			Object obj = (Object)state.get("holdsat");
+			if (obj instanceof JSONArray)
+			{
+				JSONArray ob = (JSONArray)obj;
+				
+				for(int i=0;i<ob.length();i++)
+				{
+					StringBuilder sbb = new StringBuilder("");
+					System.out.println(i + jsonExtractor_prev.extract(ob.get(i),sbb).toString());
+					;
+					//ext.get(i);
+				}
+			}
+			else if(obj instanceof JSONObject)
+			{
+				JSONObject ob = (JSONObject)state.get("holdsat");
+				JSONArray ar = jsonExtractor_prev.extractHoldsat(ob);
+				//StringBuilder sbb = new StringBuilder("");
+				System.out.println(ar);
+				for(int i=0;i<ar.length();i++)
+				{
+					
+					JSONArray arr = (JSONArray)ar.get(i);
+					for(int j=0;j<arr.length();j++)
+					{
+						StringBuilder sbb = new StringBuilder("");
+						System.out.println(j + jsonExtractor_prev.extract(arr.get(j),sbb).toString());
+						
+					}
+					
+				
+				}
+				//System.out.println(jsonExtractor_prev.extract(ar,sbb));
+//				for (String key : ob.keySet()) 
+//		    	{
+//					StringBuilder sbb = new StringBuilder("");
+//					//System.out.println(ob.get(key).getClass());
+//					JSONArray ar = jsonExtractor_prev.extractHoldsat(ob.get(key));
+//					//JSONArray ar = jsonExtractor_prev.extract(ar,sbb);
+//					//
+//					//System.out.println(key+ " "+ jsonExtractor_prev.extract((JSONArray)ob.get(key),sbb));
+//					;
+//		    	}
+				
+			}
+			else
+				System.out.println("ERROR");
+			
+
+			//System.out.println(ob.getClass());
+			
+			//for (Object o : )
+			//jsonExtractor_prev.analysisJson(state.get("occurred"));
+			//jsonExtractor_prev.analysisJson(state.get("holdsat"));
+			
+			//System.out.println(state.get("holdsat")+ " \n "+state.get("holdsat").getClass() );
+			ArrayList<String> dataList = jsonExtractor_prev.extractHoldsatJson((JSONObject)state.get("holdsat"));
+		//			data = JsonExtractor.extractHoldsatJson((JSONObject)state.get("holdsat"));
+			//System.out.println(dataList);
+			for (String data : dataList) 
+	    	{ 
+				//strip initiallys and rooms from the string.
+    			data = data.substring(10, data.length());
+    			data = data.substring(0, data.length()-1);
+    			int index = data.lastIndexOf(")");
+    			//System.out.println(index+"  "+ data.charAt(index+1));
+    			//data = data.substring(0,(index+1));
+
+    			//System.out.println(index+"  "+ data.charAt(index+1));
+    			
+	    		
+				//System.out.println(data);
+	    		
+	    	}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
-	//	return null;
-        
-		//return obj;
+//		JSONParser parser = new JSONParser();
+//		try {
+//			Object obj = parser.parse(new FileReader(file));
+//					
+//			// A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
+//		//	JSONObject jsonObject = (JSONObject) obj;
+//			org.json.simple.JSONArray jArr = (org.json.simple.JSONArray) obj;
+//			//JSONArray jArr = (JSONArray) obj;
+//
+//			for (int i = 0; i < jArr.size(); i++) {
+//			//	System.out.println(jArr.get(i).getClass());
+//				org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jArr.get(i);
+//				
+//					org.json.simple.JSONObject state = (org.json.simple.JSONObject) jsonObject.get("state");
+//								//System.out.println(state.get("holdsat")+ " \n "+state.get("holdsat").getClass() );
+//				ArrayList<String> dataList = jsonExtractor.extractHoldsatJson((org.json.simple.JSONObject)state.get("holdsat"));
+//			//			data = JsonExtractor.extractHoldsatJson((JSONObject)state.get("holdsat"));
+//				
+//				for (String data : dataList) 
+//		    	{ 
+//					//strip initiallys and rooms from the string.
+//	    			data = data.substring(10, data.length());
+//	    			//data = data.substring(0, data.length()-7);
+//	    		
+//			//		System.out.println(data);
+//		    		
+//		    	}
+//				
+//			}
+//
+//		} catch (Exception e) {
+//			System.out.println("Error from the inception");
+//			e.printStackTrace();
+//		}
+
 	}
 	
     /** Called before the end of MAS execution */

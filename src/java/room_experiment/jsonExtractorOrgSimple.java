@@ -1,224 +1,23 @@
+package room_experiment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-public class JsonExtractor {
+public class jsonExtractorOrgSimple {
 
-	//private static final Class<? extends Object>  = null;
-	StringBuilder sbb = new StringBuilder("");
-	int check =0,pass=0;
-	public JsonExtractor() {
+	public jsonExtractorOrgSimple() {
 		
 	}
 	
-	
-	protected String extractDeeper(JSONArray ext)
-	{
-		//for (String key: ext.get())
-		for(int i=0;i<ext.length();i++)
-		{
-			if(ext.get(i) instanceof JSONArray)
-				System.out.println(ext.get(i).toString());
-			else
-				System.out.println("trying stuff");
-			//ext.get(i);
-		}
-		
-		return null;
-		
-	}
-	
-/* found online - https://www.programmersought.com/article/3218326044/ [retrieved 26/01/2021]
- * Trying to make it work for me */
-	protected StringBuilder extract(Object obj, StringBuilder sb)
-	{
-		this.sbb = sb;
-		analysisJson(obj);
-		return sbb;
-	}
-	
-	 protected void  analysisJson(Object objJson){
-		 HashMap<String, Object> map = new HashMap<>();
-	    	
-		
-		 
-		 // If obj is a json array
-	    	if(objJson instanceof JSONArray){
-	    		JSONArray objArray = (JSONArray)objJson;
-	    		//System.out.println("here");
-	    		check =0;
-	    		pass=0;
-//	    		if(objArray.length()>1)
-//					c++;
-				for (int i = 0; i < objArray.length(); i++) {
-					//System.out.println(" trying  a thing"+objArray.get(i));
-					
-						//sbb.append(")"+objArray.get(i).toString());
-//					if(i>0)
-//						sbb.append(",");
-					analysisJson(objArray.get(i));
-				
-//					if(c==1)
-//						sbb.append(",");
-					//sbb.append("("+objArray.get(i).toString());
-				}
-				
-				sbb.append(")");
-				//check =0;
-	    	}
-	    	 // If the json object
-	    	else if(objJson instanceof JSONObject){
-	    		System.out.println("Get here");
-	    		JSONObject jsonObject = (JSONObject)objJson;
-				Iterator it = jsonObject.keys();
-				while(it.hasNext()){
-					String key = it.next().toString();
-					Object object = jsonObject.get(key);
-					 // If you get an array
-					if(object instanceof JSONArray){
-						JSONArray objArray = (JSONArray)object;
-						analysisJson(objArray);
-					}
-					 // If the key is a json object
-					else if(object instanceof JSONObject){
-						analysisJson((JSONObject)object);
-					}
-					 // If the key is other
-					else{
-						System.out.println("["+key+"]:"+object.toString()+" ");
-					}
-				}
-	    	}
-	    	else
-	    	{
-	    		
-	    		//System.out.println("check: "+check);
-	    		if(check!=0)
-	    		{
-	    			if(pass>0)
-		    			sbb.append(",");
-	  
-	    			sbb.append(objJson.toString());
-	    		}
-	    			
-	    		else
-	    			sbb.append("("+objJson.toString());
-	    		
-	    		//	else
-	    				
-	    		pass++;
-	    	}
-	    		//System.out.println(objJson.toString());
-	    	check++;
-	    	//sbb.append(";");
-	    	//System.out.println("my sbb: "+sbb.toString());
-	    }
-	
-	public void loopThroughJson(Object input) throws JSONException {
-
-	    if (input instanceof JSONObject) {
-
-	        Iterator<?> keys = ((JSONObject) input).keys();
-
-	        while (keys.hasNext()) {
-
-	            String key = (String) keys.next();
-
-	            if (!(((JSONObject) input).get(key) instanceof JSONArray))
-	                if (((JSONObject) input).get(key) instanceof JSONObject) {
-	                    loopThroughJson(((JSONObject) input).get(key));
-	                } else
-	                    System.out.println(key + "=" + ((JSONObject) input).get(key));
-	            else
-	                loopThroughJson(new JSONArray(((JSONObject) input).get(key).toString()));
-	        }
-	    }
-
-	    if (input instanceof JSONArray) {
-	        for (int i = 0; i < ((JSONArray) input).length(); i++) {
-	            JSONObject a = ((JSONArray) input).getJSONObject(i);
-	            loopThroughJson(a);
-	        }
-	    }
-
-	}
-	
-	
-	protected JSONArray extractHoldsat(JSONObject toExtract)
-	{
-		JSONArray j;
-		JSONArray ret=new JSONArray();
-		for (String keys : toExtract.keySet()) 
-		{
-		    if(keys.equals("fluents"))// && toExtract.get(keys)!=null)// toExtract.get(keys).equals(null)) // ArrayUtils.isEmpty(toExtract.get(keys))) // toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    		
-		    }
-		    else if(keys.equals("gpows"))//) && !toExtract.get(keys).equals(null))//!=null) //((JSONArray)toExtract.get(keys).length()))//.isNull()) // toExtract.get(keys)!=null) // toExtract.get(keys).equals(null))//&& toExtract.get(keys)!=null)
-		    { 
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    	
-		    }
-		    else if(keys.equals("ipows")) // && toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    }
-		    else if(keys.equals("tpows")) // && toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    }
-		    else if(keys.equals("obls")) // && toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    }
-		    else if(keys.equals("perms")) // && toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    }
-		    else if(keys.equals("pows")) // && toExtract.get(keys)!=null)
-		    {
-		    	j = (JSONArray)toExtract.get(keys);
-		    	if (j.length()!=0)
-		    		ret.put(j);
-		    	
-		    }
-		    else
-		    {
-		    	System.out.println("ERROR 1");
-		    }
-		}
-		return ret;
-		
-	}
-
 	protected ArrayList<String> extractHoldsatJson(JSONObject toExtract)
 	{
 		JSONArray j;
 		ArrayList<String> new_facts = new ArrayList<String>();
-		for (String keys : toExtract.keySet()) 
+		for (Object keys : toExtract.keySet()) 
 		{
 		    if(keys.equals("fluents"))// && toExtract.get(keys)!=null)// toExtract.get(keys).equals(null)) // ArrayUtils.isEmpty(toExtract.get(keys))) // toExtract.get(keys)!=null)
 		    {
@@ -228,14 +27,14 @@ public class JsonExtractor {
 				
 				//System.out.println(" hello 2 "+j.getJSONArray(0).getJSONArray(1).toString());
 				
-		    	if (j.length()!=0)
+		    	if (j.size()!=0)
 		    	{
 		    		//new_facts.add(j.getJSONArray(0).getJSONArray(1).toString());
 		    		//new_facts.add(j.getJSONArray(0).toString());
 		    		//System.out.println("Fluents: "+ j.getJSONArray(0).toString());
-		    		for(int i=0;i<j.length();i++)
+		    		for(int i=0;i<j.size();i++)
 		    		{
-		    			new_facts.add(j.getJSONArray(i).getJSONArray(1).toString());
+		    			new_facts.add(j.get(i).toString());
 		    		}
 		    		
 //		    		JSONArray fluents = (JSONArray)toExtract.get(keys);
@@ -249,7 +48,7 @@ public class JsonExtractor {
 //		    		 System.out.println(" Flatten holdsat: "+ fluents.toString());
 		    	}
 		    }
-		    else if(keys.equals("gpows"))//) && !toExtract.get(keys).equals(null))//!=null) //((JSONArray)toExtract.get(keys).length()))//.isNull()) // toExtract.get(keys)!=null) // toExtract.get(keys).equals(null))//&& toExtract.get(keys)!=null)
+	/*	    else if(keys.equals("gpows"))//) && !toExtract.get(keys).equals(null))//!=null) //((JSONArray)toExtract.get(keys).length()))//.isNull()) // toExtract.get(keys)!=null) // toExtract.get(keys).equals(null))//&& toExtract.get(keys)!=null)
 		    { 
 		    	j = (JSONArray)toExtract.get(keys);
 		    	if (j.length()!=0) //!j.isEmpty())
@@ -348,7 +147,7 @@ public class JsonExtractor {
 		    else
 		    {
 		    	System.out.print("hmmm");
-		    }
+		    }*/
 		}
 		//System.out.println("New facts: "+new_facts);
 		//System.out.println("Size of facts array before: "+new_facts.size());
@@ -423,7 +222,7 @@ public class JsonExtractor {
 		return toParse;
 	}
 	
-	public String getStateFacts(int stateKey, HashMap <Integer,State> stateList)
+	/*public String getStateFacts(int stateKey, HashMap <Integer,State> stateList)
 	{
 		State state = (State)stateList.get(stateKey);
 		JSONArray events = state.getEvents();
@@ -543,7 +342,7 @@ public class JsonExtractor {
 		
 	
 		//return "";
-	}
+	}*/
 	
     
 }
