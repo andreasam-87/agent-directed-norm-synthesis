@@ -52,7 +52,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
  	ArrayList<ArrayList<String>> facts_store = new ArrayList<ArrayList<String>>();
  	HashMap <Integer,State> stateList = new HashMap<>();
  	
- 	JsonExtractor jsonExtractor = new JsonExtractor();
+ 	JsonExtractor jsonExtractor = new JsonExtractor("rooms");
  	
  	Processes pross = new Processes();
  	

@@ -6,11 +6,11 @@ MAS room_experiment {
 	//environment: RoomEnvironmentTimeStep
 
 	agents:
-		//synthesizer [mindinspector="gui(cycle,html,history)"];
+		synthesizer [mindinspector="gui(cycle,html,history)"];
 //		agentArchClass SomewhatTransparentAgents.JASON.STAgArch
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
-		sample_agent #2; // [mindinspector="gui(cycle,html,history)"] #2;
-//		agent
+		//sample_agent #2; // [mindinspector="gui(cycle,html,history)"] #2;
+		agent [mindinspector="gui(cycle,html,history)"]#2;
 //		agentArchClass  SomewhatTransparentAgents.JASON.STAgArch
 //  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
 //		//agent1 sample_agent;

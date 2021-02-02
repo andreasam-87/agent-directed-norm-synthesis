@@ -12,8 +12,11 @@ public class JsonExtractor {
 	//private static final Class<? extends Object>  = null;
 	StringBuilder sbb = new StringBuilder("");
 	int check =0,pass=0;
-	public JsonExtractor() {
-		
+	String inst;
+	
+	
+	public JsonExtractor(String inst) {
+		this.inst = inst;
 	}
 	
 	
@@ -119,7 +122,7 @@ public class JsonExtractor {
 	    	//System.out.println("my sbb: "+sbb.toString());
 	    }
 	
-	public void loopThroughJson(Object input) throws JSONException {
+	/*public void loopThroughJson(Object input) throws JSONException {
 
 	    if (input instanceof JSONObject) {
 
@@ -146,7 +149,7 @@ public class JsonExtractor {
 	        }
 	    }
 
-	}
+	}*/
 	
 	
 	protected JSONArray extractHoldsat(JSONObject toExtract)
@@ -362,6 +365,33 @@ public class JsonExtractor {
 		//facts_store.add(temp_facts);
 		return temp_facts;
 		
+	}
+	
+	/*I need to make this so that I can add the initially afterwards*/
+	protected String parseStr(String toParse, int flag)
+	{
+		//int index = toParse.lastIndexOf(")");
+		int indx = toParse.indexOf(")");
+		int i;
+		//System.out.println("index - "+indx);
+		for(i=indx;i<toParse.length()-1;i++)
+		{
+			if(toParse.charAt(i)!=')')
+				break;
+		}
+		//System.out.println(toParse.charAt(i));
+		toParse = toParse.substring(0, i); //cuts the end of the string past the first comma
+		toParse = toParse.replace("(holdsat(", "");//removes the whole holdsat bit at the front
+		toParse = toParse.substring(0,toParse.length()-1);//removes the last )
+		if(toParse.chars().filter(ch -> ch == '(').count() < toParse.chars().filter(ch -> ch == ')').count() )
+		{
+			toParse = toParse.replaceFirst("\\)","");
+		}
+		if(flag==0)
+		{
+			toParse = "initially("+toParse+","+inst+")";//have a variable with the name of the institution to add here
+		}
+		return toParse;
 	}
 	
 	/*I need to make this so that I can add the initially afterwards*/

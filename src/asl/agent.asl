@@ -77,7 +77,7 @@
 					?room_entered(Rm);
 					.my_name(N);
 					leave(N,Rm); 
-					-+current_action(leave(N,RM));
+					-+current_action(leave(N,Rm));
 					+perm(idle);
 					.	
 					

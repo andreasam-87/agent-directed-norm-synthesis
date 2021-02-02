@@ -46,7 +46,7 @@ public class RoomEnvironmentTimeStep extends TimeSteppedEnvironment {
  	ArrayList<ArrayList<String>> facts_store = new ArrayList<ArrayList<String>>();
  	HashMap <Integer,State> stateList = new HashMap<>();
  	
- 	JsonExtractor jsonExtractor = new JsonExtractor();
+ 	JsonExtractor jsonExtractor = new JsonExtractor("rooms");
  	
     /** Called before the MAS execution with the args informed in .mas2j */
     @Override
