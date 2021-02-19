@@ -39,7 +39,7 @@
 					// +perm(leave);
 					 .
 		
-+perm(leave(_,_)) : roomCapacityExceeded <- ?role(R);
++perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
 						?room_entered(Rm);
 					//	.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
 						
@@ -51,8 +51,10 @@
 						.
 
 
-+perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(R);
-					?room_entered(Rm);
++perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(P,R);
+
+					?room_entered(Rm); //fix to work with in_room belief instead.
+					
 					.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
 					.my_name(N);
 					

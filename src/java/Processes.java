@@ -100,7 +100,7 @@ public final class Processes
         StringBuilder str_err = new StringBuilder("");
 	      while((line = errorReader.readLine()) != null) {
 	    	  str_err.append(line+ "\n");
-	  
+	    	  System.out.println(line);
 	      }
 	      
         proc.waitFor(); 

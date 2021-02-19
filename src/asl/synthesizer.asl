@@ -34,7 +34,10 @@ entered(0).
 	  											{
 	  												//.nth(0,Z,Xn);
 	  												//.print(Xn);
-	  												.print(Z);
+	  												.print("Loop item: ",Z);
+	  												//check and see if the items are the same, 
+	  												//if they are, only one action required
+	  												
 	  											}
 											}
 											

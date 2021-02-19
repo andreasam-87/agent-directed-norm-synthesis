@@ -6,7 +6,8 @@ public class State{
 	int id;
 	JSONArray occurred;
 	JSONObject holdsat; 
-	
+	String occurredStr;
+	String holdsatStr; 
 	
 	public State(int id,JSONArray occurred,JSONObject holdsat)
 	{
@@ -15,6 +16,22 @@ public class State{
 		this.holdsat = holdsat;
 		
 	}
+	
+	public State(int id,String occurred,String holdsat)
+	{
+		this.id = id;
+		occurredStr = occurred;
+		holdsatStr = holdsat;
+		
+	}
+	
+	public State(String occurred,String holdsat)
+	{
+		occurredStr = occurred;
+		holdsatStr = holdsat;
+		
+	}
+	
 	public State(JSONArray occurred,JSONObject holdsat)
 	{
 		this.occurred = occurred;
@@ -32,5 +49,14 @@ public class State{
 		return holdsat;
 	}
 	
+	public String getEventsSre()
+	{
+		return occurredStr;
+	}
+	
+	public String getFactsStr()
+	{
+		return holdsatStr;
+	}
 	
 }

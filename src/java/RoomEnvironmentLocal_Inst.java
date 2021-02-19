@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +30,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	JsonExtractor jsonExtractor_prev = new JsonExtractor("rooms");
 	//JsonExtractorOrgSimple jsonExtractor = new JsonExtractorOrgSimple();
 	
-	int inst_state=0;
- 	String current_action ="";
+	int inst_state=0; //to keep track of the institutional state at any timestep since different from env timesteps
+ 	String current_action =""; //keep track of the current action being executed by any agent
  	
- 	StringBuilder strRet = new StringBuilder();
- 	ArrayList<String> facts_store = new ArrayList<String>();
+ 	StringBuilder strRet = new StringBuilder(); //to build string after parsing json return object from request
+ 	ArrayList<String> facts_store = new ArrayList<String>(); //collect of holdsat/facts/fluents true
+ 	
+ 	HashMap <Integer,State> stateList = new HashMap<>(); //collection of states of the inst 
  	
 	public void init(String[] args) {
 	       // super.init(args);
@@ -49,7 +52,65 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	        
 	    }
-	    
+	   
+	/*Include Step finished function and work to add percept to agent in the room only */
+	/* @Override
+		protected void stepFinished(int step, long elapsedTime, boolean byTimeout) {
+			 
+			 //State now = stateList.get(inst_state);
+			 
+
+			// String array size number of rooms
+			 String [] noRooms = new String[2];
+			 
+			//figure out how to get the inst_state and how to navigate the array
+			 
+			 if(inst_state!=0)
+			{
+				// previously ArrayList<String> factsnow = facts_store.get(inst_state);
+				String[]  factsnow = facts_store.get(inst_state-1).split("\n"); 
+				 
+			
+				// System.out.println("State:" +inst_state+ " facts: "+ factsnow);
+				 int cRooms=0;
+				 for(String s: factsnow)
+				 {
+					 if(s.contains("capacityExceeded"))
+					 {
+						 s = s.substring(10, s.length());
+			    		s = s.substring(0, s.length()-7);
+						s = StringUtils.substringBetween(s, "(", ")");
+						
+						noRooms[cRooms]=s;
+						cRooms++;
+						 System.out.println("Room with exceeded capacity is " + s);
+						 
+					 }
+				 }
+				 
+				 for(String s: factsnow)
+				 {
+					 if(s.contains("in_room"))
+					 {
+						 s = s.substring(10, s.length());
+			    		s = s.substring(0, s.length()-7);
+						String s1 = StringUtils.substringBetween(s, "(", ",");
+						String s2 = StringUtils.substringBetween(s, ",", ")");
+						if ((s2.equals(noRooms[0])) || (s2.equals(noRooms[1])))
+						{
+							///<<<<This gets added after so may cause some trouble, look into it>>>>>
+							addPercept(s1, Literal.parseLiteral("roomCapacityExceeded"));
+							 System.out.println("Agents affected " + s1);
+						}
+						
+						 
+					 }
+				 }		 
+			}
+			
+		
+		}
+	*/
 	
 	
     @Override
@@ -65,6 +126,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//current_action = current_action.replaceFirst("ent","enter");
 			current_action = "observed("+current_action+")";
 			System.out.println("The action is "+current_action);
+			
+			
+			clearPercepts(agName); //remove old percepts and add new percepts
 			
 			for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitutionLocal(agName).entrySet())
 	    	{
@@ -84,12 +148,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			current_action = ex.replace("\"","");
 			current_action = "observed("+current_action+")";
 			//String ex = act.toString();
+			
+			clearPercepts(agName); //remove old percepts and add new percepts
+			
+		//	public static final Literal check  = Literal.parseLiteral("check");
 			//for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitution().entrySet())
 			for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitutionLocal(agName).entrySet())
 	    	{
 	    		for (int i = 0; i < entry.getValue().length; i++)
 	    		{
-	    			addPercept(entry.getKey(), entry.getValue()[i]);
+	    			//if(entry.getValue()[i].equals(Literal.parseLiteral(" ")))
+	    				addPercept(entry.getKey(), entry.getValue()[i]);
 	    			//addPercept(entry.getValue()[i]);
 	    			//System.out.println("Percept 2: "+ entry.getValue()[i]);
 	    		}
@@ -106,7 +175,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		
 		
-		//inst_state++;
+		inst_state++;
         return true; // the action was executed with success
     }
     
@@ -140,18 +209,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    	
 			//what occurred this timestep
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
-			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
+			String occurred = strRet.toString();
+			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
 		//	System.out.println("\nwhat occurred "+strRet.toString());
 			
-			//get the new facts sorted.
+			//get the new facts sorted and saved to file for next run
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",0);
 			
-			//get feedback for the agents
+			//get feedback for the agents as percepts
 			//System.out.println("\npotentially agent output "+strRet.toString());
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
 			
-			
-			
+			//add to the collection of states after each agent's action
+			stateList.put(inst_state, new State(occurred,facts_store.get(inst_state)));
 			
 			String[] percepts = strRet.toString().split("\n");
 			
@@ -160,19 +230,48 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			int count = StringUtils.countMatches(strRet.toString(), ag);
 			//System.out.println("Count "+count);
 	    	int c=0;
-	    	Literal[] inst_sensors = new Literal[count];
+	    	boolean viol = false;
+	    	Literal[] inst_sensors = new Literal[count+1]; //add +1 to array size if capacity percept being added
+	    	String roomCap="";
+	    	String inroom="";
 	    	for (String var : percepts) 
 	    	{ 
 	    		//System.out.println(var);
+	    		if(var.contains("capacityExceeded"))
+	    		{
+	    			viol=true; //indicates a violation of the 
+	    			roomCap=var; //stores the entire percept, maybe just store the name by putting the line from below 
+	    		}
 	    		if (var.contains(ag))
 	    		{
-	    	
+	    			//populates the percepts with the agent name to be sent to the agent
 	    			inst_sensors[c] = Literal.parseLiteral(var);
 	    			c++;
 	    			
 	    		}
+	    		if (var.contains("in_room"))
+	    			inroom=var; //keeps track of if the agent is in some room
 	    	}
-	    	//System.out.println(inst_sensors.length);
+	    	
+	    	//checking if the capacity exceeded fluent is set and sets agent percept
+	    	//if (Arrays.asList(percepts).contains("capacityExceeded")) //doesn't work actually
+	    	
+	    	//check if agent is in the room first
+	    	if (viol)
+	    	{
+	    		//System.out.println("true");
+	    		roomCap=StringUtils.substringBetween(roomCap, "(", ")"); //find the name of the room which has exceeded capacity
+	    		if(inroom.contains(roomCap)) //check if this agent is in the room
+	    			inst_sensors[c] = Literal.parseLiteral("roomCapacityExceeded");
+	    		else
+	    			inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+	    	}else
+	    	{
+	    		inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+	    	}
+//	    	//System.out.println(inst_sensors.length);
+//	    	
+	    	
 	    	m.put(ag,inst_sensors);
 			
 			//System.out.println("potentially agent output END\n ");
@@ -413,8 +512,10 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), config.toString().getBytes());
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes(),StandardOpenOption.APPEND);
-		//	System..pause();
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+		//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes(),StandardOpenOption.APPEND);
+			
+			//	System..pause();
 			
 //			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/rooms.lp -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/rooms-blank.iaq -j /workdir/out.json -v";
 //			//Processes.runShellCmd(cmd);
@@ -501,7 +602,14 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 				for(int i=0;i<ob.length();i++)
 				{
 					StringBuilder sbb = new StringBuilder("");
-					System.out.println(request+": "+jsonExtractor_prev.extract(ob.get(i),sbb).toString());
+					String str = jsonExtractor_prev.extract(ob.get(i),sbb).toString();
+					str = jsonExtractor_prev.parseStr(str,flag);
+					str = str.replaceFirst("\\(","");
+					str =str+")";
+					strRet.append(str+"\n");
+					
+					//System.out.println(request+": "+jsonExtractor_prev.parseStr(str,flag)+"\n");
+					//System.out.println(request+": "+str+"\n");
 				}
 			}
 			else if(obj instanceof JSONObject)
@@ -529,8 +637,8 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 				if (flag==0)
 				{
 					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
-					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
-			
+					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
+					facts_store.add(strRet.toString());
 				}
 				
 			}
