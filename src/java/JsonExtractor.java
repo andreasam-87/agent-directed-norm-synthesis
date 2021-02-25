@@ -465,6 +465,17 @@ public class JsonExtractor {
 		return ev+fct;
 	}
 	
+	public String getStateFactsandEvents(int stateKey, HashMap <Integer,State> stateList)
+	{
+		State state = (State)stateList.get(stateKey);
+		
+		String ev = state.getEventsStr();
+	
+		String fct = state.getFactsStr();
+		
+		return fct+ev;
+	}
+	
 	public String getFacts(JSONArray facts)
 	{
 		StringBuilder sb = new StringBuilder("");
@@ -500,7 +511,33 @@ public class JsonExtractor {
 		return sb.toString();
 	}
 	
+	
 	public int checkStateForEvent(String event, HashMap <Integer,State> stateList)
+	{
+		int stateOccurred=0;
+
+		// Using for-each loop 
+        for (Map.Entry mapElement : stateList.entrySet()) { 
+            int key = (int)mapElement.getKey(); 
+            State state = (State)mapElement.getValue();
+            
+            String events = state.getEventsStr();
+           
+            if(events.contains(event))
+            {
+            	stateOccurred = key;
+            //	System.out.println("Found "+event+ " in "+ events);
+            	break;
+            } 
+            
+        } 
+        
+        return stateOccurred;
+
+	}
+	
+	
+	public int checkStateForEventOld(String event, HashMap <Integer,State> stateList)
 	{
 		int stateOccurred=0;
 

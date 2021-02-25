@@ -10,7 +10,7 @@
 
 /* Plans */
 
-+!initialise_logger_and_start : true  <- jason.launcher; 
++!initialise_logger_and_start : true  <- //jason_logger.initialise; 
 										!start.
 
 +!start : true <-  .print("hello world.");
@@ -75,7 +75,7 @@
 					.
 	
 	
-+!leave_now: true <- .print('Decided to leave, leaving now');
++!leave_now: true <- .print("Decided to leave, leaving now");
 					?room_entered(Rm);
 					.my_name(N);
 					leave(N,Rm); 
@@ -84,7 +84,7 @@
 					.	
 					
 	
-+!idle_now: true <- .print('Decided to remain in room for now');
++!idle_now: true <- .print("Decided to remain in room for now");
 					.						
 
 //maybe an error with trying to do two actions, will check with Fahid on how the environment works or something					 
@@ -109,7 +109,10 @@
 //					
 //								.
 							
-+perm(idle)	: true <- .print("I left so I am chillin").
++perm(idle)	: true <- .print("I left so I am chillin");
+						.wait(2000);
+						!enter_room;
+						.
 					//	experiment5.myPrint('I left so I am chillin').
 							
 

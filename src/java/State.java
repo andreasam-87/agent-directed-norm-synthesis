@@ -49,7 +49,7 @@ public class State{
 		return holdsat;
 	}
 	
-	public String getEventsSre()
+	public String getEventsStr()
 	{
 		return occurredStr;
 	}

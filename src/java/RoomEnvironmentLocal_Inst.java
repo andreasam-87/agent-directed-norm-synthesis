@@ -21,7 +21,10 @@ import org.json.simple.parser.JSONParser;
 
 import instal.InstalModel;
 import instal.InstalQuery;
+import jason.NoValueException;
 import jason.asSyntax.Literal;
+import jason.asSyntax.NumberTerm;
+import jason.asSyntax.NumberTermImpl;
 import jason.asSyntax.Structure;
 
 
@@ -38,7 +41,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
  	
  	HashMap <Integer,State> stateList = new HashMap<>(); //collection of states of the inst 
  	
-	public void init(String[] args) {
+ 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
+	
+ 	public void init(String[] args) {
 	       // super.init(args);
 	        super.init(new String[]{"1000"});
 	        //super.setSleep(100);
@@ -112,7 +117,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 	*/
 	
-	
+	/** to be overridden by user class **/
+ 
+ 
+    @Override
+    protected boolean isOpenEnded (String agName, Structure action) {
+        return action.getFunctor().equals("delay") || action.getFunctor().equals("revise");
+    }
+    
     @Override
     public boolean executeAction(String agName, Structure action) {
 
@@ -125,7 +137,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			ex = ex.replace("\"","");
 			//current_action = current_action.replaceFirst("ent","enter");
 			current_action = "observed("+current_action+")";
-			System.out.println("The action is "+current_action);
+			//System.out.println("The action is "+current_action);
 			
 			
 			clearPercepts(agName); //remove old percepts and add new percepts
@@ -135,12 +147,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    		for (int i = 0; i < entry.getValue().length; i++)
 	    		{
 	    			addPercept(entry.getKey(), entry.getValue()[i]);
+	    			//System.out.println("adding percept");
 	    			//addPercept(entry.getValue()[i]);
 	    		//	System.out.println("Percept"+i+ " : "+ entry.getValue()[i]);
 	    		
 	    		}
 	    	}
-
+			updateAgsPercept();
 			
 		}
 		
@@ -165,12 +178,119 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    	}
 
 		}
+		else if (action.getFunctor().equals("checkState")) {
+			//String eventOccurred = (String) ((StringTerm) act.getTerm(0)).toString();
+			//String eventOccurred = (String) ((StringTerm) act.getTerm(0)).getString();
+				//	.toString();
+			//String eventOccurred =(String)(StringTerm) act.getTerm(0)).getString();
+			//int x=0;
+			//System.out.println("reached here");
+			try {
+				//x = (int) ((NumberTerm) act.getTerm(0)).solve();
+				String eventOccurred = (action.getTerm(0)).toString();
+				eventOccurred = eventOccurred.replace("\"","");
+				System.out.println("Checking state for: "+eventOccurred);
+				int whenOcc = jsonExtractor_prev.checkStateForEvent(eventOccurred,stateList);
+				System.out.println("Event occurred in state: "+whenOcc);
+				//String data = jsonExtractor_prev.getStateFactsandEvents(whenOcc-1,stateList);
+				//System.out.println("Data from that state- "+data);
+				
+				//addPercept(agName, Literal.parseLiteral("datafromagents"));
+				//String d = "hellohello(howare,you),good";
+				//String d = data.substring(0,40).toString().split("\\),")[0]+")";
+				
+			//	String d = "stateOccurred("+eventOccurred+","+whenOcc+")";
+				//System.out.println("D - "+d);
+				addPercept(agName, Literal.parseLiteral("eventOccurred("+whenOcc+")"));
+				//addPercept(agName, Literal.parseLiteral(data.substring(0,50)));
+			//	addPercept(agName, Literal.parseLiteral(d));
+						
+				//System.out.println("Data - "+data);
+				
+				//probably should just do something that puts the facts of the previous 
+				//state back in to the new slot 
+				inst_state--;
+				//System.out.println("reached here too");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Error here ");
+			}
+			//System.out.println("Checking state for: "+eventOccurred);
+			//System.out.println("Checking state for: "+x);
+			//action = true;
+			//inst_state++;
+			 //stateList.put(inst_state, new State(occurred,holdsat));
+		}
+		else if (action.getFunctor().equals("revise")) {
+			
+			try {
+				int when = (int)((NumberTerm) action.getTerm(0)).solve();
+				int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
+				System.out.println("Check state "+when+ " and "+ numStates +" states before and after.");
+			} catch (NoValueException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
-		
+//			try {
+//				System.out.println("about to sleep");
+//				Thread.sleep(5000);
+//				System.out.println("slept");
+//				completed_infinites.put((long) ((NumberTerm) action.getTerm(0)).solve(), true);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+			Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Revision begins...... (5 seconds)");
+                        Thread.sleep(5000);
+                        System.out.println("Revision has ended.... Completing action ......");
+                        
+                        RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
+                    }catch (Exception ex) {
+
+                    }
+                }
+            };
+
+            Thread t = new Thread(r);
+            t.start();
+            
+            addPercept(agName, Literal.parseLiteral("revisionFailed"));
+            inst_state--;
+           // return true; //do I need a separate return here or the one to the bottom will do. 
+		}
+		else if (action.getFunctor().equals("delay")) {
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Waiting begins...... (15 seconds)");
+                        Thread.sleep(15000);
+                        System.out.println("Waiting has ended.... Completing action ......");
+                  //      RoverWorld.this.markAsCompleted(action);
+                    }catch (Exception ex) {
+
+                    }
+                }
+            };
+
+            Thread t = new Thread(r);
+            t.start();
+            //return true;
+		}
 		
 		else
 		{
 			System.out.println("Dunno what action was executed");
+			return false;
+			//do I need a return false in here??
 			//inst_state--;
 		}
 		
@@ -178,6 +298,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		inst_state++;
         return true; // the action was executed with success
     }
+    
     
     
 //    

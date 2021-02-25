@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jason.asSyntax.Literal;
+import jason.asSyntax.NumberTerm;
+import jason.asSyntax.NumberTermImpl;
 import jason.asSyntax.Structure;
 
 
@@ -54,6 +56,8 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
         proceed
     }
 
+    private ArrayList<Long> completedTasks;
+    private ArrayList<Long> queuedTasks;
     private int step = 0;   // step counter
     private int nbAgs = -1; // number of agents acting on the environment
     private Map<String,ActRequest> requests; // actions to be executed
@@ -62,7 +66,7 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
     private long stepTimeout = 0;
     private int  sleep = 0; // pause time between cycles
 
-// changed to queue: failSecond
+    // changed to queue: failSecond
     private OverActionsPolicy overActPol = OverActionsPolicy.queue;
     private CompositeActionFailurePolicy cActionFailurePol =  CompositeActionFailurePolicy.abort;
 
@@ -88,6 +92,8 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
             }
         }
         // reset everything
+        completedTasks = new ArrayList<>();
+        queuedTasks = new ArrayList<>();
         requests = new HashMap<String,ActRequest>();
         overRequests = new LinkedList<ActRequest>();
         step = 0;
@@ -163,6 +169,7 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
 
         // checks if the action is a composite action
         boolean hasWayPoints =  isComposite(agName, action);
+        boolean isOpenEnded = isOpenEnded(agName, action);
         boolean startNew = false;
 
         synchronized (requests) {
@@ -188,12 +195,18 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
                                 overRequests.offer(pNewRequest);
                             }
                         }
+                    } else if (isOpenEnded) {
+                        final long tag = System.currentTimeMillis();
+                        action = applyTag(action, tag);
+                        final ActRequest pNewRequest = new ActRequest(agName, action, 1, infraData, tag , ActRequest.open_ended_action);
+                        overRequests.offer(pNewRequest);
                     }
                     else {
                         ActRequest newRequest = new ActRequest(agName, action, 1, infraData);
                         overRequests.offer(newRequest);
                     }
-                } else if (overActPol == OverActionsPolicy.failSecond) {
+                }
+                else if (overActPol == OverActionsPolicy.failSecond) {
                     getEnvironmentInfraTier().actionExecuted(agName, action, false, infraData);
                 } else if (overActPol == OverActionsPolicy.ignoreSecond) {
                     getEnvironmentInfraTier().actionExecuted(agName, action, true, infraData);
@@ -216,7 +229,14 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
                             overRequests.offer(pNewRequest);
                         }
                     }
-                } else {
+                }
+                else if (isOpenEnded) {
+                    final long tag = System.currentTimeMillis();
+                    action = applyTag(action, tag);
+                    final ActRequest pNewRequest = new ActRequest(agName, action, 1, infraData, tag , ActRequest.open_ended_action);
+                    requests.put(agName, pNewRequest);
+                }
+                else {
                     ActRequest newRequest = new ActRequest(agName, action, 1, infraData);
                     requests.put(agName, newRequest);
                 }
@@ -275,7 +295,16 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
                 for (ActRequest a: requests.values()) {
                     a.remainSteps--;
                     if (a.remainSteps == 0) {
-                        a.success = executeAction(a.agName, a.action);
+                        // here....
+                        if (a.batchEntryType == ActRequest.open_ended_action) {
+                            if (! queuedTasks.contains(a.batchId)) {
+                                queuedTasks.add(a.batchId);
+                                a.success = executeAction(a.agName, a.action);
+                            }
+                        } else {
+                            a.success = executeAction(a.agName, a.action);
+                        }
+
                     }
                 }
 
@@ -302,6 +331,20 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
                             i.remove();
                         }   else if ((a.batchEntryType == ActRequest.waypoint_action) && a.success) {
                             i.remove();
+                        }
+                        else if (
+                                a.batchEntryType == ActRequest.open_ended_action
+                                &&
+                               StepSynchedEnvironment.this.isCompleted(a.batchId)
+                        ) {
+                            getEnvironmentInfraTier().actionExecuted(a.agName, a.action, a.success, a.infraData);
+                            i.remove();
+                        } else if (
+                                a.batchEntryType == ActRequest.open_ended_action
+                                        &&
+                                        (! StepSynchedEnvironment.this.isCompleted(a.batchId))
+                        ) {
+                            a.remainSteps ++;
                         }
                     }
                 }
@@ -365,9 +408,28 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
         return false;
     }
 
+    protected boolean isOpenEnded (String agName, Structure action) { return false; }
+
+    private  Structure applyTag (Structure action, long tag) {
+        action.addTerm(new NumberTermImpl(tag));
+        return action;
+    }
+
+    protected void markAsCompleted (Structure action) {
+        try {
+            long tag = (long) ( (NumberTerm) action.getTerm(action.getTerms().size() - 1) ).solve();
+            completedTasks.add(tag);
+        }catch (Exception ex) {
+        }
+    }
+
     /** to be overridden by the user class */
     protected ArrayList <Structure> getComposites (String agName, Structure action) {
         return null;
+    }
+
+    protected boolean isCompleted (long actionId) {
+        return completedTasks.contains(actionId);
     }
 
     /** stops perception while executing the step's actions */
@@ -382,6 +444,7 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
 
         public static final int waypoint_action = 0;
         public static final int concluding_action = 1;
+        public static final int open_ended_action = 2;
 
         String agName;
         Structure action;

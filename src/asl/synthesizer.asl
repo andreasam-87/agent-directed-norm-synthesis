@@ -24,22 +24,32 @@ entered(0).
 											.count(request(_,_,_)[source(_)],C); 
 											?entered(T);
 											-+entered(T+1);	
-											.print('T is ', T, 'C is ',C);
+											//.print('T is ', T, 'C is ',C);
 											if ((T+1)==C)
 											{
 												.print('Message received from ', C, ' agents, will handle');
 												.findall([A,Ac,E],request(A,Ac,E),Reqs); 
-												//.print(Reqs);
+												.print(Reqs);
+												room_experiment.checkSameReqs(Reqs);
 												for (.member(Z,Reqs))
 	  											{
 	  												//.nth(0,Z,Xn);
 	  												//.print(Xn);
-	  												.print("Loop item: ",Z);
+	  												//.print("Loop item: ",Z);
+	  												//.print(Z);
+	  												room_experiment.getItems(Z,I1,I2,I3);
+	  												
+	  												//.print('Action attempted ', I2);
+	  												checkState(I2);
+	  											//	delay;
+	  											//	!fix;
 	  												//check and see if the items are the same, 
 	  												//if they are, only one action required
 	  												
 	  											}
+	  											.abolish(request(_,_,_));
 											}
+											
 											
 											//.length(Reqs,Ct);
 												
@@ -78,7 +88,15 @@ entered(0).
 //										
 //										. 
 
+//@eventOccurred[atomic]
++eventOccurred(When): true <- .print("Attempting to revise norms");
+                           revise(When,3).
 
+
++revisionFailed: true <- .print("No possible revisions found").
+
+
++!fix: true <- revise(0).
  
   +!handle: true <- .print("Handling the others");
 					.findall(r(A,Ac,E),request(Act,AcAtmp,Exp),Reqs);  					
