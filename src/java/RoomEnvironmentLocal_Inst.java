@@ -224,29 +224,20 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("revise")) {
 			
-			try {
-				int when = (int)((NumberTerm) action.getTerm(0)).solve();
-				int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
-				System.out.println("Check state "+when+ " and "+ numStates +" states before and after.");
-			} catch (NoValueException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
 //			try {
-//				System.out.println("about to sleep");
-//				Thread.sleep(5000);
-//				System.out.println("slept");
-//				completed_infinites.put((long) ((NumberTerm) action.getTerm(0)).solve(), true);
-//			} catch (Exception e) {
+//				} catch (NoValueException e1) {
 //				// TODO Auto-generated catch block
-//				e.printStackTrace();
+//				e1.printStackTrace();
 //			}
-//			
+//		
 			Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     try {
+                    	int when = (int)((NumberTerm) action.getTerm(0)).solve();
+        				int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
+        				System.out.println("Check state "+when+ " and "+ numStates +" states before and after.");
+        			
                         System.out.println("Revision begins...... (5 seconds)");
                         Thread.sleep(5000);
                         System.out.println("Revision has ended.... Completing action ......");
@@ -271,10 +262,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
                 @Override
                 public void run() {
                     try {
-                        System.out.println("Waiting begins...... (15 seconds)");
-                        Thread.sleep(15000);
+                    	int delay = (int)((NumberTerm) action.getTerm(0)).solve();
+                        System.out.println("Waiting begins...... ("+(delay/1000)+" seconds)");
+                        Thread.sleep(delay);
                         System.out.println("Waiting has ended.... Completing action ......");
                   //      RoverWorld.this.markAsCompleted(action);
+                        RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
                     }catch (Exception ex) {
 
                     }
@@ -284,6 +277,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
             Thread t = new Thread(r);
             t.start();
             //return true;
+            inst_state--;
 		}
 		
 		else
@@ -363,7 +357,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    			viol=true; //indicates a violation of the 
 	    			roomCap=var; //stores the entire percept, maybe just store the name by putting the line from below 
 	    		}
-	    		if (var.contains(ag))
+	    		if (var.contains(ag) && !var.matches("(.*)"+ag+"[0-9]+(.*)"))
 	    		{
 	    			//populates the percepts with the agent name to be sent to the agent
 	    			inst_sensors[c] = Literal.parseLiteral(var);

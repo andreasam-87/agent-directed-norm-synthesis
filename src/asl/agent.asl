@@ -110,7 +110,9 @@
 //								.
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
-						.wait(2000);
+						//.wait(2000);
+						delay(3000);
+						-perm(idle);
 						!enter_room;
 						.
 					//	experiment5.myPrint('I left so I am chillin').

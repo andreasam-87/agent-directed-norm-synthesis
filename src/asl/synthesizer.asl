@@ -20,34 +20,70 @@ entered(0).
  
 @request[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : true <- //.print('Message received from ', Ag , ', will handle');
-											.wait(1000);
+										//	.wait(1000);
+											//delay(1000)
+										    .print("Request received");
 											.count(request(_,_,_)[source(_)],C); 
 											?entered(T);
 											-+entered(T+1);	
+											-+countRequests(C);
 											//.print('T is ', T, 'C is ',C);
 											if ((T+1)==C)
 											{
-												.print('Message received from ', C, ' agents, will handle');
-												.findall([A,Ac,E],request(A,Ac,E),Reqs); 
-												.print(Reqs);
-												room_experiment.checkSameReqs(Reqs);
-												for (.member(Z,Reqs))
-	  											{
-	  												//.nth(0,Z,Xn);
-	  												//.print(Xn);
-	  												//.print("Loop item: ",Z);
-	  												//.print(Z);
-	  												room_experiment.getItems(Z,I1,I2,I3);
-	  												
-	  												//.print('Action attempted ', I2);
-	  												checkState(I2);
-	  											//	delay;
-	  											//	!fix;
-	  												//check and see if the items are the same, 
-	  												//if they are, only one action required
-	  												
-	  											}
-	  											.abolish(request(_,_,_));
+												if (C==1)
+												{
+													+checkone;
+													.print("Only 1 request to handle");
+													.print('Action attempted ', ActAtmpt);
+													checkState(ActAtmpt);
+													-request(ActRes,ActAtmpt,Exp);
+												}
+												else
+												{
+													.print('Message received from ', C, ' agents, will handle');
+													.findall([A,Ac,E],request(A,Ac,E),Reqs); 
+													.abolish(request(_,_,_));
+													-+entered(0);
+													.print(Reqs);
+													room_experiment.checkSameReqs(Reqs,Ret,Num);
+													.print("Returned ",Ret," ",Num);
+													if(Num==0)
+													{
+														room_experiment.getItems(Ret,I1,I2,I3);
+														.print('Action attempted ', I2);
+														checkState(I2);
+													}
+													else
+													{
+														.print("List of items: ",Ret);
+														for (.member(Z,Ret))
+		  												{
+		  													room_experiment.getItems(Z,I1,I2,I3);
+		  													.print('Action attempted ', I2);
+		  												}
+		  												
+		  											 }	
+												}
+												
+												//}
+//												
+//												for (.member(Z,Reqs))
+//	  											{
+//	  												//.nth(0,Z,Xn);
+//	  												//.print(Xn);
+//	  												//.print("Loop item: ",Z);
+//	  												//.print(Z);
+//	  												room_experiment.getItems(Z,I1,I2,I3);
+//	  												
+//	  												//.print('Action attempted ', I2);
+//	  												checkState(I2);
+//	  											//	delay;
+//	  											//	!fix;
+//	  												//check and see if the items are the same, 
+//	  												//if they are, only one action required
+//	  												
+//	  											}
+	  											
 											}
 											
 											
@@ -88,12 +124,16 @@ entered(0).
 //										
 //										. 
 
-//@eventOccurred[atomic]
+@eventOccurred[atomic]
 +eventOccurred(When): true <- .print("Attempting to revise norms");
-                           revise(When,3).
+                           revise(When,3);
+                           -eventOccurred(When);
+                           .
 
 
-+revisionFailed: true <- .print("No possible revisions found").
++revisionFailed: true <- .print("No possible revisions found");
+						-revisionFailed;
+						.
 
 
 +!fix: true <- revise(0).

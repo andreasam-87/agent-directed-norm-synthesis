@@ -10,7 +10,7 @@ MAS room_experiment {
 //		agentArchClass SomewhatTransparentAgents.JASON.STAgArch
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
 		//sample_agent #2; // [mindinspector="gui(cycle,html,history)"] #2;
-		agent [mindinspector="gui(cycle,html,history)"]#10; //agentArchClass jason_logger.LoggerAgArch;
+		agent [mindinspector="gui(cycle,html,history)"]#15; //agentArchClass jason_logger.LoggerAgArch;
 //		agentArchClass  SomewhatTransparentAgents.JASON.STAgArch
 //  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
 //		//agent1 sample_agent;
