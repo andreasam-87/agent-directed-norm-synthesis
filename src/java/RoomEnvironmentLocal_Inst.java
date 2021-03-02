@@ -238,8 +238,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
         				int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
         				System.out.println("Check state "+when+ " and "+ numStates +" states before and after.");
         			
-                        System.out.println("Revision begins...... (5 seconds)");
-                        Thread.sleep(5000);
+                        System.out.println("Revision begins...... (2 seconds)");
+                        
+                        System.out.println(jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt"));
+                        Thread.sleep(2000);
                         System.out.println("Revision has ended.... Completing action ......");
                         
                         RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
@@ -769,7 +771,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 			e1.printStackTrace();
 		}
 		
-			}
+	}
 	
 	public void getJSONObjectFromFileOld(String file)
 	{

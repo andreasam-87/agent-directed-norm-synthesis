@@ -1,11 +1,18 @@
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class JsonExtractor {
 
@@ -610,6 +617,136 @@ public class JsonExtractor {
 		
 	
 		//return "";
+	}
+	
+	
+	public String getModesFile(String file)
+	{
+		
+		String line="";
+		try {
+			System.out.println("trying to read this file");
+		List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+	    	for (String line2 : lines) {
+	    	//System.out.println("line read: " + line2);
+	    		line+=line2;
+	    	}
+			
+	//		System.out.println("pass 1");
+			//JSONObject object = new JSONObject(strRet.toString());
+
+			JSONObject object = new JSONObject(line);
+//			JSONArray jArr = object.getJSONArray("institution_ir");
+////			System.out.println("pass 3 - "+jArr.get(0).getClass());
+//			JSONObject obj1 = jArr.getJSONObject(0);
+//			
+//			System.out.println("Object : "+obj1);
+//			//System.out.println("Object : "+object.getJSONArray("institution_ir").getJSONObject(0).getJSONArray("noninertial_fluents"));
+//		//	
+//			
+//			JSONObject obj2 = obj1.getJSONObject("contents");
+//			System.out.println("pass 2 ");
+//			
+//			JSONObject obj3 = obj2.getJSONObject("noninertial_fluents");
+//			
+//			System.out.println("pass 3");
+//			
+			JSONObject niFluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("noninertial_fluents");
+			JSONObject fluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("fluents");
+//			
+			;
+//			System.out.println("pass 4");
+		
+//			
+			//	WORK OUT HOW TO PUT THIS IN A FUNCTION TO PASS THE APPROPRIATE JSONOBJECT 
+			// AND GET BACK ALL THE STRINGS MH,MB,EP
+			// PROBABLY GRAB ONE STRING AND THEN ADD THE MODEH OR WHATEVER AFTER SINCE ITS ESSENTIALLY THE SAME STRING
+		
+			StringBuilder modeh=new StringBuilder();
+			StringBuilder modeb=new StringBuilder();
+			StringBuilder examplepattern=new StringBuilder();
+			
+			//for (String key : niFluents.keySet()) 
+			for (String key : fluents.keySet()) 
+			{
+				//System.out.println(key +" : "+ niFluents.get(key)+" - "+ niFluents.get(key).getClass());
+				modeh.append("modeh(holdsat("+key+"(");
+				examplepattern.append("examplePattern((holdsat("+key+"(");
+				//JSONArray jArr = (JSONArray)niFluents.get(key);
+				JSONArray jArr = (JSONArray)fluents.get(key);
+				for(int i=0;i<jArr.length();i++)
+		    	{
+					//System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
+		    		modeh.append("+"+((String)jArr.get(i)).toLowerCase());
+		    		examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
+		    		if(i!=(jArr.length()-1))
+		    		{
+		    			modeh.append(",");
+		    			examplepattern.append(",");
+		    		}
+		    	}
+				modeh.append("),+inst,+event,+instant))\n");	
+				examplepattern.append("),+inst,+event,+instant))\n");
+
+			}
+			System.out.println("modeh:\n "+modeh.toString());
+//			Object obj = (Object)state.get(request);
+//			if (obj instanceof JSONArray)
+//			{
+//				JSONArray ob = (JSONArray)obj;
+//				
+//				for(int i=0;i<ob.length();i++)
+//				{
+//					StringBuilder sbb = new StringBuilder("");
+//					String str = jsonExtractor_prev.extract(ob.get(i),sbb).toString();
+//					str = jsonExtractor_prev.parseStr(str,flag);
+//					str = str.replaceFirst("\\(","");
+//					str =str+")";
+//					strRet.append(str+"\n");
+//					
+//					//System.out.println(request+": "+jsonExtractor_prev.parseStr(str,flag)+"\n");
+//					//System.out.println(request+": "+str+"\n");
+//				}
+//			}
+//			else if(obj instanceof JSONObject)
+//			{
+//				JSONObject ob = (JSONObject)state.get("holdsat");
+//				JSONArray ar = jsonExtractor_prev.extractHoldsat(ob);
+//				for(int i=0;i<ar.length();i++)
+//				{
+//					
+//					JSONArray arr = (JSONArray)ar.get(i);
+//					for(int j=0;j<arr.length();j++)
+//					{
+//						StringBuilder sbb = new StringBuilder("");
+//
+//						//System.out.println(jsonExtractor_prev.extract(arr.get(j),sbb).toString());
+//						String str = jsonExtractor_prev.extract(arr.get(j),sbb).toString();
+//						strRet.append(jsonExtractor_prev.parseStr(str,flag)+"\n");
+//						
+//						//System.out.println(jsonExtractor_prev.parseStr(str,flag));
+//						
+//					}
+//					
+//					
+//				}
+//				if (flag==0)
+//				{
+//					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+//					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
+//					facts_store.add(strRet.toString());
+//				}
+				
+//			}
+//			else
+//				System.out.println("ERROR - no JSON in file");
+//		
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("Error with json modes");
+			e1.printStackTrace();
+		}
+		return "modes created";
 	}
 	
     
