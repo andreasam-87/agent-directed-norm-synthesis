@@ -240,7 +240,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
         			
                         System.out.println("Revision begins...... (2 seconds)");
                         
-                        System.out.println(jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt"));
+                        String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt");
+                        
+                        System.out.println(modes); //just printing for now
+                        //writing to the file is what is required so that the ILP can access this file
+                        Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"), modes.getBytes());
+            			
                         Thread.sleep(2000);
                         System.out.println("Revision has ended.... Completing action ......");
                         

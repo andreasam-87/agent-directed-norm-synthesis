@@ -622,8 +622,14 @@ public class JsonExtractor {
 	
 	public String getModesFile(String file)
 	{
+		/*Function to parse a json file with instal dictionar and return a modes file as string 
+		 * This function may need to be modified to should only a specific set of fluents and events rather than all
+		 * */
 		
 		String line="";
+		StringBuilder modeh=new StringBuilder();
+		StringBuilder modeb=new StringBuilder();
+		StringBuilder examplepattern=new StringBuilder();
 		try {
 			System.out.println("trying to read this file");
 		List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
@@ -637,117 +643,130 @@ public class JsonExtractor {
 
 			JSONObject object = new JSONObject(line);
 //			JSONArray jArr = object.getJSONArray("institution_ir");
-////			System.out.println("pass 3 - "+jArr.get(0).getClass());
-//			JSONObject obj1 = jArr.getJSONObject(0);
-//			
+//			JSONObject obj1 = jArr.getJSONObject(0);		
 //			System.out.println("Object : "+obj1);
 //			//System.out.println("Object : "+object.getJSONArray("institution_ir").getJSONObject(0).getJSONArray("noninertial_fluents"));
-//		//	
-//			
-//			JSONObject obj2 = obj1.getJSONObject("contents");
-//			System.out.println("pass 2 ");
-//			
+	
+//			JSONObject obj2 = obj1.getJSONObject("contents");		
 //			JSONObject obj3 = obj2.getJSONObject("noninertial_fluents");
-//			
-//			System.out.println("pass 3");
-//			
+			
 			JSONObject niFluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("noninertial_fluents");
 			JSONObject fluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("fluents");
-//			
-			;
-//			System.out.println("pass 4");
-		
-//			
-			//	WORK OUT HOW TO PUT THIS IN A FUNCTION TO PASS THE APPROPRIATE JSONOBJECT 
-			// AND GET BACK ALL THE STRINGS MH,MB,EP
-			// PROBABLY GRAB ONE STRING AND THEN ADD THE MODEH OR WHATEVER AFTER SINCE ITS ESSENTIALLY THE SAME STRING
-		
-			StringBuilder modeh=new StringBuilder();
-			StringBuilder modeb=new StringBuilder();
-			StringBuilder examplepattern=new StringBuilder();
+			JSONObject ievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("inevents");
+			JSONObject vievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("vievents");
+	
+			
+			ArrayList <String> modesh = getModesList(niFluents,'f');
+			for(String s: modesh)
+			{
+				modeh.append("modeh(holdsat("+s);
+				modeb.append("modeb(holdsat("+s);
+				modeb.append("modeb(not holdsat("+s);
+				examplepattern.append("examplePattern((holdsat("+s);
+			}
+			
+			modesh = getModesList(fluents,'f');
+			for(String s: modesh)
+			{
+				modeh.append("modeh(initiated("+s);
+				modeh.append("modeh(terminated("+s);
+				modeb.append("modeb(holdsat("+s);
+				modeb.append("modeb(not holdsat("+s);
+				examplepattern.append("examplePattern((holdsat("+s);
+			}
+			
+			modesh = getModesList(ievents,'e');
+			for(String s: modesh)
+			{
+				modeh.append("modeh(occurred("+s);
+				modeb.append("modeb(occurred("+s);
+				modeb.append("modeb(not occurred("+s);
+				examplepattern.append("examplePattern((occurred("+s);
+			}
+			
+			modesh = getModesList(vievents,'e');
+			for(String s: modesh)
+			{
+				modeh.append("modeh(occurred("+s);
+				modeb.append("modeb(occurred("+s);
+				modeb.append("modeb(not occurred("+s);
+				examplepattern.append("examplePattern((occurred("+s);
+			}
 			
 			//for (String key : niFluents.keySet()) 
-			for (String key : fluents.keySet()) 
-			{
-				//System.out.println(key +" : "+ niFluents.get(key)+" - "+ niFluents.get(key).getClass());
-				modeh.append("modeh(holdsat("+key+"(");
-				examplepattern.append("examplePattern((holdsat("+key+"(");
-				//JSONArray jArr = (JSONArray)niFluents.get(key);
-				JSONArray jArr = (JSONArray)fluents.get(key);
-				for(int i=0;i<jArr.length();i++)
-		    	{
-					//System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
-		    		modeh.append("+"+((String)jArr.get(i)).toLowerCase());
-		    		examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
-		    		if(i!=(jArr.length()-1))
-		    		{
-		    			modeh.append(",");
-		    			examplepattern.append(",");
-		    		}
-		    	}
-				modeh.append("),+inst,+event,+instant))\n");	
-				examplepattern.append("),+inst,+event,+instant))\n");
-
-			}
-			System.out.println("modeh:\n "+modeh.toString());
-//			Object obj = (Object)state.get(request);
-//			if (obj instanceof JSONArray)
+//			for (String key : fluents.keySet()) 
 //			{
-//				JSONArray ob = (JSONArray)obj;
-//				
-//				for(int i=0;i<ob.length();i++)
-//				{
-//					StringBuilder sbb = new StringBuilder("");
-//					String str = jsonExtractor_prev.extract(ob.get(i),sbb).toString();
-//					str = jsonExtractor_prev.parseStr(str,flag);
-//					str = str.replaceFirst("\\(","");
-//					str =str+")";
-//					strRet.append(str+"\n");
-//					
-//					//System.out.println(request+": "+jsonExtractor_prev.parseStr(str,flag)+"\n");
-//					//System.out.println(request+": "+str+"\n");
-//				}
-//			}
-//			else if(obj instanceof JSONObject)
-//			{
-//				JSONObject ob = (JSONObject)state.get("holdsat");
-//				JSONArray ar = jsonExtractor_prev.extractHoldsat(ob);
-//				for(int i=0;i<ar.length();i++)
-//				{
-//					
-//					JSONArray arr = (JSONArray)ar.get(i);
-//					for(int j=0;j<arr.length();j++)
-//					{
-//						StringBuilder sbb = new StringBuilder("");
+//				//System.out.println(key +" : "+ niFluents.get(key)+" - "+ niFluents.get(key).getClass());
+//				modeh.append("modeh(holdsat("+key+"(");
+//				examplepattern.append("examplePattern((holdsat("+key+"(");
+//				//JSONArray jArr = (JSONArray)niFluents.get(key);
+//				JSONArray jArr = (JSONArray)fluents.get(key);
+//				for(int i=0;i<jArr.length();i++)
+//		    	{
+//					//System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
+//		    		modeh.append("+"+((String)jArr.get(i)).toLowerCase());
+//		    		examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
+//		    		if(i!=(jArr.length()-1))
+//		    		{
+//		    			modeh.append(",");
+//		    			examplepattern.append(",");
+//		    		}
+//		    	}
+//				modeh.append("),+inst,+event,+instant))\n");	
+//				examplepattern.append("),+inst,+event,+instant))\n");
 //
-//						//System.out.println(jsonExtractor_prev.extract(arr.get(j),sbb).toString());
-//						String str = jsonExtractor_prev.extract(arr.get(j),sbb).toString();
-//						strRet.append(jsonExtractor_prev.parseStr(str,flag)+"\n");
-//						
-//						//System.out.println(jsonExtractor_prev.parseStr(str,flag));
-//						
-//					}
-//					
-//					
-//				}
-//				if (flag==0)
-//				{
-//					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
-//					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
-//					facts_store.add(strRet.toString());
-//				}
-				
 //			}
-//			else
-//				System.out.println("ERROR - no JSON in file");
-//		
+			//System.out.println("modeh:\n "+modeh.toString());
+	
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			System.out.println("Error with json modes");
+			System.out.println("Error with json modes file");
 			e1.printStackTrace();
 		}
-		return "modes created";
+		return modeh.toString()+"\n"+modeb.toString()+"\n"+examplepattern.toString();
+		//return modeh.toString()+modeb.toString()+examplepattern.toString();
 	}
 	
+	
+	private ArrayList<String> getModesList(JSONObject toext,char t)
+	{
+		ArrayList <String> retList = new ArrayList<String>();
+		for (String key : toext.keySet()) 
+		{
+			String str="";
+			
+			//System.out.println(key +" : "+ niFluents.get(key)+" - "+ niFluents.get(key).getClass());
+		//	modeh.append("modeh(holdsat("+key+"(");
+		//	examplepattern.append("examplePattern((holdsat("+key+"(");
+			str+=key+"(";
+			//JSONArray jArr = (JSONArray)niFluents.get(key);
+			JSONArray jArr = (JSONArray)toext.get(key);
+			for(int i=0;i<jArr.length();i++)
+	    	{
+				//System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
+	    	//	modeh.append("+"+((String)jArr.get(i)).toLowerCase());
+	    	//	examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
+				str+="+"+((String)jArr.get(i)).toLowerCase();
+	    		if(i!=(jArr.length()-1))
+	    		{
+	    		//	modeh.append(",");
+	    		//	examplepattern.append(",");
+	    			str+=",";
+	    		}
+	    	}
+		//	modeh.append("),+inst,+event,+instant))\n");	
+		//	examplepattern.append("),+inst,+event,+instant))\n");
+			if(t=='e')
+			{
+				str+="),+inst,+instant))\n";
+			}else
+			{
+				str+="),+inst,+event,+instant))\n";
+			}
+			
+			retList.add(str);
+		}
+		return retList;
+	}
     
 }
