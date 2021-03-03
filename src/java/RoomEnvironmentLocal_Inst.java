@@ -130,6 +130,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		return action.getFunctor().equals("skip_steps");
 	}
 
+	@Override
 	protected ArrayList <Structure> getComposites (String agName, Structure action) {
 		ArrayList<Structure> composites =  new ArrayList<Structure>();
 		try{
