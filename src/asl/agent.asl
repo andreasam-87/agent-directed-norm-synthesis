@@ -111,7 +111,8 @@
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);
-						delay(3000);
+						delay(5000);
+						//skip_steps(2);
 						-perm(idle);
 						!enter_room;
 						.

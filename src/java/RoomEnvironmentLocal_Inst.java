@@ -138,7 +138,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			final int stepsToSkip = (int) ((NumberTerm) action.getTerm(0)).solve();
 			for (int i=0; i < stepsToSkip; i++) {
 				Structure newAction =  (Structure) action.clone();
-				newAction.setTerm(0, 1);
+				newAction.setTerm(0, new NumberTermImpl(1));
 				composites.add(newAction);
 			}
 
@@ -264,7 +264,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 						String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt");
 
-						System.out.println(modes); //just printing for now
+					//	System.out.println(modes); //just printing for now
+						System.out.println("Modes file created");
 						//writing to the file is what is required so that the ILP can access this file
 						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"), modes.getBytes());
 
@@ -309,6 +310,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			inst_state--;
 		}
 		else if (action.getFunctor().equals("skip_steps")) {
+			inst_state--;
 			return true;
 		}
 
