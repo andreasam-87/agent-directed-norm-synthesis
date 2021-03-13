@@ -48,6 +48,8 @@
 			
 					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
 					//	.print(request(roomCapacityExceededViol, A, noViol));
+					
+					//TO DO -- include the logic to have them decide to move 
 						.
 
 
