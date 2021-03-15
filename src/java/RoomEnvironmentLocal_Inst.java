@@ -36,6 +36,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	int inst_state=0; //to keep track of the institutional state at any timestep since different from env timesteps
 	String current_action =""; //keep track of the current action being executed by any agent
 
+	int trace_count=0;
 	StringBuilder strRet = new StringBuilder(); //to build string after parsing json return object from request
 	ArrayList<String> facts_store = new ArrayList<String>(); //collect of holdsat/facts/fluents true
 
@@ -258,9 +259,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					try {
 						int when = (int)((NumberTerm) action.getTerm(0)).solve();
 						int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
-						System.out.println("Check state "+when+ " and "+ numStates +" states before and after.");
+						System.out.println("Check state "+when+ " and if possible "+ numStates +" states before and after.");
 
-						System.out.println("Revision begins...... (2 seconds)");
+						System.out.println("Revision begins.................");
 
 						String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt");
 
@@ -268,8 +269,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						System.out.println("Modes file created");
 						//writing to the file is what is required so that the ILP can access this file
 						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"), modes.getBytes());
-
-						Thread.sleep(2000);
+						
+						String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
+						System.out.println("Trace file created");
+						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
+						trace_count++;
+						
+//						System.out.println("Sleeping now for ............ (2 seconds)");
+//						Thread.sleep(2000);
 						System.out.println("Revision has ended.... Completing action ......");
 
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
@@ -322,7 +329,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//inst_state--;
 		}
 
-
+		//System.out.print("Stuck here ");
 		inst_state++;
 		return true; // the action was executed with success
 	}
@@ -359,7 +366,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//what occurred this timestep
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
 			String occurred = strRet.toString();
-			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
+			
+			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
+			String observed = strRet.toString();
 			//	System.out.println("\nwhat occurred "+strRet.toString());
 
 			//get the new facts sorted and saved to file for next run
@@ -370,7 +379,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
 
 			//add to the collection of states after each agent's action
-			stateList.put(inst_state, new State(occurred,facts_store.get(inst_state)));
+			stateList.put(inst_state, new State(occurred,observed,facts_store.get(inst_state)));
 
 			String[] percepts = strRet.toString().split("\n");
 
@@ -440,165 +449,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		return m;
 	}
-//    
-//    
-//    public Map<String, Literal[]> perceptsFromInstitution(String ag) {
-// 		Map<String, Literal[]> m = new HashMap<String, Literal[]>();
-//
-// 		int state = whichState();
-// 		//System.out.println("state is: "+state);
-// 		
-// 		//ArrayList<String> facts = getFacts(state);
-// 		ArrayList<String> facts = new ArrayList<String>();
-// 		//ArrayList<String> query = getQuery(state);
-// 		ArrayList<String> query = new ArrayList<String>();
-// 		facts.addAll(facts_store.get(state));
-// 		
-// 		//System.out.println("facts: "+facts_store.get(state));
-// 		
-// 		//String ag = agent;
-// 		
-// 			query.add(current_action);
-// 			
-// 			InstalQuery q = this.grounding.newQuery(facts.toArray(new String[facts.size()]), query.toArray(new String[query.size()]));
-// 			JSONObject queryOutput = q.getQueryOutput();
-// 			
-//
-// 			JSONArray occurred = queryOutput.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
-// 	    	boolean success = false;
-// 	    	boolean success2 = false;
-// 	    	boolean success3 = false;
-// 	    	for (int i = 0; i < occurred.length(); i++) {
-// 	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("arrive")) {
-// 	    			success = true;
-// 	    		}
-// 	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("exit")) {
-// 	    			success2 = true;
-// 	    		}
-// 	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("capacityExceeded")) {
-// 	    			//System.out.println("this is here");
-// 	    			success3 = true;
-// 	    		}
-//// 	    		if (occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0).equals("setpermenteri")) {
-//// 	    			success3 = true;
-//// 	    		}
-// 	    		//System.out.println("Occurred: " + occurred.getJSONArray(i).getJSONArray(1).getJSONArray(0).getString(0));
-// 	    	}
-// 	    	//System.out.println("Success 1,2,3 " +  success + success2 + success3);
-// 	    	
-// 	    /*	if(current_action.equals("enter("+ag+",room1)"))
-// 	    	{
-// 	    		if (success) {
-// 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)")});
-// 	        		inroom = true;
-// 	        		//System.out.println(("I can now wave"));
-// 	        		
-// 	        	} else {
-// 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(enter)")});
-// 	        	}
-// 	    	}*/
-// 	    	if(current_action.equals("enter("+ag+",room1)") || current_action.equals("enter("+ag+",room2)"))
-// 	    	{
-// 	    		if (success) {
-// 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)")});
-// 	        		//inroom = true;
-// 	        		//System.out.println(("I can now wave"));
-// 	        		if(success3)
-// 	        		{
-// 	        			m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)"), Literal.parseLiteral("roomCapacityExceeded")});
-// 	        		}
-// 	        	} else {
-// 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(enter)")});
-// 	        	}
-// 	    	}
-// 	    	else if (current_action.equals("leave("+ag+",room1)") || current_action.equals("leave("+ag+",room2)"))
-// 	    	{
-// 	    		
-// 	    		if (success2) {
-// 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(idle)")});
-// 	        		//inroom = true;
-// 	        		//System.out.println(("I just waved can now leave"));
-// 	        		if(success3)
-// 	        		{
-// 	        			m.put(ag,new Literal[] {Literal.parseLiteral("perm(leave)"), Literal.parseLiteral("roomCapacityExceeded")});
-// 	        		}
-// 	        		
-// 	        	} else {
-// 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(leave)")});
-// 	        		//System.out.println(("I cannot wave :( "));
-// 	        	}
-// 	    	}
-//// 	    	else if (current_action.equals("setpermenter("+ag+")"))
-//// 	    	{
-//// 	    		System.out.println("hey..... "+ success3);
-//// 	    		if (success3) {
-//// 	        		m.put(ag,new Literal[] {Literal.parseLiteral("perm(enterroom)")});
-//// 	        		//inroom = true;
-//// 	        		//System.out.println(("I just waved can now leave"));
-//// 	        		
-//// 	        	} else {
-//// 	        		m.put(ag, new Literal[] {Literal.parseLiteral("prob(enterroom)")});
-//// 	        		//System.out.println(("I cannot wave :( "));
-//// 	        	}
-//// 	    	}
-// 	    	else
-// 	    	{
-// 	    		System.out.println(current_action);
-// 	    		System.out.println(("Error"));
-// 	    	}
-//
-// 	    	
-// 	    	
-// 	    	JSONObject holdsat = queryOutput.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONObject("holdsat");
-// 	    		//	getJSONObject("holdsat");
-// 	    	//System.out.println(holdsat);
-// 	    	//System.out.println(holdsat.keySet());
-// 	    	
-// 	    	
-// 	    	facts_store.add(jsonExtractor.extractHoldsatJson(holdsat));
-// 	    	//extractJson(holdsat);
-// 	    	
-// 	    	
-// 	    	ArrayList<String> tempValues = jsonExtractor.extractHoldsatJson(holdsat);
-// 	    	String add = "";	
-// 	//    	Literal[] inst_sense = new Literal[15];
-// 	    	int c=0;
-// 	    //	int noOfOccurs = Collections.frequency(tempValues, ag);
-// 	    	int count = StringUtils.countMatches(tempValues.toString(), ag);
-// 	    	//System.out.println("Occurences: "+ noOfOccurs+ " "+count);
-// 	    	Literal[] inst_sense = new Literal[count+1];
-// 	    	for (String var : tempValues) 
-// 	    	{ 
-// 	    		if (var.contains(ag))
-// 	    		{
-// 	    			//strip initiallys and rooms from the string.
-// 	    			var = var.substring(10, var.length());
-// 	    			var = var.substring(0, var.length()-7);
-// 	    			inst_sense[c] = Literal.parseLiteral(var);
-// 	    			c++;
-// 	    			//System.out.println(var);
-// 	    		}
-// 	    	    //add+=var;
-// 	    	}
-// 	    	if (success3)
-// 	    	{
-// 	    		inst_sense[c] = Literal.parseLiteral("roomCapacityExceeded");
-// 	    	}else
-// 	    	{
-// 	    		inst_sense[c] = Literal.parseLiteral("roomCapacityOkay");
-// 	    	}
-// 	    	
-// 	    	m.put(ag,inst_sense);
-// 		
-// 		//System.out.println("Agents: "+getNamesAgents());
-// 		
-// 		
-//     	//Storing the state
-// 	    stateList.put(inst_state, new State(occurred,holdsat));
-// 	    	
-// 	    	
-//     	return m;
-// 	}
+
 
 
 	public List<String> getNamesAgents() {

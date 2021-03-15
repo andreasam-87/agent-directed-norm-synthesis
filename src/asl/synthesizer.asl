@@ -4,6 +4,7 @@
 
 /* Initial goals */
 entered(0).
+what(0).
 !start.
 
 
@@ -144,9 +145,14 @@ entered(0).
 
 //@eventOccurred[atomic]
 +eventOccurred(When): true <- .print("Attempting to revise norms");
-							.abolish(eventOccurred(When));
+							
+							?what(D);
+							.print("What is happening - ", D);
+							-+what(D+1);
                            revise(When,3);
-                          // -eventOccurred(When);
+                           -eventOccurred(When);
+                         // .abolish(eventOccurred(When)); //something strange happens when I abolish
+                         //the previous event returns and then this part runs twice again, how and why? 
                            
                            .
 
@@ -244,7 +250,7 @@ entered(0).
   					.
 
 
-@handle_reqs[atomic]
+//@handle_reqs[atomic]
 +!handle_reqs(H,I,J,K): true <- .print("handling remaining requests");
 						checkState(I);
 						.

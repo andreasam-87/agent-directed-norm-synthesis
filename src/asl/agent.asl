@@ -113,7 +113,18 @@
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);
-						delay(5000);
+						.random(Rnd);
+					//.print('random: ',Rd);
+						if (Rnd>0.5)
+						{
+						 	delay(2000);				
+						}
+						else
+						{
+							delay(3000);
+						}
+						//t=Rnd*1000;		
+						
 						//skip_steps(2);
 						-perm(idle);
 						!enter_room;

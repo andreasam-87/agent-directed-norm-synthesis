@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -768,5 +769,58 @@ public class JsonExtractor {
 		}
 		return retList;
 	}
+	
+	public String getTraceFile(int stateKey, int howMuchStates,HashMap <Integer,State> stateList )
+	{
+		/*Function to access state facts and return a trace file as string 
+		 * This function may need to be modified to allow changes to the fluents and events 
+		 * to properly represent/demonstrate the rule that needs to be learnt
+		 * */
+
+		System.out.print("Retrieving states: ");
+		
+		StringBuilder ret=new StringBuilder();
+		
+		// Loop through to identify states to use
+		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
+		{
+			if(stateList.containsKey(find))
+			{
+				System.out.print(find+" ");
+				
+				String facts=getStateFactsandEvents(find,stateList);
+		
+				String [] facts_array = facts.split("\n");
+			//	System.out.println("Size of facts: "+ facts_array.length);
+				ret.append("%Timestep "+find+".\n");
+				for(String str: facts_array)
+				{
+					//StringUtils.
+					str = str.replace("initially","holdsat");
+					str = replaceLast(")",","+find+")",str);
+					ret.append(str+"\n");
+				}
+				
+			}
+			ret.append("\n\n");
+		}
+		System.out.println("Finished Retrieval");
+		return ret.toString();
+	
+	}
+	
+	/* FOund here https://bytenota.com/java-replace-last-occurrence-of-a-string/ */
+	 public static String replaceLast(String find, String replace, String string) {
+	        int lastIndex = string.lastIndexOf(find);
+	        
+	        if (lastIndex == -1) {
+	            return string;
+	        }
+	        
+	        String beginString = string.substring(0, lastIndex);
+	        String endString = string.substring(lastIndex + find.length());
+	        
+	        return beginString + replace + endString;
+	    }
     
 }
