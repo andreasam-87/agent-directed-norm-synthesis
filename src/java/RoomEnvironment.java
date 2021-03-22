@@ -397,7 +397,9 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 			
 			//System.out.println(queryOutput);
 			JSONArray occurred = queryOutput.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
-	    	boolean success = false;
+			JSONArray observed = queryOutput.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("observed");
+	    	
+			boolean success = false;
 	    	boolean success2 = false;
 	    	boolean success3 = false;
 	    	for (int i = 0; i < occurred.length(); i++) {
@@ -526,7 +528,7 @@ public class RoomEnvironment extends StepSynchedEnvironment {
 		
 		
     	//Storing the state
-	    stateList.put(inst_state, new State(occurred,holdsat));
+	    stateList.put(inst_state, new State(occurred,observed,holdsat));
 	    	
 	    	
     	return m;
