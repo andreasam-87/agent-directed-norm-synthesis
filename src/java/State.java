@@ -3,6 +3,7 @@ import org.json.JSONObject;
 
 
 public class State{
+//	int instId=0;
 	int id;
 	JSONArray occurred;
 	JSONArray observed;
@@ -44,6 +45,16 @@ public class State{
 		this.holdsat = holdsat;
 		
 	}
+
+//	public void setInstId(int id)
+//	{
+//		instId = id;
+//	}
+//	
+//	public int getInstId()
+//	{
+//		return instId;  
+//	}
 	
 	public JSONArray getEvents()
 	{

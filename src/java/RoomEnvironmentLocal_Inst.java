@@ -44,6 +44,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
+	String inst_file = "rooms.ial"; //which institutional file we will be running
+	int count_inst =0; //keep track of the institutional file
+
+	HashMap <Integer,String> instChangePoint = new HashMap<>(); //collection of states of the inst
+
+	
 	public void init(String[] args) {
 		// super.init(args);
 		super.init(new String[]{"1000"});
@@ -55,7 +61,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //	        if (this.grounding == null) {
 //	    		this.grounding = toGrounding();
 //	    		}
-
+		instChangePoint.put(inst_state, inst_file);
 
 	}
 
@@ -268,7 +274,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					//	System.out.println(modes); //just printing for now
 						System.out.println("Modes file created");
 						//writing to the file is what is required so that the ILP can access this file
-						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"), modes.getBytes());
+						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
 						
 						String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
 						System.out.println("Trace file created");
@@ -279,6 +285,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //						Thread.sleep(2000);
 						System.out.println("Revision has ended.... Completing action ......");
 
+						addPercept(agName, Literal.parseLiteral("revisionFailed"));
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
 					}catch (Exception ex) {
 
@@ -289,7 +296,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			Thread t = new Thread(r);
 			t.start();
 
-			addPercept(agName, Literal.parseLiteral("revisionFailed"));
+			//addPercept(agName, Literal.parseLiteral("revisionFailed"));
 			inst_state--;
 			// return true; //do I need a separate return here or the one to the bottom will do.
 		}
@@ -351,7 +358,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //	    	System.out.println("line read: " + line);
 //	    	
 //	    	}
-			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/rooms.ial -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
 			//Processes.runShellCmd(cmd);
 
 			String output = Processes.runShellCmdRes(cmd);

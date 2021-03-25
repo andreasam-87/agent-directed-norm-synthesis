@@ -22,11 +22,11 @@ public class JsonExtractor {
 	int check =0,pass=0;
 	String inst;
 	
+	StringBuilder temp = new StringBuilder("");
 	
 	public JsonExtractor(String inst) {
 		this.inst = inst;
 	}
-	
 	
 	protected String extractDeeper(JSONArray ext)
 	{
@@ -34,15 +34,19 @@ public class JsonExtractor {
 		for(int i=0;i<ext.length();i++)
 		{
 			if(ext.get(i) instanceof JSONArray)
-				System.out.println(ext.get(i).toString());
+				extractDeeper(ext.getJSONArray(i));
 			else
-				System.out.println("trying stuff");
+				temp.append(ext.get(i).toString());
+				
+				//System.out.println("trying stuff");
 			//ext.get(i);
+			temp.append(",");
 		}
 		
-		return null;
+		return temp.toString();
 		
 	}
+
 	
 /* found online - https://www.programmersought.com/article/3218326044/ [retrieved 26/01/2021]
  * Trying to make it work for me */
@@ -633,7 +637,7 @@ public class JsonExtractor {
 		StringBuilder examplepattern=new StringBuilder();
 		try {
 			System.out.println("trying to read this file");
-		List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+			List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
 	    	for (String line2 : lines) {
 	    	//System.out.println("line read: " + line2);
 	    		line+=line2;
@@ -655,7 +659,11 @@ public class JsonExtractor {
 			JSONObject fluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("fluents");
 			JSONObject ievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("inevents");
 			JSONObject vievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("vievents");
-	
+			JSONObject exevents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("exevents");
+			
+			JSONArray initiates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initiates");// .getJSONObject("initiates");
+			JSONArray initials = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initials");// .getJSONObject("initiates");
+			
 			
 			ArrayList <String> modesh = getModesList(niFluents,'f');
 			for(String s: modesh)
@@ -694,6 +702,30 @@ public class JsonExtractor {
 				examplepattern.append("examplePattern((occurred("+s);
 			}
 			
+			//Do I need the exogeneous or observable events 
+			modesh = getModesList(exevents,'e');
+			for(String s: modesh)
+			{
+			//	Deciding to justt add them as possible body elements
+				//modeh.append("modeh(observed("+s);
+				modeb.append("modeb(observed("+s);
+				modeb.append("modeb(not observed("+s);
+			//	examplepattern.append("examplePattern((observed("+s);
+			}
+			
+//			System.out.println("Checking out the initiates and generates");
+//			getModesListFromArray(initiates,'f');
+			System.out.println("Checking out the initiallies");
+			getModesListFromArray(initials,'f');
+			
+//			modesh = getModesList(initiates,'f');
+//			for(String s: modesh)
+//			{
+//				modeh.append("modeh(initiates("+s);
+//				//modeb.append("modeb(occurred("+s);
+//				//modeb.append("modeb(not occurred("+s);
+//				//examplepattern.append("examplePattern((occurred("+s);
+//			}
 			//for (String key : niFluents.keySet()) 
 //			for (String key : fluents.keySet()) 
 //			{
@@ -729,8 +761,60 @@ public class JsonExtractor {
 	}
 	
 	
+	//check initiates and build a list of fluents to keep then remove the rest from the current list, 
+	//or only grab that from the current set  
+	
+	private void getModesListFromArray(JSONArray toext,char t)
+	{
+		//ArrayList <String> retList = new ArrayList<String>();
+		System.out.println("Items from Initiates:");
+		
+		
+		
+	//	return sbb;
+		for (int j=0; j<toext.length();j++)
+		{
+			JSONArray jArr = (JSONArray)toext.get(j);
+		//	System.out.println(extractDeeper(jArr.getJSONArray(j)));
+			
+			
+			StringBuilder tmp = new StringBuilder();
+			
+			this.sbb = tmp;
+			analysisJson((Object)jArr);
+			System.out.println(sbb.toString());
+			
+			
+			String str = sbb.toString();
+			System.out.println(str);
+//			str = jsonExtractor_prev.parseStr(str,flag);
+//			str = str.replaceFirst("\\(","");
+//			str =str+")";
+//			strRet.append(str+"\n");
+			
+//			for(int i=0;i<jArr.length();i++)
+//	    	{
+//				System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
+//				//ArrayList <String> retList = getModesList(jArr.get(i),'f');
+//				
+////	    	//	modeh.append("+"+((String)jArr.get(i)).toLowerCase());
+////	    	//	examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
+////				str+="+"+((String)jArr.get(i)).toLowerCase();
+////	    		if(i!=(jArr.length()-1))
+////	    		{
+////	    		//	modeh.append(",");
+////	    		//	examplepattern.append(",");
+////	    			str+=",";
+////	    		}
+//	    	}
+		}
+
+
+	}
+	
 	private ArrayList<String> getModesList(JSONObject toext,char t)
 	{
+		//should use a set rather than an arraylist here to fix duplicates
 		ArrayList <String> retList = new ArrayList<String>();
 		for (String key : toext.keySet()) 
 		{
