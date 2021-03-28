@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -19,10 +21,11 @@ public class JsonExtractor {
 
 	//private static final Class<? extends Object>  = null;
 	StringBuilder sbb = new StringBuilder("");
-	int check =0,pass=0;
+	int check =0,pass=0,first=0;
 	String inst;
 	
 	StringBuilder temp = new StringBuilder("");
+	Set<String> tempSet;// = new HashSet<String>();
 	
 	public JsonExtractor(String inst) {
 		this.inst = inst;
@@ -134,6 +137,79 @@ public class JsonExtractor {
 	    	//System.out.println("my sbb: "+sbb.toString());
 	    }
 	
+	 protected void  analyseJson(Object objJson){
+		 HashMap<String, Object> map = new HashMap<>();
+	    		 
+		 // If obj is a json array
+	    	if(objJson instanceof JSONArray){
+	    		JSONArray objArray = (JSONArray)objJson;
+	    		//System.out.println("here");
+	    		check =0;
+	    		pass=0;
+	    		first=0;
+
+				for (int i = 0; i < objArray.length(); i++) {
+				
+					analyseJson(objArray.get(i));
+
+				}
+				
+				sbb.append(")");
+				//check =0;
+	    	}
+	    	 // If the json object
+	    	else if(objJson instanceof JSONObject){
+	    		System.out.println("Get here");
+	    		JSONObject jsonObject = (JSONObject)objJson;
+				Iterator it = jsonObject.keys();
+				while(it.hasNext()){
+					String key = it.next().toString();
+					Object object = jsonObject.get(key);
+					 // If you get an array
+					if(object instanceof JSONArray){
+						JSONArray objArray = (JSONArray)object;
+						analysisJson(objArray);
+					}
+					 // If the key is a json object
+					else if(object instanceof JSONObject){
+						analysisJson((JSONObject)object);
+					}
+					 // If the key is other
+					else{
+						System.out.println("["+key+"]:"+object.toString()+" ");
+					}
+				}
+	    	}
+	    	else
+	    	{
+	    		
+	    		if(check!=0)
+	    		{
+	    			if(pass>0)
+		    			sbb.append(",");
+	  
+	    			sbb.append(objJson.toString());
+	    		}
+	    		
+	    		else
+	    		{
+	    			System.out.println("First is "+first);
+	    			if(first==0)
+	    				sbb.append(objJson.toString());
+	    			else
+	    				sbb.append("("+objJson.toString());
+	    			
+	    			first++;
+	    		}
+	    			
+	    		
+	    		//	else
+	    				
+	    		pass++;
+	    	}
+	    	check++;
+	    }
+	 
 	/*public void loopThroughJson(Object input) throws JSONException {
 
 	    if (input instanceof JSONObject) {
@@ -635,6 +711,9 @@ public class JsonExtractor {
 		StringBuilder modeh=new StringBuilder();
 		StringBuilder modeb=new StringBuilder();
 		StringBuilder examplepattern=new StringBuilder();
+		
+		tempSet = new HashSet<String>();
+		 
 		try {
 			System.out.println("trying to read this file");
 			List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
@@ -661,8 +740,9 @@ public class JsonExtractor {
 			JSONObject vievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("vievents");
 			JSONObject exevents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("exevents");
 			
-			JSONArray initiates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initiates");// .getJSONObject("initiates");
 			JSONArray initials = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initials");// .getJSONObject("initiates");
+			JSONArray initiates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initiates");// .getJSONObject("initiates");
+			JSONArray generates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("generates");// .getJSONObject("initiates");
 			
 			
 			ArrayList <String> modesh = getModesList(niFluents,'f');
@@ -716,40 +796,32 @@ public class JsonExtractor {
 //			System.out.println("Checking out the initiates and generates");
 //			getModesListFromArray(initiates,'f');
 			System.out.println("Checking out the initiallies");
-			getModesListFromArray(initials,'f');
+		//	getModesListFromArray(initials,'f');
 			
-//			modesh = getModesList(initiates,'f');
+			modesh = getModesListFromArray(initials,'f',"none");
+			for(String s: modesh)
+			{
+				modeh.append("modeh(initiated("+s);
+				modeh.append("modeh(terminated("+s);
+				modeb.append("modeb(holdsat("+s);
+				modeb.append("modeb(not holdsat("+s);
+				examplepattern.append("examplePattern((holdsat("+s);
+			}
+			
+			
+			//get the items needed to do some filtering on the modes stuff
+			modesh = getModesListFromArray(initiates,'f',"enter");
+			modesh = getModesListFromArray(generates,'f',"enter");
 //			for(String s: modesh)
 //			{
-//				modeh.append("modeh(initiates("+s);
-//				//modeb.append("modeb(occurred("+s);
-//				//modeb.append("modeb(not occurred("+s);
-//				//examplepattern.append("examplePattern((occurred("+s);
+//				modeh.append("modeh(initiated("+s);
+//				modeh.append("modeh(terminated("+s);
+//				modeb.append("modeb(holdsat("+s);
+//				modeb.append("modeb(not holdsat("+s);
+//				examplepattern.append("examplePattern((holdsat("+s);
 //			}
-			//for (String key : niFluents.keySet()) 
-//			for (String key : fluents.keySet()) 
-//			{
-//				//System.out.println(key +" : "+ niFluents.get(key)+" - "+ niFluents.get(key).getClass());
-//				modeh.append("modeh(holdsat("+key+"(");
-//				examplepattern.append("examplePattern((holdsat("+key+"(");
-//				//JSONArray jArr = (JSONArray)niFluents.get(key);
-//				JSONArray jArr = (JSONArray)fluents.get(key);
-//				for(int i=0;i<jArr.length();i++)
-//		    	{
-//					//System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
-//		    		modeh.append("+"+((String)jArr.get(i)).toLowerCase());
-//		    		examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
-//		    		if(i!=(jArr.length()-1))
-//		    		{
-//		    			modeh.append(",");
-//		    			examplepattern.append(",");
-//		    		}
-//		    	}
-//				modeh.append("),+inst,+event,+instant))\n");	
-//				examplepattern.append("),+inst,+event,+instant))\n");
-//
-//			}
-			//System.out.println("modeh:\n "+modeh.toString());
+			printArrayContents(tempSet.toArray());
+
 	
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -764,52 +836,103 @@ public class JsonExtractor {
 	//check initiates and build a list of fluents to keep then remove the rest from the current list, 
 	//or only grab that from the current set  
 	
-	private void getModesListFromArray(JSONArray toext,char t)
+	private ArrayList<String> getModesListFromArray(JSONArray toext,char t, String custom)
 	{
-		//ArrayList <String> retList = new ArrayList<String>();
+		ArrayList <String> retList = new ArrayList<String>();
+		//Set<String> tempSet = new HashSet<String>();
 		System.out.println("Items from Initiates:");
-		
-		
-		
-	//	return sbb;
+
 		for (int j=0; j<toext.length();j++)
 		{
-			JSONArray jArr = (JSONArray)toext.get(j);
-		//	System.out.println(extractDeeper(jArr.getJSONArray(j)));
-			
-			
+			JSONArray jArr = (JSONArray)toext.get(j);	
 			StringBuilder tmp = new StringBuilder();
 			
 			this.sbb = tmp;
 			analysisJson((Object)jArr);
-			System.out.println(sbb.toString());
+		//	System.out.println(sbb.toString());
 			
 			
 			String str = sbb.toString();
-			System.out.println(str);
-//			str = jsonExtractor_prev.parseStr(str,flag);
-//			str = str.replaceFirst("\\(","");
-//			str =str+")";
-//			strRet.append(str+"\n");
+	//		System.out.println(str);
+			if(custom.equals("none"))
+			{
+				str = parseStr(str,1);
+				str = str.replaceFirst("\\(","");
+				str = str.replaceFirst("\\)","");
+				//System.out.println(str);
+				if(str.startsWith("perm"))
+				{
+					str = str.replace("P","+person");
+					str = str.replace("L","+location");
+					if(t=='e')
+					{
+						str+=",+inst,+instant))\n";
+					}else
+					{
+						str+=",+inst,+event,+instant))\n";
+					}
+					retList.add(str);
+				}
 			
-//			for(int i=0;i<jArr.length();i++)
-//	    	{
-//				System.out.println(jArr.get(i)+" "+jArr.get(i).getClass());
-//				//ArrayList <String> retList = getModesList(jArr.get(i),'f');
-//				
-////	    	//	modeh.append("+"+((String)jArr.get(i)).toLowerCase());
-////	    	//	examplepattern.append("+"+((String)jArr.get(i)).toLowerCase());
-////				str+="+"+((String)jArr.get(i)).toLowerCase();
-////	    		if(i!=(jArr.length()-1))
-////	    		{
-////	    		//	modeh.append(",");
-////	    		//	examplepattern.append(",");
-////	    			str+=",";
-////	    		}
-//	    	}
+			}
+			else
+			{
+				//first check the string to see if it contains the custom filter before doing any of this
+				//otherwise move on to the next one.
+				if (str.contains(custom))
+				{
+					System.out.println("String: "+str);
+					
+					String strArr[] = StringUtils.split(str, "("); 
+					Set<String> set = getCustomFluentList(strArr);
+					tempSet.addAll(set);
+				}
+				
+				//printArrayContents(set.toArray());
+				//Set
+				//System.out.println(strArr);
+				
+			}
+
 		}
+	//	printArrayContents(tempSet.toArray());
+		return retList;
 
-
+	}
+	
+	private Set<String> getCustomFluentList(Object ar[])
+	{
+		Set<String> hash_Set = new HashSet<String>();
+		//System.out.println("Array Contents");
+		for(int i=0;i<ar.length;i++)
+		{
+			String s= (String)ar[i];
+			if(!(s.contains("and")) && !(s.contains(")")) && !(s.contains("not")))
+			{
+			//	System.out.println("smh - "+ar[i]);
+				if (s.equals("perm") || s.equals("pow"))
+				{
+					hash_Set.add(s+"("+(String) ar[i+1]);
+					i++;
+				}
+				else
+					hash_Set.add(s);
+			}
+//			else
+//				System.out.println("here - "+ar[i]);
+			//System.out.println(ar[i]);
+		}
+		return hash_Set;
+	}
+	
+	
+	private void printArrayContents(Object ar[])
+	{
+		System.out.println("Array Contents");
+		for(int i=0;i<ar.length;i++)
+		{
+			System.out.println(ar[i]);
+		}
 	}
 	
 	private ArrayList<String> getModesList(JSONObject toext,char t)
