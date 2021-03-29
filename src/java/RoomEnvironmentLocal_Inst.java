@@ -269,7 +269,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 						System.out.println("Revision begins.................");
 
-						String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt");
+						String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
 
 					//	System.out.println(modes); //just printing for now
 						System.out.println("Modes file created");

@@ -701,13 +701,14 @@ public class JsonExtractor {
 	}
 	
 	
-	public String getModesFile(String file)
+	public String getModesFile(String file, String filter)
 	{
 		/*Function to parse a json file with instal dictionar and return a modes file as string 
 		 * This function may need to be modified to should only a specific set of fluents and events rather than all
 		 * */
 		
 		String line="";
+		String toReturn = "";
 		StringBuilder modeh=new StringBuilder();
 		StringBuilder modeb=new StringBuilder();
 		StringBuilder examplepattern=new StringBuilder();
@@ -808,39 +809,127 @@ public class JsonExtractor {
 				examplepattern.append("examplePattern((holdsat("+s);
 			}
 			
+			toReturn = modeh.toString()+"\n"+modeb.toString()+"\n"+examplepattern.toString();
 			
-			//get the items needed to do some filtering on the modes stuff
-			modesh = getModesListFromArray(initiates,'f',"enter");
-			modesh = getModesListFromArray(generates,'f',"enter");
-//			for(String s: modesh)
-//			{
-//				modeh.append("modeh(initiated("+s);
-//				modeh.append("modeh(terminated("+s);
-//				modeb.append("modeb(holdsat("+s);
-//				modeb.append("modeb(not holdsat("+s);
-//				examplepattern.append("examplePattern((holdsat("+s);
-//			}
-			printArrayContents(tempSet.toArray());
+			if(!(filter.equals("")))
+			{
+				System.out.println("Filtering the modes file for "+filter);
+				
+				//get the items needed to do some filtering on the modes stuff
+				modesh = getModesListFromArray(initiates,'f',filter);
+				modesh = getModesListFromArray(generates,'f',filter);
+				
+				String [] s_a = tempSet.toArray(new String[0]); //converts the object array to string array
+				
+				//*alternative method for above stackoverflow
+				//String[] stringArray = Arrays.copyOf(objectArray, objectArray.length, String[].class);*./
+		
+				//Filtering each list
+				HashSet<String> set1 = filterList(modeh.toString(),s_a);
 
-	
+				HashSet<String> set2 = filterList(modeb.toString(),s_a);
+
+				HashSet<String> set3 = filterList(examplepattern.toString(),s_a);
+				
+				//creating string to return 
+				String write = setToString(set1)+"\n"+setToString(set2)+"\n"+setToString(set3);
+				toReturn = write;
+			//	System.out.println("After function call");
+				printArrayContents(tempSet.toArray());
+				//printArrayContents(set2.toArray());
+				
+				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/test.txt"), write.getBytes());
+				//return write;
+			}
+			//get the items needed to do some filtering on the modes stuff
+//			modesh = getModesListFromArray(initiates,'f',"enter");
+//			modesh = getModesListFromArray(generates,'f',"enter");
+//
+//			//System.out.println("Before function call");
+//			//String [] s_a = ((String[])(Object[])tempSet.toArray()); ///whyyyyyy
+//			String [] s_a = tempSet.toArray(new String[0]);
+//			
+//			//	System.out.println("Array casting "+ s_a.getClass());
+//			HashSet<String> set1 = filterList(modeh.toString(),s_a);
+//
+//			HashSet<String> set2 = filterList(modeb.toString(),s_a);
+//
+//			HashSet<String> set3 = filterList(examplepattern.toString(),s_a);
+//			String write = setToString(set1)+"\n"+setToString(set2)+"\n"+setToString(set3);
+//		//	System.out.println("After function call");
+//			printArrayContents(tempSet.toArray());
+//			//printArrayContents(set2.toArray());
+//			//printArrayContents(tempSet.toArray());
+//			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/test.txt"), write.getBytes());
+//			
+//	
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			System.out.println("Error with json modes file");
 			e1.printStackTrace();
 		}
-		return modeh.toString()+"\n"+modeb.toString()+"\n"+examplepattern.toString();
+	//	System.out.println("Still reached here");
+		return toReturn;
+		//return modeh.toString()+"\n"+modeb.toString()+"\n"+examplepattern.toString();
 		//return modeh.toString()+modeb.toString()+examplepattern.toString();
 	}
 	
+	 /* Function to pull a set's items into a single string*/
+	private String setToString(HashSet<String> set)
+	{
+		//System.out.println("Array Contents");
+		String str = "";
+		for(String s: set)
+		{
+			str+=s+"\n";
+		}
+		return str;
+	}
 	
-	//check initiates and build a list of fluents to keep then remove the rest from the current list, 
-	//or only grab that from the current set  
+	
+   /* Function to filter the modes lists based on some specific term specified */
+	private HashSet<String> filterList(String toFilter,String [] terms)
+	{
+		//System.out.println("Entered function");
+		//should use a set rather than an arraylist here to fix duplicates
+		HashSet <String> retList = new HashSet<String>();
+				
+		String [] filter_array = toFilter.split("\n");
+
+		//navigates the specific modes list
+		for(String str: filter_array)
+		{
+		//	int check =0;
+		//	System.out.println("Entered first loop");
+			
+			//navigates the terms list
+			for(int i=0;i<terms.length;i++)
+	    	{	
+				//System.out.println("Entered second loop");
+				
+				//only adds to the set if the modes item contains the term
+	    		if(str.contains(terms[i]))
+	    		{
+	    			//System.out.println("Adding: "+ str);
+	    			retList.add(str);
+	   // 			check++;
+	    		}
+	    	}
+		}
+		
+		//System.out.println("Leaving function");
+		return retList;
+	}
+	
+	
+	/*check initiates and build a list of fluents to keep then remove the rest from the current list, 
+	or only grab that from the current set  */
 	
 	private ArrayList<String> getModesListFromArray(JSONArray toext,char t, String custom)
 	{
 		ArrayList <String> retList = new ArrayList<String>();
 		//Set<String> tempSet = new HashSet<String>();
-		System.out.println("Items from Initiates:");
+		//System.out.println("Items from Initiates:");
 
 		for (int j=0; j<toext.length();j++)
 		{
@@ -899,41 +988,10 @@ public class JsonExtractor {
 		return retList;
 
 	}
+
 	
-	private Set<String> getCustomFluentList(Object ar[])
-	{
-		Set<String> hash_Set = new HashSet<String>();
-		//System.out.println("Array Contents");
-		for(int i=0;i<ar.length;i++)
-		{
-			String s= (String)ar[i];
-			if(!(s.contains("and")) && !(s.contains(")")) && !(s.contains("not")))
-			{
-			//	System.out.println("smh - "+ar[i]);
-				if (s.equals("perm") || s.equals("pow"))
-				{
-					hash_Set.add(s+"("+(String) ar[i+1]);
-					i++;
-				}
-				else
-					hash_Set.add(s);
-			}
-//			else
-//				System.out.println("here - "+ar[i]);
-			//System.out.println(ar[i]);
-		}
-		return hash_Set;
-	}
-	
-	
-	private void printArrayContents(Object ar[])
-	{
-		System.out.println("Array Contents");
-		for(int i=0;i<ar.length;i++)
-		{
-			System.out.println(ar[i]);
-		}
-	}
+	/*Function to access extract the fluents to construct a modes list
+	 * */
 	
 	private ArrayList<String> getModesList(JSONObject toext,char t)
 	{
@@ -1017,7 +1075,8 @@ public class JsonExtractor {
 	}
 	
 	/* Found here https://bytenota.com/java-replace-last-occurrence-of-a-string/ */
-	 public static String replaceLast(String find, String replace, String string) {
+	 public static String replaceLast(String find, String replace, String string) 
+	 {
 	        int lastIndex = string.lastIndexOf(find);
 	        
 	        if (lastIndex == -1) {
@@ -1028,6 +1087,44 @@ public class JsonExtractor {
 	        String endString = string.substring(lastIndex + find.length());
 	        
 	        return beginString + replace + endString;
-	    }
+	 }
+	 
+	 
+	private void printArrayContents(Object ar[])
+	{
+		System.out.println("Array Contents");
+		for(int i=0;i<ar.length;i++)
+		{
+			System.out.println(ar[i]);
+		}
+	}
+	
+	/*Function to extract the terms from the generates and initiates list that are in 
+	 * the same rule of the term to filter for*/
+	private Set<String> getCustomFluentList(Object ar[])
+	{
+		Set<String> hash_Set = new HashSet<String>();
+		//System.out.println("Array Contents");
+		for(int i=0;i<ar.length;i++)
+		{
+			String s= (String)ar[i];
+			if(!(s.contains("and")) && !(s.contains(")")) && !(s.contains("not")))
+			{
+			//	System.out.println("smh - "+ar[i]);
+				if (s.equals("perm") || s.equals("pow"))
+				{
+					hash_Set.add(s+"("+(String) ar[i+1]);
+					i++;
+				}
+				else
+					hash_Set.add(s);
+			}
+//			else
+//				System.out.println("here - "+ar[i]);
+			//System.out.println(ar[i]);
+		}
+		return hash_Set;
+	}
+	
     
 }
