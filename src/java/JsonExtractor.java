@@ -838,7 +838,7 @@ public class JsonExtractor {
 				printArrayContents(tempSet.toArray());
 				//printArrayContents(set2.toArray());
 				
-				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/test.txt"), write.getBytes());
+			//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/test.txt"), write.getBytes());
 				//return write;
 			}
 			//get the items needed to do some filtering on the modes stuff
@@ -1063,6 +1063,9 @@ public class JsonExtractor {
 					//StringUtils.
 					str = str.replace("initially","holdsat");
 					str = replaceLast(")",","+find+")",str);
+					
+					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case
+					
 					ret.append(str+"\n");
 				}
 				

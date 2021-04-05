@@ -217,6 +217,8 @@ what(0).
 						-handling;
 						-+entered(0);	
 						.abolish(handlingCur(_,_,_,_));
+						+updateEnv;
+						//changeInst(agn);
 					}				
   					else
   					{
@@ -263,3 +265,11 @@ what(0).
 					//.send(Ag,tell,msg(M)).
  
  
++updateEnv: true <- .print("Updating the institution");
+					//can I pass a list as a parameter
+					changeInst(bob);
+					.print("Adding one agent");
+						
+						.create_agent(bob, "agent.asl");
+				
+					.

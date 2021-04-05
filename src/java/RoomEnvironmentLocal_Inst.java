@@ -45,6 +45,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
 	String inst_file = "rooms.ial"; //which institutional file we will be running
+	
+
+	//String inst_file = "rooms.ial"; //which institutional file we will be running
+	
 	int count_inst =0; //keep track of the institutional file
 
 	HashMap <Integer,String> instChangePoint = new HashMap<>(); //collection of states of the inst
@@ -167,7 +171,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//current_action = current_action.replaceFirst("ent","enter");
 			current_action = "observed("+current_action+")";
 			//System.out.println("The action is "+current_action);
+			
 
+			if(agName.equals("bob"))
+				System.out.println("Bob in enter block " );
 
 			clearPercepts(agName); //remove old percepts and add new percepts
 
@@ -176,6 +183,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				for (int i = 0; i < entry.getValue().length; i++)
 				{
 					addPercept(entry.getKey(), entry.getValue()[i]);
+					
+					if(agName.equals("bob"))
+					{
+						System.out.println("adding percept for bob");
+						System.out.println("Percept"+i+ " : "+ entry.getValue()[i]);
+					}
+					//	System.out.println("Bob in enter block " );
 					//System.out.println("adding percept");
 					//addPercept(entry.getValue()[i]);
 					//	System.out.println("Percept"+i+ " : "+ entry.getValue()[i]);
@@ -184,6 +198,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 			updateAgsPercept();
 
+			if(agName.equals("bob"))
+				System.out.println("Bob leaving enter block " );
 		}
 
 		else if (action.getFunctor().equals("leave")) {
@@ -327,7 +343,77 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			inst_state--;
 			return true;
 		}
+		else if (action.getFunctor().equals("changeInst")) {
+			System.out.println("Setting up new institution:");
+			String agent = (action.getTerm(0)).toString();
+			System.out.println("Adding "+agent+ " to the environment");
+			
+			inst_file = "rooms_v2.lp"; 
+			String add = "initially(meeting,rooms)\n";
+			add+="initially(role("+agent+",y),rooms)\n";
 
+			// in the short term, adding the necessary permissions 
+			add+="initially(perm(enter("+agent+",room1)),rooms)\n";
+			add+="initially(perm(enter("+agent+",room2)),rooms)\n";
+			add+="initially(perm(arrive("+agent+",room1)),rooms)\n";
+			add+="initially(perm(arrive("+agent+",room2)),rooms)\n";
+			add+="initially(pow(enter("+agent+",room1)),rooms)\n";
+			add+="initially(pow(enter("+agent+",room2)),rooms)\n";
+			
+			//initially(perm(enter(agent6,room2)),rooms)
+			String line = "";
+			String file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			try {
+				
+				// Editing the facts file
+				List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+		    	for (String line2 : lines) {
+		    		if(!(line2.contains("capacityExceededViol")))
+		    			line+=line2+"\n";
+//		    		else
+//		    			System.out.println("line: "+line2);
+		    	}
+				line+=add;
+				//System.out.println("New facts file: \n"+line);
+				
+				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
+				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+			
+				//Must edit the config file to include the new agent names. 
+			
+				//errors adding an agent from here. 
+//				getEnvironmentInfraTier().getRuntimeServices().createAgent(  //arg0, arg1, arg2, arg3, arg4, arg5, arg6) .getRuntimeServices().createAgent(
+//			         "anotherAg",     // agent name
+//			         "ag1.asl",       // AgentSpeak source
+//			         null,            // default agent class
+//			         null,            // default architecture class
+//			         null,            // default belief base parameters
+//			         null);           // default settings
+			
+				
+				// updating the config file
+				file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc";
+				lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+				line="";
+		    	for (String line2 : lines) {
+		    		if(line2.contains("Person"))
+		    			line+=line2+agent+" \n";
+		    		else
+		    			line+=line2+"\n";
+
+		    	}
+		
+				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
+				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), line.toString().getBytes());
+			
+				System.out.println("New institution enabled");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			inst_state--;
+			return true;
+		}
 		else
 		{
 			System.out.println("Dunno what action was executed");
@@ -335,7 +421,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//do I need a return false in here??
 			//inst_state--;
 		}
-
+		if(agName.equals("bob"))
+			System.out.println("What is happening to Bob? " + action.toString());
 		//System.out.print("Stuck here ");
 		inst_state++;
 		return true; // the action was executed with success
@@ -373,6 +460,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//what occurred this timestep
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
 			String occurred = strRet.toString();
+			System.out.println("\nwhat occurred "+strRet.toString());
+			
 			
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
 			String observed = strRet.toString();
