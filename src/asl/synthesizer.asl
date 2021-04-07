@@ -157,6 +157,14 @@ what(0).
                            .
 
 
++revisionSuccess: true <- .print("A possble revision found");
+							.abolish(revisionSuccess);
+							.broadcast(tell,instRev);
+							
+							//.broadcast(tell,"value(1)");
+							+updateEnv;
+							.
+
 +revisionFailed: true <- .print("No possible revisions found");
 						//-revisionFailed;
 						//.print("Removing revision failed percept");
@@ -217,7 +225,7 @@ what(0).
 						-handling;
 						-+entered(0);	
 						.abolish(handlingCur(_,_,_,_));
-						+updateEnv;
+						//+updateEnv;
 						//changeInst(agn);
 					}				
   					else
@@ -273,3 +281,5 @@ what(0).
 						.create_agent(bob, "agent.asl");
 				
 					.
+
++bold(V): true <- +boldness(V).

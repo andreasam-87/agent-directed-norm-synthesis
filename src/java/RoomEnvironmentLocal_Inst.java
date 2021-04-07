@@ -46,7 +46,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	String inst_file = "rooms.ial"; //which institutional file we will be running
 	
-
+	Boolean decision = true;
 	//String inst_file = "rooms.ial"; //which institutional file we will be running
 	
 	int count_inst =0; //keep track of the institutional file
@@ -173,8 +173,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//System.out.println("The action is "+current_action);
 			
 
-			if(agName.equals("bob"))
-				System.out.println("Bob in enter block " );
+//			if(agName.equals("bob"))
+//				System.out.println("Bob in enter block " );
 
 			clearPercepts(agName); //remove old percepts and add new percepts
 
@@ -184,11 +184,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				{
 					addPercept(entry.getKey(), entry.getValue()[i]);
 					
-					if(agName.equals("bob"))
-					{
-						System.out.println("adding percept for bob");
-						System.out.println("Percept"+i+ " : "+ entry.getValue()[i]);
-					}
+//					if(agName.equals("bob"))
+//					{
+//						System.out.println("adding percept for bob");
+//						System.out.println("Percept"+i+ " : "+ entry.getValue()[i]);
+//					}
 					//	System.out.println("Bob in enter block " );
 					//System.out.println("adding percept");
 					//addPercept(entry.getValue()[i]);
@@ -197,9 +197,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 			}
 			updateAgsPercept();
-
-			if(agName.equals("bob"))
-				System.out.println("Bob leaving enter block " );
+//
+//			if(agName.equals("bob"))
+//				System.out.println("Bob leaving enter block " );
 		}
 
 		else if (action.getFunctor().equals("leave")) {
@@ -300,8 +300,26 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //						System.out.println("Sleeping now for ............ (2 seconds)");
 //						Thread.sleep(2000);
 						System.out.println("Revision has ended.... Completing action ......");
-
-						addPercept(agName, Literal.parseLiteral("revisionFailed"));
+//						Double decision = Math.random(); 
+//						if(decision>0.5)
+//						{
+//							addPercept(agName, Literal.parseLiteral("revisionFailed"));
+//						}
+//						else
+//						{
+//							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+//						}
+						if(decision)
+						{
+							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+							decision = false; 
+						}
+						else
+						{
+							addPercept(agName, Literal.parseLiteral("revisionFailed"));
+							decision = true; 
+						}	
+						
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
 					}catch (Exception ex) {
 
@@ -340,6 +358,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			inst_state--;
 		}
 		else if (action.getFunctor().equals("skip_steps")) {
+			System.out.println("Skipping a step or 2");
 			inst_state--;
 			return true;
 		}
@@ -421,9 +440,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//do I need a return false in here??
 			//inst_state--;
 		}
-		if(agName.equals("bob"))
-			System.out.println("What is happening to Bob? " + action.toString());
-		//System.out.print("Stuck here ");
+//		if(agName.equals("bob"))
+//			System.out.println("What is happening to Bob? " + action.toString());
+//		//System.out.print("Stuck here ");
 		inst_state++;
 		return true; // the action was executed with success
 	}
@@ -460,7 +479,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//what occurred this timestep
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
 			String occurred = strRet.toString();
-			System.out.println("\nwhat occurred "+strRet.toString());
+		//	System.out.println("\nwhat occurred "+strRet.toString());
 			
 			
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
@@ -585,11 +604,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				//facts.add("initially(role("+ag+", x), rooms)");
 				strRet.append("initially(role("+ag+", x), rooms)\n");
 				addPercept(ag,Literal.parseLiteral("role(x)"));
+				addPercept(ag,Literal.parseLiteral("bold("+count+")"));
 			}else
 			{
 				//facts.add("initially(role("+ag+", y), rooms)");
 				strRet.append("initially(role("+ag+", y), rooms)\n");
 				addPercept(ag,Literal.parseLiteral("role(y)"));
+				addPercept(ag,Literal.parseLiteral("bold("+count+")"));
 			}
 			count++;
 

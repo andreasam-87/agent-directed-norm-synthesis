@@ -44,7 +44,7 @@
 					//	.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
 						
 						?current_action(A);
-					.print('I am in Room ', Rm,' but it is full, I may need to leave the room');
+					.print("I am in Room ", Rm," but it is full, I may need to leave the room");
 			
 					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
 					//	.print(request(roomCapacityExceededViol, A, noViol));
@@ -57,7 +57,7 @@
 
 					?room_entered(Rm); //fix to work with in_room belief instead.
 					
-					.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
+					.print("I am in ",Rm," and my role is ', R, '  I will exit when ready"); 
 					.my_name(N);
 					
 					.random(Rd);
@@ -136,7 +136,7 @@
 						//.print("I cannot enter, I am role -",R);
 						?current_action(A);
 						//experiment5.myPrint('I cannot enter, I am role - ',R, ' I was trying to ',A);
-						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						.print("I cannot enter, I am role - ",R, " I was trying to ",A);
 						//.send(supervisor,tell,deniedEntry);
 						
 						//an appropriate send template
@@ -158,4 +158,8 @@
 
 +prob(wave) :  true <- .print("I cannot leave").
 						//experiment5.myPrint('I cannot leave').
+						
++bold(V): true <- +boldness(V). 
+
++instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag).
 					 
