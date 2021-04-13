@@ -15,6 +15,7 @@ MAS room_experiment {
 //  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
 //		//agent1 sample_agent;
 		bAgent[mindinspector="gui(cycle,html,history)"]#6;
+		pAgent[mindinspector="gui(cycle,html,history)"] #2;
 	aslSourcePath:
 		"src/asl";
 }

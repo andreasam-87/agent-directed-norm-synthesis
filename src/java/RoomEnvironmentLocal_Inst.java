@@ -524,6 +524,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 				if (var.contains("in_room"))
 					inroom=var; //keeps track of if the agent is in some room
+				
+				//check if the agent wasn't allowed in the room
+				//could be problematic given array size, maybe use an array list then turn it into an arrray. 
+//				if (!(var.contains("in_room")) && current_action.contains("enter"))
+//					inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			}
 
 			//checking if the capacity exceeded fluent is set and sets agent percept
