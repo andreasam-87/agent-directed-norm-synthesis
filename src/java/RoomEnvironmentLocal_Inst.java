@@ -301,6 +301,32 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						{
 							System.out.println("A solution does not currently exists for this action and problem");
 							
+							System.out.println("Check state "+when+ " and if possible "+ numStates +" states before and after.");
+
+							System.out.println("Revision begins.................");
+
+							String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
+
+						//	System.out.println(modes); //just printing for now
+							System.out.println("Modes file created");
+							
+							//writing to the modes file is what is required so that the ILP can access this file
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
+							
+							String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
+							
+							System.out.println("Trace file created");
+							//writing to the trace file is what is required so that the ILP can access this file
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
+							trace_count++;
+						
+							String revision = "rooms_v2.lp";
+							System.out.println("Revision has ended.... Completing action ......");
+							
+							//Add solution to the solution set
+							instModList.add(new InstMods(atmpt,revision,problem));
+							
+							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 						}
 						else
 						{
@@ -309,52 +335,26 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							if(solution.equals(inst_file))
 							{
 								System.out.println("Solution is active");
-								addPercept(agName, Literal.parseLiteral("revisionFailed(active)"));
+								addPercept(agName, Literal.parseLiteral("revisionSuccess(active)"));
 							}
 							else	
 							{
-								
+								System.out.println("Changing to the existing solution");
+								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+							//	TODO:CHANGE TO THE NEW INSTITUTION, WORK THAT OUT WITH PERCEPTS
 							}
 						}
-						
-						System.out.println("Check state "+when+ " and if possible "+ numStates +" states before and after.");
 
-						System.out.println("Revision begins.................");
-
-						String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
-
-					//	System.out.println(modes); //just printing for now
-						System.out.println("Modes file created");
-						//writing to the file is what is required so that the ILP can access this file
-						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
-						
-						String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
-						System.out.println("Trace file created");
-						Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
-						trace_count++;
-						
-//						System.out.println("Sleeping now for ............ (2 seconds)");
-//						Thread.sleep(2000);
-						System.out.println("Revision has ended.... Completing action ......");
-//						Double decision = Math.random(); 
-//						if(decision>0.5)
+//						if(decision)
 //						{
-//							addPercept(agName, Literal.parseLiteral("revisionFailed"));
+//							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+//							decision = false; 
 //						}
 //						else
 //						{
-//							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-//						}
-						if(decision)
-						{
-							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-							decision = false; 
-						}
-						else
-						{
-							addPercept(agName, Literal.parseLiteral("revisionFailed"));
-							decision = true; 
-						}	
+//							addPercept(agName, Literal.parseLiteral("revisionFailed"));
+//							decision = true; 
+//						}	
 						
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
 					}catch (Exception ex) {
@@ -402,10 +402,24 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("changeInst")) {
 			System.out.println("Setting up new institution:");
-			String agent = (action.getTerm(0)).toString();
+			String file = (action.getTerm(0)).toString();
+			inst_file = file;  //file
+			//inst_file = "rooms_v2.lp";  //file
+			System.out.println("New institution enabled");
+			inst_state--;
+			return true;
+		}
+		else if (action.getFunctor().equals("addAgent")) {
+		//	System.out.println("Setting up new institution:");
+			//String agent = (action.getTerm(0)).toString();
+			
+			//int nParams = action.getTerms().size();
+			String list = (action.getTerm(0)).toString();
+			System.out.println("List of agent names: "+list);
+			String agent = "bob";
 			System.out.println("Adding "+agent+ " to the environment");
 			
-			inst_file = "rooms_v2.lp"; 
+			//inst_file = "rooms_v2.lp"; 
 			String add = "initially(meeting,rooms)\n";
 			add+="initially(role("+agent+",y),rooms)\n";
 
@@ -463,7 +477,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
 				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), line.toString().getBytes());
 			
-				System.out.println("New institution enabled");
+				System.out.println("Agent added");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

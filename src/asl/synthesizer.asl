@@ -5,6 +5,13 @@
 /* Initial goals */
 entered(0).
 what(0).
+name(bob).
+name(alice).
+name(jo).
+name(jane).
+
+updateCount(0).
+
 !start.
 
 
@@ -147,11 +154,53 @@ what(0).
                            .
 
 
-+revisionSuccess: true <- .print("A possble revision found");
+
++revisionSuccess(T): true <- .print("Revision successful ");
+							if(T==active)
+							{
+								.print("A solution exists for your problem but it is currently active so no change required");
+								?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+								
+								.print("Action under review: ", ActAtmpt);
+								.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
+						
+								.length(List1,Sizer)
+								.print("I have to inform ", Sizer, " agents");	
+								
+						
+								room_experiment.getRoom(ActAtmpt,R1);	
+		
+								for (.member(Zn,List1))
+				  				{
+				  					room_experiment.getItems(Zn,2,Agn,Act);
+		
+									.send(Agn,tell,revisionActive);
+				  					.print("Inform ",Agn,", revision solution currently active");
+		
+				  				}
+				  				.abolish(to_inform(_,ActAtmpt));	
+							}
+							else
+							{
+								 .print("T is ",T);
+							}
+							.abolish(revisionSuccess(T));
+						//	-revisionSuccess(T);
+						
+																				
+						!handle;
+							.
+
++revisionSuccess: true <- .print("A possble revision found, inform agents of change");
 						//	.abolish(revisionSuccess);
 							-revisionSuccess;
 							.broadcast(tell,instRev);
+							.print("Removing relevant to_inform percepts");
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							.print("Action under review: ", ActAtmpt);
+							.abolish(to_inform(_,ActAtmpt));	
 							+updateEnv;
+							
 							.
 
 +revisionFailed: true <- .print("No possible revisions found");
@@ -169,8 +218,8 @@ what(0).
 						for (.member(Zn,List1))
 		  				{
 		  					room_experiment.getItems(Zn,2,Agn,Act);
-
-		  						.print("Inform ",Agn," no possible revisions");
+							.send(Agn,tell,revisionFailed);
+		  					.print("Inform ",Agn," no possible revisions");
 
 		  				}
 		  				.abolish(to_inform(_,ActAtmpt));							
@@ -222,12 +271,26 @@ what(0).
 +updateEnv: true <- .print("Updating the institution");
 				
 					//can I pass a list as a parameter
-					changeInst(bob);
-					.print("Adding one agent");
-						
-					.create_agent(bob, "agent.asl");
-						
+					changeInst("rooms_v2.lp");
 					-updateEnv;
+					?updateCount(C);
+					if(C==0)
+					{
+						?name(N);
+						//addAgent(N);
+						
+						addAgent([alice,bob,jane]);
+						.print("Adding one agent");	
+						//.create_agent(N, "agent.asl");
+						
+						.create_agent(alice, "agent.asl");
+						.create_agent(bob, "agent.asl");
+						.create_agent(jane, "agent.asl");
+						
+						.abolish(name(N));
+						-+updateCount(C+1);
+					}
+		
 					!handle;
 					.
 

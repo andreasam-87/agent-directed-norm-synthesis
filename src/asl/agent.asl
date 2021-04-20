@@ -26,15 +26,14 @@
 +!enter_room: true <- .print("I tried to enter");
 					//experiment5.myPrint('I tried to enter');
 					.my_name(N);
-				//	room_experiment.chooseRandomRoom(Rm);
-					//experiment5.myPrint(Rm);
-					//experiment5.myPrint(N);
-					 //enter;
-					 
+			
 					 room_experiment.getRandomNum(1,3,Rnd);
-					 .concat(room,Rnd,Rom);
-				//	 .print("New string ",X);
-					 room_experiment.stripString(Rom,Rm);
+		
+					//attempting to strip the extra ""
+					//		 .concat(room,Rnd,Rom);
+					//	 room_experiment.stripString(Rom,Rm);
+					 
+					  .concat(room,Rnd,Rm);
 					 +room_entered(Rm);
 					 enter(N,Rm);
 					//cheers;
@@ -168,6 +167,11 @@
 						//experiment5.myPrint('I cannot leave').
 						
 +bold(V): true <- +boldness(V). 
+
++revisionActive[source(Ag)]: true <- .print("The solution to my problem is currently active, I should retry my action").
+
++revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.").
+
 
 +instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
 
