@@ -26,10 +26,15 @@
 +!enter_room: true <- .print("I tried to enter");
 					//experiment5.myPrint('I tried to enter');
 					.my_name(N);
-					room_experiment.chooseRandomRoom(Rm);
+				//	room_experiment.chooseRandomRoom(Rm);
 					//experiment5.myPrint(Rm);
 					//experiment5.myPrint(N);
 					 //enter;
+					 
+					 room_experiment.getRandomNum(1,3,Rnd);
+					 .concat(room,Rnd,Rom);
+				//	 .print("New string ",X);
+					 room_experiment.stripString(Rom,Rm);
 					 +room_entered(Rm);
 					 enter(N,Rm);
 					//cheers;
@@ -57,7 +62,7 @@
 
 					?room_entered(Rm); //fix to work with in_room belief instead.
 					
-					.print("I am in ",Rm," and my role is ', R, '  I will exit when ready"); 
+					.print("I am in ",Rm," and my role is ", R, "  I will exit when ready"); 
 					.my_name(N);
 					
 					.random(Rd);
@@ -132,11 +137,14 @@
 					//	experiment5.myPrint('I left so I am chillin').
 							
 
-+prob(enter) :  true <- ?role(R);
++prob(enter) :  true <- ?role(P,R);
 						//.print("I cannot enter, I am role -",R);
 						?current_action(A);
 						//experiment5.myPrint('I cannot enter, I am role - ',R, ' I was trying to ',A);
 						.print("I cannot enter, I am role - ",R, " I was trying to ",A);
+						
+						.send(synthesizer,tell,request(prohibitedEntry, A, allowedEntry));	
+						
 						//.send(supervisor,tell,deniedEntry);
 						
 						//an appropriate send template
@@ -161,5 +169,8 @@
 						
 +bold(V): true <- +boldness(V). 
 
-+instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag).
++instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
+
+								-instRev;
+								.
 					 

@@ -83,11 +83,8 @@ what(0).
 												for (.member(Z,Lists2))
 									  			{
 									  				room_experiment.getItems(Z,3,I1,I2,I3);
-	//												room_experiment.stripString(I1,S1);
-	//												room_experiment.stripString(I2,S2);
-	//												room_experiment.stripString(I3,S3);
-	//												.print("String S2 - ", S2);
-													room_experiment.checkSimilarRequest(ActRes,ActAtmpt,Exp,I1,I2,I3,R2);
+	
+														room_experiment.checkSimilarRequest(ActRes,ActAtmpt,Exp,I1,I2,I3,R2);
 									  				
 													if(R2==1)
 													{
@@ -124,20 +121,12 @@ what(0).
 											.print("Need to inform this agent ", Ag);
 											+to_inform(Ag,Act1);
 										}	
-										//-request(ActRes,ActAtmpt,Exp);
-										
+
 										.abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
 										.print("Removed request from list");
-										
-										
-//										.count(request(_,_,_)[source(_)],C); 
+	
 										?entered(T);
 										-+entered(T+1);	
-//										if ((T+1)==C)
-//										{
-//											-handling;
-//											-+entered(0);	
-//										}
 
 										. 
 
@@ -149,7 +138,8 @@ what(0).
 							?what(D);
 							.print("What is happening - ", D);
 							-+what(D+1);
-                           revise(When,3);
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+                           revise(When,3,ActAtmpt,ActRes);
                            -eventOccurred(When);
                          // .abolish(eventOccurred(When)); //something strange happens when I abolish
                          //the previous event returns and then this part runs twice again, how and why? 
@@ -158,22 +148,16 @@ what(0).
 
 
 +revisionSuccess: true <- .print("A possble revision found");
-							.abolish(revisionSuccess);
+						//	.abolish(revisionSuccess);
+							-revisionSuccess;
 							.broadcast(tell,instRev);
-							
-							//.broadcast(tell,"value(1)");
 							+updateEnv;
 							.
 
 +revisionFailed: true <- .print("No possible revisions found");
-						//-revisionFailed;
-						//.print("Removing revision failed percept");
-						.abolish(revisionFailed);
-						
+						//.abolish(revisionFailed);
+						-revisionFailed;
 						?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-						
-					//	.findall([W,A],to_inform(W,A),List1); 
-						
 						.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
 						
 						.length(List1,Sizer)
@@ -181,28 +165,13 @@ what(0).
 								
 						
 						room_experiment.getRoom(ActAtmpt,R1);	
-	//					-+room1(R1);		
+		
 						for (.member(Zn,List1))
 		  				{
 		  					room_experiment.getItems(Zn,2,Agn,Act);
-//		  					.print("Agn = ",Agn, " Act = ", Act);	
-//		  					room_experiment.getRoom(Act,R2);	
-//		  					-+room2(R2);
-//		  					.print("R1 = ",R1, " R2 = ", R2);	
-//		  					?room1(Roo1);
-//		  					?room2(Roo2);
-//		  					if(Roo1==Roo2)
-//		  					{
-//		  						.print("Inform ",Agn," no possible revisions");
-//		  						
-//		  					}
-		  					
-//		  					if(R1==R2)
-//		  					{
+
 		  						.print("Inform ",Agn," no possible revisions");
-		  						
-//		  					}
-		  					
+
 		  				}
 		  				.abolish(to_inform(_,ActAtmpt));							
 						!handle;
@@ -211,8 +180,9 @@ what(0).
 
 +!fix: true <- revise(0).
  
+ @handle[atomic]
  +!handle: true <- .print("Handling the others");
- 					.perceive;
+ 					//.perceive;
 					.findall([A5,Ac5,E5,Aa],to_handle(A5,Ac5,E5,Aa),Reqs);  
 					.length(Reqs,Size);
 					.print("Number of to_handle beliefs found ", Size);
@@ -225,61 +195,40 @@ what(0).
 						-handling;
 						-+entered(0);	
 						.abolish(handlingCur(_,_,_,_));
-						//+updateEnv;
-						//changeInst(agn);
+
 					}				
   					else
   					{
- // 						.print("Number of requests to handle ",Size);
-  						//.print("First: ",Reqs[0]);
-  //						.print("Need to update current handling belief ");
-  					//	.abolish(handlingCur(_,_,_,_));
-  						// -+handlingCur(ActRes,ActAtmpt,Exp,Ag);
-  						//.abolish(handlingCur(_,_,_,_));
-  						for (.member(Z,Reqs))
-		  				{
-		  					room_experiment.getItems(Z,4,I1,I2,I3,I4);
-		  					
-//							room_experiment.stripString(I1,S1);
-//							room_experiment.stripString(I2,S2);
-//							room_experiment.stripString(I3,S3);
-//							room_experiment.stripString(I4,S4);
-//							.print("Items:  ", I1,I2,I3,I4);
-							
-							-+handlingCur(I1,I2,I3,I4);
-		  					//.print("Action attempted in next  ", I2);
-		  					//-to_handle(I1,I2,I3);
-		  					//.abolish(to_handle(I1,I2,I3,I4));	
-		  					
-		  					.abolish(to_handle(I1,I2,I3,I4));	//TROUBLE WITH STRINGS AGAIN
-		  				//	.abolish(to_handle(_,_,_,_));	
-		  					
-		  					!handle_reqs(I1,I2,I3,I4);
-		  				}
+
+  						.print("Preparing to handle the first item in the list");
+  						.nth(0,Reqs,Z);
+  						room_experiment.getItems(Z,4,I1,I2,I3,I4);
+  						-+handlingCur(I1,I2,I3,I4);
+  						.abolish(to_handle(I1,I2,I3,I4));
+  						!handle_reqs(I1,I2,I3,I4);
+
   					}
   					.
-
-
-//@handle_reqs[atomic]
-+!handle_reqs(H,I,J,K): true <- .print("handling remaining requests");
+  					
++!handle_reqs(H,I,J,K): true <- .print("handling next request");
 						checkState(I);
 						.
 
 
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
-									//experiment5.myPrint('Message received from ', Ag , ', will handle'). 
-									//experiment5.myPrint(msg). 
-									//checkState.
-					//.send(Ag,tell,msg(M)).
+
  
  
 +updateEnv: true <- .print("Updating the institution");
+				
 					//can I pass a list as a parameter
 					changeInst(bob);
 					.print("Adding one agent");
 						
-						.create_agent(bob, "agent.asl");
-				
+					.create_agent(bob, "agent.asl");
+						
+					-updateEnv;
+					!handle;
 					.
 
 +bold(V): true <- +boldness(V).

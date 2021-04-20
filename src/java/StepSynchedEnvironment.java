@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jason.NoValueException;
 import jason.asSyntax.Literal;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.NumberTermImpl;
@@ -57,6 +58,7 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
     }
 
     private ArrayList<Long> completedTasks;
+    private ArrayList<Long> runningTasks;
     private ArrayList<Long> queuedTasks;
     private int step = 0;   // step counter
     private int nbAgs = -1; // number of agents acting on the environment
@@ -93,6 +95,7 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
         }
         // reset everything
         completedTasks = new ArrayList<>();
+        runningTasks = new ArrayList<>();
         queuedTasks = new ArrayList<>();
         requests = new HashMap<String,ActRequest>();
         overRequests = new LinkedList<ActRequest>();
@@ -422,6 +425,14 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
         }catch (Exception ex) {
         }
     }
+    
+    protected void markAsExecuting (Structure action) {
+        try {
+            long tag = (long) ( (NumberTerm) action.getTerm(action.getTerms().size() - 1) ).solve();
+            runningTasks.add(tag);
+        }catch (Exception ex) {
+        }
+    }
 
     /** to be overridden by the user class */
     protected ArrayList <Structure> getComposites (String agName, Structure action) {
@@ -430,6 +441,17 @@ public class StepSynchedEnvironment extends jason.environment.Environment {
 
     protected boolean isCompleted (long actionId) {
         return completedTasks.contains(actionId);
+    }
+    
+    protected boolean isRunning (Structure action) {
+    	 long tag=-1;
+		try {
+			tag = (long) ( (NumberTerm) action.getTerm(action.getTerms().size() - 1) ).solve();
+		} catch (NoValueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return runningTasks.contains(tag);
     }
 
     /** stops perception while executing the step's actions */

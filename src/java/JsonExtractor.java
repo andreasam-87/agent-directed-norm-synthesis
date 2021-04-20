@@ -703,7 +703,7 @@ public class JsonExtractor {
 	
 	public String getModesFile(String file, String filter)
 	{
-		/*Function to parse a json file with instal dictionar and return a modes file as string 
+		/*Function to parse a json file with instal dictionary and return a modes file as string 
 		 * This function may need to be modified to should only a specific set of fluents and events rather than all
 		 * */
 		

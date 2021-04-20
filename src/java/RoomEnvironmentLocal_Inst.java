@@ -10,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	ArrayList<String> facts_store = new ArrayList<String>(); //collect of holdsat/facts/fluents true
 
 	HashMap <Integer,State> stateList = new HashMap<>(); //collection of states of the inst
+	
+	HashSet <InstMods> instModList = new HashSet<>();
 
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
@@ -275,12 +278,45 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //				e1.printStackTrace();
 //			}
 //
+			if(!isRunning(action))
+			{
+				markAsExecuting(action);
+			
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
 					try {
 						int when = (int)((NumberTerm) action.getTerm(0)).solve();
 						int numStates = (int)((NumberTerm) action.getTerm(1)).solve();
+
+						String atmpt = (action.getTerm(2)).toString();
+
+						String problem = (action.getTerm(3)).toString();
+						
+						System.out.println("Checking if the problem has an existing solution");
+						
+						//public String checkExistingMods(String act, String prob)
+						String solution = checkExistingMods(atmpt,problem);
+						if(solution.equals("none"))
+						{
+							System.out.println("A solution does not currently exists for this action and problem");
+							
+						}
+						else
+						{
+							System.out.println("A solution exists for this problem");
+							System.out.println("Checking if the solution is currently in place");
+							if(solution.equals(inst_file))
+							{
+								System.out.println("Solution is active");
+								addPercept(agName, Literal.parseLiteral("revisionFailed(active)"));
+							}
+							else	
+							{
+								
+							}
+						}
+						
 						System.out.println("Check state "+when+ " and if possible "+ numStates +" states before and after.");
 
 						System.out.println("Revision begins.................");
@@ -333,6 +369,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//addPercept(agName, Literal.parseLiteral("revisionFailed"));
 			inst_state--;
 			// return true; //do I need a separate return here or the one to the bottom will do.
+			
+			}
 		}
 		else if (action.getFunctor().equals("delay")) {
 
@@ -505,8 +543,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			int c=0;
 			boolean viol = false;
 			Literal[] inst_sensors = new Literal[count+1]; //add +1 to array size if capacity percept being added
+			
+			ArrayList<Literal> inst_sense = new ArrayList<Literal>();
+			
 			String roomCap="";
 			String inroom="";
+			boolean entered = false;
 			for (String var : percepts)
 			{
 				//System.out.println(var);
@@ -519,16 +561,24 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				{
 					//populates the percepts with the agent name to be sent to the agent
 					inst_sensors[c] = Literal.parseLiteral(var);
+					inst_sense.add(Literal.parseLiteral(var));
 					c++;
+					
+					//check if the agent wasn't allowed in the room
+					//could be problematic given array size, maybe use an array list then turn it into an arrray. 
 
+					if (var.contains("in_room"))
+					{
+						inroom=var; //keeps track of if the agent is in some room
+						entered=true;
+					}
 				}
-				if (var.contains("in_room"))
-					inroom=var; //keeps track of if the agent is in some room
+//				if (var.contains("in_room"))
+//				{
+//					inroom=var; //keeps track of if the agent is in some room
+//					entered=true;
+//				}
 				
-				//check if the agent wasn't allowed in the room
-				//could be problematic given array size, maybe use an array list then turn it into an arrray. 
-//				if (!(var.contains("in_room")) && current_action.contains("enter"))
-//					inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			}
 
 			//checking if the capacity exceeded fluent is set and sets agent percept
@@ -540,18 +590,43 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				//System.out.println("true");
 				roomCap=StringUtils.substringBetween(roomCap, "(", ")"); //find the name of the room which has exceeded capacity
 				if(inroom.contains(roomCap)) //check if this agent is in the room
+				{
 					inst_sensors[c] = Literal.parseLiteral("roomCapacityExceeded");
+					inst_sense.add(Literal.parseLiteral("roomCapacityExceeded"));
+				}
 				else
 					inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			}else
 			{
 				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			}
+			
+			
+			//check if the agent wasn't allowed in the room
+			//could be problematic given array size, maybe use an array list then turn it into an arrray. 
+//			if (!(var.contains("in_room")) && current_action.contains("enter"))
+//				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+			if (!entered && current_action.contains("enter"))
+			{
+				inst_sense.add(Literal.parseLiteral("prob(enter)"));
+				
+			}
+			
+			inst_sense.add(Literal.parseLiteral("extraPercept"));
 //	    	//System.out.println(inst_sensors.length);
-//	    	
+	    	int s = inst_sense.size();
+	    	
+		//	Literal[] inst = (Literal []) inst_sense.toArray(); 
 
-			m.put(ag,inst_sensors);
+			Literal[] inst = new Literal [s];// (inst_sense.toArray()); 
+			for(int i=0;i<s;i++)
+			{
+				inst[i] = inst_sense.get(i);
+			}
+	    
+			//m.put(ag,inst_sensors);
 
+			m.put(ag,inst);
 			//System.out.println("potentially agent output END\n ");
 
 		} catch (IOException e) {
@@ -683,6 +758,22 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 
 	}
 
+	public String checkExistingMods(String act, String prob)
+	{
+		String ret="none";
+		for(InstMods ins: instModList)
+		{
+			String ac = ins.getAction();
+			if(StringUtils.substringBefore(ac,"(").equals(StringUtils.substringBefore(act,"(")))
+			{
+				if(ins.getProblem().equals(prob))
+					return ins.getInstFile();
+			}
+		}
+		return ret;
+	}
+	
+	
 	public void getJSONObjectFromFile(String file,String request,int flag)
 	{
 		strRet=new StringBuilder();
