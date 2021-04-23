@@ -277,16 +277,16 @@ updateCount(0).
 					if(C==0)
 					{
 						?name(N);
-						//addAgent(N);
+						addAgent(N);
 						
-						addAgent([alice,bob,jane]);
+					//	addAgent([alice,bob,jane]);
 						.print("Adding one agent");	
-						//.create_agent(N, "agent.asl");
+						.create_agent(N, "agent.asl");
 						
-						.create_agent(alice, "agent.asl");
-						.create_agent(bob, "agent.asl");
-						.create_agent(jane, "agent.asl");
-						
+//						.create_agent(alice, "agent.asl");
+//						.create_agent(bob, "agent.asl");
+//						.create_agent(jane, "agent.asl");
+//						
 						.abolish(name(N));
 						-+updateCount(C+1);
 					}

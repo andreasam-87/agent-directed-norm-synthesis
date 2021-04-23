@@ -27,7 +27,7 @@
 					//experiment5.myPrint('I tried to enter');
 					.my_name(N);
 			
-					 room_experiment.getRandomNum(1,3,Rnd);
+					 room_experiment.getRandomNum(1,2,Rnd);
 		
 					//attempting to strip the extra ""
 					//		 .concat(room,Rnd,Rom);
@@ -48,8 +48,8 @@
 					//	.print('I am in ',Rm,' and my role is ', R, '  I will exit when ready'); 
 						
 						?current_action(A);
-					.print("I am in Room ", Rm," but it is full, I may need to leave the room");
-			
+					.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
+					
 					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
 					//	.print(request(roomCapacityExceededViol, A, noViol));
 					
@@ -134,7 +134,9 @@
 						!enter_room;
 						.
 					//	experiment5.myPrint('I left so I am chillin').
-							
+					
+					
+		
 
 +prob(enter) :  true <- ?role(P,R);
 						//.print("I cannot enter, I am role -",R);

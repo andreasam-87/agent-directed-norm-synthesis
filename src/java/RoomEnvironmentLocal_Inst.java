@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import jason.asSyntax.Structure;
 
 public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
-	JsonExtractor jsonExtractor_prev = new JsonExtractor("rooms");
+	JsonExtractor jsonExtractor_prev;// = new JsonExtractor("rooms");
 	//JsonExtractorOrgSimple jsonExtractor = new JsonExtractorOrgSimple();
 
 	int inst_state=0; //to keep track of the institutional state at any timestep since different from env timesteps
@@ -47,21 +48,36 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
-	String inst_file = "rooms.ial"; //which institutional file we will be running
+	String inst_file;// = "rooms.ial"; //which institutional file we will be running
 	
-	Boolean decision = true;
-	//String inst_file = "rooms.ial"; //which institutional file we will be running
+	//Boolean decision = true;
 	
 	int count_inst =0; //keep track of the institutional file
 
 	HashMap <Integer,String> instChangePoint = new HashMap<>(); //collection of states of the inst
 
+	JSONObject domainConf; //object to keep track of domain configuration information
 	
 	public void init(String[] args) {
 		// super.init(args);
 		super.init(new String[]{"1000"});
 		//super.setSleep(100);
+		
+		System.out.println("Parsing json file ");
+		try {
+			parseDomainConf("domain.json");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//load values based on domain config file
+	//	inst_file = (String) domainConf.get("originalfile");
+		//jsonExtractor_prev = new JsonExtractor((String) domainConf.get("institution"));
+		
 
+		inst_file = domainConf.get("originalfile").toString();
+		jsonExtractor_prev = new JsonExtractor(domainConf.get("institution").toString());
+		
 //	        institutions = new InstalModel[] { room_inst };
 //	        this.model = room_inst;
 		initialiseInstitution();
@@ -320,18 +336,31 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
 							trace_count++;
 						
-							String revision = "rooms_v2.lp";
+							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
+							
 							System.out.println("Revision has ended.... Completing action ......");
 							
-							//Add solution to the solution set
-							instModList.add(new InstMods(atmpt,revision,problem));
-							
-							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+							if(getDecisionOracle())
+							{
+								System.out.println("Revision approved by Oracle, can be implemented");
+								
+								//Add solution to the solution set
+								instModList.add(new InstMods(atmpt,revision,problem));
+								
+								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+								}
+							else
+							{
+								System.out.println("Revision not approved by Oracle, will be discarded");
+								
+								addPercept(agName, Literal.parseLiteral("revisionFailed"));
+							}
 						}
 						else
 						{
 							System.out.println("A solution exists for this problem");
 							System.out.println("Checking if the solution is currently in place");
+							System.out.println("Solution - "+solution+" active inst file - "+inst_file);
 							if(solution.equals(inst_file))
 							{
 								System.out.println("Solution is active");
@@ -403,7 +432,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		else if (action.getFunctor().equals("changeInst")) {
 			System.out.println("Setting up new institution:");
 			String file = (action.getTerm(0)).toString();
-			inst_file = file;  //file
+			inst_file = StringUtils.replaceAll(file,"\"", "");  //file
+			//inst_file = file;  //file
 			//inst_file = "rooms_v2.lp";  //file
 			System.out.println("New institution enabled");
 			inst_state--;
@@ -416,21 +446,58 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//int nParams = action.getTerms().size();
 			String list = (action.getTerm(0)).toString();
 			System.out.println("List of agent names: "+list);
-			String agent = "bob";
-			System.out.println("Adding "+agent+ " to the environment");
+			String names="";
 			
-			//inst_file = "rooms_v2.lp"; 
-			String add = "initially(meeting,rooms)\n";
-			add+="initially(role("+agent+",y),rooms)\n";
 
-			// in the short term, adding the necessary permissions 
-			add+="initially(perm(enter("+agent+",room1)),rooms)\n";
-			add+="initially(perm(enter("+agent+",room2)),rooms)\n";
-			add+="initially(perm(arrive("+agent+",room1)),rooms)\n";
-			add+="initially(perm(arrive("+agent+",room2)),rooms)\n";
-			add+="initially(pow(enter("+agent+",room1)),rooms)\n";
-			add+="initially(pow(enter("+agent+",room2)),rooms)\n";
+			String add = "initially(meeting,rooms)\n";
+			if(list.contains("["))
+			{
+				System.out.println("Adding multiple agents to the scenario ");
+				list = list.substring(1,list.length()-1);
+				String [] agentNames = list.split(",");
+				int count =0;
+				for(String name: agentNames)
+				{
+					names+=name+" ";
+					
+					if(count%2==0)
+					{
+						add+="initially(role("+name+",y),rooms)\n";
+					}else
+					{
+						add+="initially(role("+name+",x),rooms)\n";
+					}
+					count++;
+
+					// in the short term, adding the necessary permissions 
+//					add+="initially(perm(enter("+name+",room1)),rooms)\n";
+//					add+="initially(perm(enter("+name+",room2)),rooms)\n";
+//					add+="initially(perm(arrive("+name+",room1)),rooms)\n";
+//					add+="initially(perm(arrive("+name+",room2)),rooms)\n";
+//					add+="initially(pow(enter("+name+",room1)),rooms)\n";
+//					add+="initially(pow(enter("+name+",room2)),rooms)\n";
+					
+				}
+			}
+			else
+			{
+				names = list;
+				String agent = list;
+				System.out.println("Adding "+agent+ " to the environment");
+				
+				//inst_file = "rooms_v2.lp"; 
+				
+				add+="initially(role("+agent+",y),rooms)\n";
+	
+				// in the short term, adding the necessary permissions 
+				add+="initially(perm(enter("+agent+",room1)),rooms)\n";
+				add+="initially(perm(enter("+agent+",room2)),rooms)\n";
+				add+="initially(perm(arrive("+agent+",room1)),rooms)\n";
+				add+="initially(perm(arrive("+agent+",room2)),rooms)\n";
+				add+="initially(pow(enter("+agent+",room1)),rooms)\n";
+				add+="initially(pow(enter("+agent+",room2)),rooms)\n";
 			
+			}
 			//initially(perm(enter(agent6,room2)),rooms)
 			String line = "";
 			String file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
@@ -468,7 +535,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				line="";
 		    	for (String line2 : lines) {
 		    		if(line2.contains("Person"))
-		    			line+=line2+agent+" \n";
+		    			line+=line2+names+" \n";
 		    		else
 		    			line+=line2+"\n";
 
@@ -713,6 +780,37 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				"Location: room1 room2\n" +
 				"Number: 0 1 2 3 4 5 6 7 8 9 ");
 		
+//		String r = domainConf.get("role").toString();
+//		String l = domainConf.get("location").toString();
+//		String n = domainConf.get("number").toString();
+//		
+//		String r1 = "x y";
+//		String r = (String) domainConf.get("role");
+//		String l = (String) domainConf.get("location");
+//		String n = (String) domainConf.get("number");
+		//System.out.println(domainConf.get("role")+ " --test--" + domainConf.get("role").toString());
+		
+//		r = r.replace("\"","");
+//		l = l.replace("\"","");
+//		n = n.replace("\"","");
+		
+//		if(r1.equals(r))
+//		{
+//			System.out.println("No problem");
+//		}
+//		else
+//			System.out.println("Problem");
+//		
+//		String con = "\nRole: "+r+
+//				"\nLocation: "+l +
+//				"\nNumber: " + n+ " ";
+		
+//		config.append("\nRole: "+r1+
+//				"\nLocation: "+l +
+//				"\nNumber: " + n+ " ");
+//		
+//		config.append(con);
+		//domainConf.get("institution").toString()
 		/* Structure of file to create
 		 * Person: alice bob eve tony lily jem
 Role: x y
@@ -772,7 +870,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 
 	}
 
-	public String checkExistingMods(String act, String prob)
+	private String checkExistingMods(String act, String prob)
 	{
 		String ret="none";
 		for(InstMods ins: instModList)
@@ -787,6 +885,17 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		return ret;
 	}
 	
+	private String reviseInstitution(String tracefile, String modesfile)
+	{
+		//will need to use a collection or file that maps the issues to the already generated files - modified institution
+		
+		return "rooms_v2.lp";
+	}
+	
+	private boolean getDecisionOracle()
+	{
+		return true;
+	}
 	
 	public void getJSONObjectFromFile(String file,String request,int flag)
 	{
@@ -882,150 +991,34 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		}
 
 	}
+	
+	/* Method to extract the domain configuration information, basically used readfile in rovers env */
+	
+	private void parseDomainConf(String path) throws Exception{
+        String jsonString;
 
-	public void getJSONObjectFromFileOld(String file)
-	{
-		try {
-			JSONTokener token = new JSONTokener(new FileReader(file));
-			//JSONArray object = (JSONArray) token.nextValue();
-			JSONArray object = new JSONArray (token);
-			//	System.out.println("Got: "+object + " \nclass "+ object.getClass());
-			JSONObject occurred = (JSONObject)object.get(1); //.getJSONArray("json_out").getJSONArray(0).getJSONObject(1).getJSONObject("state").getJSONArray("occurred");
-			//System.out.println("Got: "+occurred.getJSONObject("state").getJSONArray("occurred") ); 
+        final BufferedReader fileReader = new BufferedReader(new FileReader(path));
+        final StringBuilder jsonContent = new StringBuilder();
+        String line;
+        while ((line =  fileReader.readLine()) != null) {
+            jsonContent.append(line);
+        }
+        fileReader.close();
+        jsonString = jsonContent.toString();
 
-			//System.out.println("Got: "+occurred + " \nclass "+ occurred.getClass());
-			//		while(!token.end())
-//			{
-//				JSONArray object = (JSONArray) token.nextValue();
-//				System.out.println("Got: "+object + " \nclass "+ object.getClass());
-//			}
-			//	while(token.more()) {
-			//System.out.println(token.next());
-//			    JSONArray object = (JSONArray) token.nextValue();
-			//System.out.println("Got: "+object + " \nclass "+ object.getClass());
-			//		}
-			System.out.println("Done ");
-
-
-			JSONObject state = (JSONObject) occurred.get("state");
-
-			//jsonExtractor_prev.loopThroughJson(state);
-
-			Object obj = (Object)state.get("holdsat");
-			if (obj instanceof JSONArray)
-			{
-				JSONArray ob = (JSONArray)obj;
-
-				for(int i=0;i<ob.length();i++)
-				{
-					StringBuilder sbb = new StringBuilder("");
-					System.out.println("Occurred: "+jsonExtractor_prev.extract(ob.get(i),sbb).toString());
-					;
-					//ext.get(i);
-				}
-			}
-			else if(obj instanceof JSONObject)
-			{
-				JSONObject ob = (JSONObject)state.get("holdsat");
-				JSONArray ar = jsonExtractor_prev.extractHoldsat(ob);
-				//StringBuilder sbb = new StringBuilder("");
-				System.out.println(ar);
-				for(int i=0;i<ar.length();i++)
-				{
-
-					JSONArray arr = (JSONArray)ar.get(i);
-					for(int j=0;j<arr.length();j++)
-					{
-						StringBuilder sbb = new StringBuilder("");
-						System.out.println(j + jsonExtractor_prev.extract(arr.get(j),sbb).toString());
-
-					}
-
-
-				}
-				//System.out.println(jsonExtractor_prev.extract(ar,sbb));
-//				for (String key : ob.keySet()) 
-//		    	{
-//					StringBuilder sbb = new StringBuilder("");
-//					//System.out.println(ob.get(key).getClass());
-//					JSONArray ar = jsonExtractor_prev.extractHoldsat(ob.get(key));
-//					//JSONArray ar = jsonExtractor_prev.extract(ar,sbb);
-//					//
-//					//System.out.println(key+ " "+ jsonExtractor_prev.extract((JSONArray)ob.get(key),sbb));
-//					;
-//		    	}
-
-			}
-			else
-				System.out.println("ERROR");
-
-
-			//System.out.println(ob.getClass());
-
-			//for (Object o : )
-			//jsonExtractor_prev.analysisJson(state.get("occurred"));
-			//jsonExtractor_prev.analysisJson(state.get("holdsat"));
-
-			//System.out.println(state.get("holdsat")+ " \n "+state.get("holdsat").getClass() );
-			ArrayList<String> dataList = jsonExtractor_prev.extractHoldsatJson((JSONObject)state.get("holdsat"));
-			//			data = JsonExtractor.extractHoldsatJson((JSONObject)state.get("holdsat"));
-			//System.out.println(dataList);
-			for (String data : dataList)
-			{
-				//strip initiallys and rooms from the string.
-				data = data.substring(10, data.length());
-				data = data.substring(0, data.length()-1);
-				int index = data.lastIndexOf(")");
-				//System.out.println(index+"  "+ data.charAt(index+1));
-				//data = data.substring(0,(index+1));
-
-				//System.out.println(index+"  "+ data.charAt(index+1));
-
-
-				//System.out.println(data);
-
-			}
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-//		JSONParser parser = new JSONParser();
-//		try {
-//			Object obj = parser.parse(new FileReader(file));
-//					
-//			// A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
-//		//	JSONObject jsonObject = (JSONObject) obj;
-//			org.json.simple.JSONArray jArr = (org.json.simple.JSONArray) obj;
-//			//JSONArray jArr = (JSONArray) obj;
-//
-//			for (int i = 0; i < jArr.size(); i++) {
-//			//	System.out.println(jArr.get(i).getClass());
-//				org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jArr.get(i);
-//				
-//					org.json.simple.JSONObject state = (org.json.simple.JSONObject) jsonObject.get("state");
-//								//System.out.println(state.get("holdsat")+ " \n "+state.get("holdsat").getClass() );
-//				ArrayList<String> dataList = jsonExtractor.extractHoldsatJson((org.json.simple.JSONObject)state.get("holdsat"));
-//			//			data = JsonExtractor.extractHoldsatJson((JSONObject)state.get("holdsat"));
-//				
-//				for (String data : dataList) 
-//		    	{ 
-//					//strip initiallys and rooms from the string.
-//	    			data = data.substring(10, data.length());
-//	    			//data = data.substring(0, data.length()-7);
-//	    		
-//			//		System.out.println(data);
-//		    		
-//		    	}
-//				
-//			}
-//
-//		} catch (Exception e) {
-//			System.out.println("Error from the inception");
-//			e.printStackTrace();
-//		}
-
-	}
+        domainConf = new JSONObject(jsonString);
+        
+//        Iterator <String> itr1 = domainConf.keys();// .iterator();
+//        
+//        
+//        while (itr1.hasNext()) {
+//        	 String key = itr1.next();
+//            System.out.println(key + " : " + domainConf.get(key));
+//        }
+    
+    }
+	
+	
 	/** Called before the end of MAS execution */
 	@Override
 	public void stop() {
