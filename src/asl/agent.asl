@@ -49,8 +49,9 @@
 						
 						?current_action(A);
 					.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
-					
-					.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));		
+					?overseer(O);
+					//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
+					.send(O,tell,request(roomCapacityExceededViol, A, noViol));		
 					//	.print(request(roomCapacityExceededViol, A, noViol));
 					
 					//TO DO -- include the logic to have them decide to move 
@@ -143,8 +144,9 @@
 						?current_action(A);
 						//experiment5.myPrint('I cannot enter, I am role - ',R, ' I was trying to ',A);
 						.print("I cannot enter, I am role - ",R, " I was trying to ",A);
-						
-						.send(synthesizer,tell,request(prohibitedEntry, A, allowedEntry));	
+						?overseer(O);
+						.send(O,tell,request(prohibitedEntry, A, allowedEntry));	
+						//.send(synthesizer,tell,request(prohibitedEntry, A, allowedEntry));	
 						
 						//.send(supervisor,tell,deniedEntry);
 						
@@ -169,6 +171,8 @@
 						//experiment5.myPrint('I cannot leave').
 						
 +bold(V): true <- +boldness(V). 
+
++overseer(O): true <- +overseer(O). 
 
 +revisionActive[source(Ag)]: true <- .print("The solution to my problem is currently active, I should retry my action").
 

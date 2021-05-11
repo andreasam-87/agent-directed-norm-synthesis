@@ -185,7 +185,7 @@ updateCount(0).
 								 .print("T is ",T);
 							}
 							.abolish(revisionSuccess(T));
-						//	-revisionSuccess(T);
+							//-revisionSuccess(T);
 						
 																				
 						!handle;
@@ -244,6 +244,9 @@ updateCount(0).
 						-handling;
 						-+entered(0);	
 						.abolish(handlingCur(_,_,_,_));
+						
+						//trying something
+						!do_sense;
 
 					}				
   					else
@@ -263,6 +266,10 @@ updateCount(0).
 						checkState(I);
 						.
 
+
++!do_sense: true <- .print("about to try to sense the institution");
+					sense("enter(pAgent1,room1)");
+					.
 
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
 

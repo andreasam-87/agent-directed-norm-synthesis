@@ -242,6 +242,38 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 
 		}
+		else if (action.getFunctor().equals("sense")) {
+			String tocheck = (action.getTerm(0)).toString();
+			tocheck= tocheck.replace("\"","");
+			tocheck = "observed("+tocheck+")";
+			//current_action = "observed("+current_action+")";
+			//String ex = act.toString();
+
+			//clearPercepts(agName); //remove old percepts and add new percepts
+
+			//	public static final Literal check  = Literal.parseLiteral("check");
+			//for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitution().entrySet())
+			System.out.println("TO Check: "+ tocheck);
+			
+			//senseInstitution(String ag, String act, String avoid) {
+			for (Map.Entry<String, Literal[]> entry : this.senseInstitution(agName,tocheck,"capacityExceeded").entrySet())
+			{
+
+				System.out.println("Percepts from sense: ");
+				for (int i = 0; i < entry.getValue().length; i++)
+				{
+					//if(entry.getValue()[i].equals(Literal.parseLiteral(" ")))
+					addPercept(entry.getKey(), entry.getValue()[i]);
+					//addPercept(entry.getValue()[i]);
+					System.out.println("Percept: "+ entry.getValue()[i]);
+				}
+			}
+			
+			inst_state--;
+			return true; 
+			
+
+		}
 		else if (action.getFunctor().equals("checkState")) {
 			//String eventOccurred = (String) ((StringTerm) act.getTerm(0)).toString();
 			//String eventOccurred = (String) ((StringTerm) act.getTerm(0)).getString();
@@ -294,9 +326,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //				e1.printStackTrace();
 //			}
 //
-			if(!isRunning(action))
-			{
-				markAsExecuting(action);
+//			if(!isRunning(action))
+//			{
+//				markAsExecuting(action);
 			
 			Runnable r = new Runnable() {
 				@Override
@@ -406,7 +438,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			inst_state--;
 			// return true; //do I need a separate return here or the one to the bottom will do.
 			
-			}
+		//	}
 		}
 		else if (action.getFunctor().equals("delay")) {
 
@@ -479,7 +511,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						add+="initially(role("+name+",x),rooms)\n";
 					}
 					count++;
-
+					
+					
 					// in the short term, adding the necessary permissions 
 //					add+="initially(perm(enter("+name+",room1)),rooms)\n";
 //					add+="initially(perm(enter("+name+",room2)),rooms)\n";
@@ -488,6 +521,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //					add+="initially(pow(enter("+name+",room1)),rooms)\n";
 //					add+="initially(pow(enter("+name+",room2)),rooms)\n";
 					
+
+					addPercept(name,Literal.parseLiteral("overseer(synthesizer)"));
+					
+					//temporarily assigning all agents to the single synthesizer
+					addPercept("synthesizer",Literal.parseLiteral("assignee("+name+")"));
 				}
 			}
 			else
@@ -508,6 +546,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				add+="initially(pow(enter("+agent+",room1)),rooms)\n";
 				add+="initially(pow(enter("+agent+",room2)),rooms)\n";
 			
+				addPercept(agent,Literal.parseLiteral("overseer(synthesizer)"));
+				
+				//temporarily assigning all agents to the single synthesizer
+				addPercept("synthesizer",Literal.parseLiteral("assignee("+agent+")"));
 			}
 			//initially(perm(enter(agent6,room2)),rooms)
 			String line = "";
@@ -578,6 +620,116 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	}
 
 
+	public Map<String, Literal[]> senseInstitution(String ag, String act, String avoid) {
+		Map<String, Literal[]> m = new HashMap<String, Literal[]>();
+
+		try {
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"),act.getBytes());
+
+
+			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+		
+			String output = Processes.runShellCmdRes(cmd);
+			
+			ArrayList<Literal> inst_sense = new ArrayList<Literal>();
+			
+			//what occurred this timestep
+			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
+			String occurred = strRet.toString();
+		
+		//	getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
+		//	String observed = strRet.toString();
+
+			System.out.println("Sense - what occurred: "+occurred);
+			//returning what occurred
+			for(String s : occurred.split("\n"))
+			{
+				inst_sense.add(Literal.parseLiteral(s));
+				System.out.println("occurred: "+s);
+			}
+			
+			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
+
+	
+			String[] percepts = strRet.toString().split("\n");
+
+			int count = StringUtils.countMatches(strRet.toString(), ag);
+			//System.out.println("Count "+count);
+			int c=0;
+			boolean viol = false;
+			
+			String roomCap="";
+			String inroom="";
+			int in = act.indexOf("(");
+			int ind = StringUtils.ordinalIndexOf(act, "(", 2);//  .act.indexOf("(");
+			String str = act.substring(ind,act.length()-1);
+			System.out.println("String to check "+str);
+			
+			boolean entered = false;
+			for (String var : percepts)
+			{
+				if(var.contains(avoid))
+				{
+					viol=true; //indicates a violation of the
+				
+					inst_sense.add(Literal.parseLiteral(var));
+				}
+				if(var.contentEquals("in_room"+str))
+				//if (var.matches("in_room"+str))
+				{
+					System.out.println("Found it");
+					inst_sense.add(Literal.parseLiteral(var));
+				}
+//				else
+//					System.out.println("Matches didn't work");
+
+				
+			}
+
+
+			//check if agent is in the room first
+			if (viol)
+			{
+				inst_sense.add(Literal.parseLiteral("revisionUnacceptable"));
+				
+			}
+			else
+			{
+				inst_sense.add(Literal.parseLiteral("revisionAcceptable"));
+			}
+
+
+	    	int s = inst_sense.size();
+	    	
+		//	Literal[] inst = (Literal []) inst_sense.toArray(); 
+
+	    	//used arralist for variable size percepts then converting arraylist to an array as expected by the collection.
+			Literal[] inst = new Literal [s];// (inst_sense.toArray()); 
+			for(int i=0;i<s;i++)
+			{
+				inst[i] = inst_sense.get(i);
+			}
+	    
+			//m.put(ag,inst_sensors);
+
+			m.put(ag,inst);
+			//System.out.println("potentially agent output END\n ");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+
+			System.out.println("Err");
+
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+
+			System.out.println("Errr 1" );
+
+			e.printStackTrace();
+		}
+		return m;
+	}
 
 	//
 	public Map<String, Literal[]> perceptsFromInstitutionLocal(String ag) {
@@ -710,6 +862,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    	
 		//	Literal[] inst = (Literal []) inst_sense.toArray(); 
 
+	    	//used arralist for variable size percepts then converting arraylist to an array as expected by the collection.
 			Literal[] inst = new Literal [s];// (inst_sense.toArray()); 
 			for(int i=0;i<s;i++)
 			{
@@ -785,6 +938,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				addPercept(ag,Literal.parseLiteral("bold("+count+")"));
 			}
 			count++;
+			//addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
+			
+			//identifying overseer and assignee at startup so agents can know who to contact
+			if(!(ag.contains("synthesizer")))
+			{
+				//temporarily setting all agents' overseer to the single synthesizer.
+				addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
+				
+				//temporarily assigning all agents to the single synthesizer
+				//addPercept("synthesizer",Literal.parseLiteral("assignee("+ag+")"));
+			}
 
 		}
 		config.append("\nRole: x y\n" +
