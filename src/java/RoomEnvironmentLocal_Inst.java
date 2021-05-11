@@ -347,6 +347,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								//Add solution to the solution set
 								instModList.add(new InstMods(atmpt,revision,problem));
 								
+								
+								
 								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 								}
 							else
@@ -371,6 +373,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								System.out.println("Changing to the existing solution");
 								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 							//	TODO:CHANGE TO THE NEW INSTITUTION, WORK THAT OUT WITH PERCEPTS
+								
+								
+								//maybe need to do below as well
+								//add a record to the changepoint list
+								//instChangePoint.put(inst_state, inst_file);
 							}
 						}
 
@@ -435,6 +442,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			inst_file = StringUtils.replaceAll(file,"\"", "");  //file
 			//inst_file = file;  //file
 			//inst_file = "rooms_v2.lp";  //file
+			
+			//add a record to the changepoint list
+			instChangePoint.put(inst_state, inst_file);
+			
 			System.out.println("New institution enabled");
 			inst_state--;
 			return true;
