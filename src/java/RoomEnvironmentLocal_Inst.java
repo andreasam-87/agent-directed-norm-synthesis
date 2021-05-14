@@ -34,6 +34,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	JsonExtractor jsonExtractor_prev;// = new JsonExtractor("rooms");
 	//JsonExtractorOrgSimple jsonExtractor = new JsonExtractorOrgSimple();
+	
+	InstitutionHandler instHandle;  //file that deals with the institutional changes
 
 	int inst_state=0; //to keep track of the institutional state at any timestep since different from env timesteps
 	String current_action =""; //keep track of the current action being executed by any agent
@@ -78,7 +80,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		inst_file = domainConf.get("originalfile").toString();
 		jsonExtractor_prev = new JsonExtractor(domainConf.get("institution").toString());
 		
-//	        institutions = new InstalModel[] { room_inst };
+		instHandle = new InstitutionHandler("rules.json");
+		//String rule_set = "R1-R31";
+		String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
+		String str =instHandle.reviseInst(rule_set);
+
+		try {
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/rules.txt"), str.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//	        institutions = new InstalModel[] { room_inst };
 //	        this.model = room_inst;
 		initialiseInstitution();
 //	        if (this.grounding == null) {
@@ -370,6 +384,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 							
+							
+							String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
+							String str =instHandle.reviseInst(rule_set);
+							/***/
+							
 							System.out.println("Revision has ended.... Completing action ......");
 							
 							if(getDecisionOracle())
@@ -398,7 +417,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							if(solution.equals(inst_file))
 							{
 								System.out.println("Solution is active");
-								addPercept(agName, Literal.parseLiteral("revisionSuccess(active)"));
+								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
 							}
 							else	
 							{
@@ -471,9 +490,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		else if (action.getFunctor().equals("changeInst")) {
 			System.out.println("Setting up new institution:");
 			String file = (action.getTerm(0)).toString();
-			inst_file = StringUtils.replaceAll(file,"\"", "");  //file
+			//inst_file = StringUtils.replaceAll(file,"\"", "");  //file
 			//inst_file = file;  //file
-			//inst_file = "rooms_v2.lp";  //file
+			inst_file = "roomsInst.lp";  //file
 			
 			//add a record to the changepoint list
 			instChangePoint.put(inst_state, inst_file);
@@ -1064,7 +1083,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 	{
 		//will need to use a collection or file that maps the issues to the already generated files - modified institution
 		
-		return "rooms_v2.lp";
+		return "roomsInst.lp";
 	}
 	
 	private boolean getDecisionOracle()

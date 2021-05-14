@@ -11,6 +11,7 @@ name(jo).
 name(jane).
 
 updateCount(0).
+count(0).
 
 !start.
 
@@ -155,7 +156,9 @@ updateCount(0).
 
 
 
-+revisionSuccess(T): true <- .print("Revision successful ");
++revisionSuccessful(T): true <- .print("Revision successful ");
+							?count(C);
+							-+count(C+1);
 							if(T==active)
 							{
 								.print("A solution exists for your problem but it is currently active so no change required");
@@ -184,8 +187,8 @@ updateCount(0).
 							{
 								 .print("T is ",T);
 							}
-							.abolish(revisionSuccess(T));
-							//-revisionSuccess(T);
+							.abolish(revisionSuccessful(_));
+							//-revisionSuccessful(_);
 						
 																				
 						!handle;
@@ -246,7 +249,7 @@ updateCount(0).
 						.abolish(handlingCur(_,_,_,_));
 						
 						//trying something
-						!do_sense;
+						//!do_sense;
 
 					}				
   					else
