@@ -52,6 +52,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	String inst_file;// = "rooms.ial"; //which institutional file we will be running
 	
+	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
+	String ruleSet2Mod="";
 	//Boolean decision = true;
 	
 	int count_inst =0; //keep track of the institutional file
@@ -80,7 +82,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		inst_file = domainConf.get("originalfile").toString();
 		jsonExtractor_prev = new JsonExtractor(domainConf.get("institution").toString());
 		
-		instHandle = new InstitutionHandler("rules.json");
+		instHandle = new InstitutionHandler("rules.json","modRulesDict.json");
 		//String rule_set = "R1-R31";
 		String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
 		String str =instHandle.reviseInst(rule_set);
@@ -206,8 +208,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//System.out.println("The action is "+current_action);
 			
 
-//			if(agName.equals("bob"))
-//				System.out.println("Bob in enter block " );
+			if(agName.equals("bob"))
+				System.out.println("Bob in enter block " );
 
 			clearPercepts(agName); //remove old percepts and add new percepts
 
@@ -385,50 +387,73 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 							
 							
-							String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
+							//String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
+							String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
 							String str =instHandle.reviseInst(rule_set);
-							/***/
+							/** the above probably shouldn't happen here, to rethink*/
 							
 							System.out.println("Revision has ended.... Completing action ......");
 							
-							if(getDecisionOracle())
+							if(str.equals("none"))
 							{
-								System.out.println("Revision approved by Oracle, can be implemented");
-								
-								//Add solution to the solution set
-								instModList.add(new InstMods(atmpt,revision,problem));
-								
-								
-								
-								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-								}
-							else
-							{
-								System.out.println("Revision not approved by Oracle, will be discarded");
+								System.out.println("No solution available currently.");
 								
 								addPercept(agName, Literal.parseLiteral("revisionFailed"));
 							}
+							else
+							{
+								if(getDecisionOracle())
+								{
+									System.out.println("Revision approved by Oracle, can be implemented");
+									
+									//Add solution to the solution set
+									instModList.add(new InstMods(atmpt,problem,rule_set,str));
+									//curInstRuleSet = rule_set;
+									ruleSet2Mod = rule_set;
+									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+									}
+								else
+								{
+									System.out.println("Revision not approved by Oracle, will be discarded");
+									
+									addPercept(agName, Literal.parseLiteral("revisionFailed"));
+								}
+							}
+
 						}
 						else
 						{
 							System.out.println("A solution exists for this problem");
 							System.out.println("Checking if the solution is currently in place");
-							System.out.println("Solution - "+solution+" active inst file - "+inst_file);
-							if(solution.equals(inst_file))
+//							System.out.println("Solution - "+solution+" active inst file - "+inst_file);
+//							if(solution.equals(inst_file))
+//							{
+//								System.out.println("Solution is active");
+//								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
+//							}
+//							else	
+//							{
+//								System.out.println("Changing to the existing solution");
+//								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+								
+							//System.out.println("Solution ruleset - "+solution+" active ruleset - "+curInstRuleSet);
+							if(solution.equals(curInstRuleSet))
 							{
 								System.out.println("Solution is active");
 								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
 							}
 							else	
 							{
-								System.out.println("Changing to the existing solution");
-								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-							//	TODO:CHANGE TO THE NEW INSTITUTION, WORK THAT OUT WITH PERCEPTS
-								
+								//	TODO:CHANGE TO THE NEW INSTITUTION, WORK THAT OUT WITH PERCEPTS
 								
 								//maybe need to do below as well
 								//add a record to the changepoint list
 								//instChangePoint.put(inst_state, inst_file);
+								
+								System.out.println("Changing to the existing solution");
+								ruleSet2Mod = solution;
+								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+						
 							}
 						}
 
@@ -490,12 +515,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		else if (action.getFunctor().equals("changeInst")) {
 			System.out.println("Setting up new institution:");
 			String file = (action.getTerm(0)).toString();
-			//inst_file = StringUtils.replaceAll(file,"\"", "");  //file
+			inst_file = StringUtils.replaceAll(file,"\"", "");  //file
 			//inst_file = file;  //file
-			inst_file = "roomsInst.lp";  //file
+			//inst_file = "roomsInst.lp";  //file
+			
+			//need to do this before or something
+			curInstRuleSet = ruleSet2Mod;
+			
 			
 			//add a record to the changepoint list
-			instChangePoint.put(inst_state, inst_file);
+			instChangePoint.put(inst_state, curInstRuleSet);
 			
 			System.out.println("New institution enabled");
 			inst_state--;
@@ -1073,7 +1102,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 			if(StringUtils.substringBefore(ac,"(").equals(StringUtils.substringBefore(act,"(")))
 			{
 				if(ins.getProblem().equals(prob))
-					return ins.getInstFile();
+					return ins.getRuleSet(); //old -> .getInstFile();
 			}
 		}
 		return ret;
@@ -1082,6 +1111,8 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 	private String reviseInstitution(String tracefile, String modesfile)
 	{
 		//will need to use a collection or file that maps the issues to the already generated files - modified institution
+		
+		//maybe do the file thing here or have t
 		
 		return "roomsInst.lp";
 	}

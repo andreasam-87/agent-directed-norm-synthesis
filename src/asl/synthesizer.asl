@@ -249,7 +249,7 @@ count(0).
 						.abolish(handlingCur(_,_,_,_));
 						
 						//trying something
-						//!do_sense;
+						!do_sense;
 
 					}				
   					else
@@ -280,8 +280,8 @@ count(0).
  
 +updateEnv: true <- .print("Updating the institution");
 				
-					//can I pass a list as a parameter
-					changeInst("rooms_v2.lp");
+					
+					changeInst("roomsInst.lp");
 					-updateEnv;
 					?updateCount(C);
 					if(C==0)
@@ -289,6 +289,7 @@ count(0).
 						?name(N);
 						addAgent(N);
 						
+						//can I pass a list as a parameter
 					//	addAgent([alice,bob,jane]);
 						.print("Adding one agent");	
 						.create_agent(N, "agent.asl");
