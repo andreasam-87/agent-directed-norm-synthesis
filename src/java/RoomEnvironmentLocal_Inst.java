@@ -196,6 +196,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	@Override
 	public boolean executeAction(String agName, Structure action) {
 
+		//clearPercepts(agName); //remove old percepts and add new percepts
+		
 		System.out.print(agName+ " ");
 		String ex = action.toString();
 		if (action.getFunctor().equals("enter")) {
@@ -259,6 +261,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		}
 		else if (action.getFunctor().equals("sense")) {
+			clearPercepts(agName); //remove old percepts and add new percepts
+			
 			String tocheck = (action.getTerm(0)).toString();
 			tocheck= tocheck.replace("\"","");
 			tocheck = "observed("+tocheck+")";
@@ -470,7 +474,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
 					}catch (Exception ex) {
-
+						ex.printStackTrace();
 					}
 				}
 			};
@@ -991,11 +995,23 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//identifying overseer and assignee at startup so agents can know who to contact
 			if(!(ag.contains("synthesizer")))
 			{
+				if(count%2==0)
+				{
 				//temporarily setting all agents' overseer to the single synthesizer.
 				addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
 				
 				//temporarily assigning all agents to the single synthesizer
 				//addPercept("synthesizer",Literal.parseLiteral("assignee("+ag+")"));
+				}
+				else
+				{
+					//temporarily setting all agents' overseer to the single synthesizer.
+					addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
+					
+					//temporarily assigning all agents to the single synthesizer
+					//addPercept("synthesizer",Literal.parseLiteral("assignee("+ag+")"));
+					}
+				}
 			}
 
 		}

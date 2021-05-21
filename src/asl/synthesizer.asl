@@ -41,9 +41,32 @@ count(0).
 										    +to_inform(Ag,ActAtmpt);
 										    .abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
 										    
+										     if(pause)
+										    {
+										    	.print("I have to wait");
+										    }
+										    else
+										    {
+										    	.print("Tell other agents to wait");
+										    	.all_names(Names);
+										    	for (.member(N,Names))
+									  			{
+									  				//.substring("a","bbacc",0): false. When the third argument is 0, 
+									  				//.substring works like a java startsWith method.
+									  				if(.substring("syn",N,0) & not my_name(Me))
+									  				{
+									  					
+									  					.send(N,tell,pause);
+									  				}
+									  				
+									  			}
+										    	
+										    }
+										    
 										    .print('Action attempted ', ActAtmpt);
 											checkState(ActAtmpt);
 										    
+										   
 										    .wait(1000);
 											.count(request(_,_,_)[source(_)],C); 
 											
@@ -63,6 +86,10 @@ count(0).
 										.
 
 							//			. 
+							
++pause[source(Ag)]: true <- .print(Ag, " asked me to wait");
+							//-pause[source(Ag)].
+							.
 
 @request_b[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : handling <- .print('Queued request for ',Ag);
@@ -70,12 +97,12 @@ count(0).
 										?handlingCur(A1,Act1,E1,Ag1);
 										room_experiment.checkSimilarRequest(ActRes, ActAtmpt,Exp,A1,Act1,E1,R1);
 										
-										.print("R1 is ", R1);
+										//.print("R1 is ", R1);
 										if(R1==1)
 										{
 											
 										
-											.perceive;
+											//.perceive;
 											.findall([X,Y,Z,Q],to_handle(X,Y,Z,Q),Lists2);  
 											.length(Lists2,Sze);
 											.count(to_handle(_,_,_,_),C); 
@@ -99,16 +126,26 @@ count(0).
 														.print("Adding this request to the official queue because it is different to what is there");
 							  							+to_handle(ActRes,ActAtmpt,Exp,Ag);
 							  							+to_inform(Ag,ActAtmpt);
+							  							+different;
 													}
 													else
 													{
 														.print("No need to add the request to the official queue, a similar request is already in the queue");
     												//	room_experiment.stripString(I2,S2);
 														+to_inform(Ag,I2);
+														+similar;
 													}
-										
+													
+													//rethink this to work with the list as it adds something to based on all the to handle stuff there 
+													//if similar to anythin in the list then add a new request, otherwise add a to_inform
 									  			}
-												
+												if(similar & different)
+												{
+													.abolish(to_handle(ActRes,ActAtmpt,Exp,Ag));
+							  						.abolish(to_inform(Ag,ActAtmpt));
+							  						-similar;
+							  						-different;
+												}
 												
 												//.nth(0,Lists2,First);
 												
@@ -235,6 +272,7 @@ count(0).
  @handle[atomic]
  +!handle: true <- .print("Handling the others");
  					//.perceive;
+ 					//.drop_event(revisionSuccessful(_));
 					.findall([A5,Ac5,E5,Aa],to_handle(A5,Ac5,E5,Aa),Reqs);  
 					.length(Reqs,Size);
 					.print("Number of to_handle beliefs found ", Size);
@@ -249,7 +287,8 @@ count(0).
 						.abolish(handlingCur(_,_,_,_));
 						
 						//trying something
-						!do_sense;
+						+sense_time;
+						//!do_sense;
 
 					}				
   					else
@@ -269,7 +308,11 @@ count(0).
 						checkState(I);
 						.
 
-
++sense_time: true <- !do_sense;
+				
+					-sense_time;
+					.
+						
 +!do_sense: true <- .print("about to try to sense the institution");
 					sense("enter(pAgent1,room1)");
 					.

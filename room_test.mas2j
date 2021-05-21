@@ -7,7 +7,7 @@ MAS room_experiment {
 
 	agents:
 		synthesizer [mindinspector="gui(cycle,html,history)"];
-//		agentArchClass SomewhatTransparentAgents.JASON.STAgArch
+		//agentArchClass room_experiment.STAgArch;
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
 		//sample_agent #2; // [mindinspector="gui(cycle,html,history)"] #2;
 		agent [mindinspector="gui(cycle,html,history)"]#6; //agentArchClass jason_logger.LoggerAgArch;
