@@ -998,19 +998,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				if(count%2==0)
 				{
 				//temporarily setting all agents' overseer to the single synthesizer.
-				addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
+				addPercept(ag,Literal.parseLiteral("overseer(synthesizer1)"));
 				
 				//temporarily assigning all agents to the single synthesizer
-				//addPercept("synthesizer",Literal.parseLiteral("assignee("+ag+")"));
+				//addPercept("synthesizer1",Literal.parseLiteral("assignee("+ag+")"));
 				}
 				else
 				{
 					//temporarily setting all agents' overseer to the single synthesizer.
-					addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
+					addPercept(ag,Literal.parseLiteral("overseer(synthesizer2)"));
 					
 					//temporarily assigning all agents to the single synthesizer
-					//addPercept("synthesizer",Literal.parseLiteral("assignee("+ag+")"));
-					}
+					//addPercept("synthesizer2",Literal.parseLiteral("assignee("+ag+")"));
+					
 				}
 			}
 
