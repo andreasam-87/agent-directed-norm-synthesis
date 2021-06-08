@@ -48,46 +48,47 @@ count(0).
 										    if(Bool==0)
 										    {
 										    	.print("I have to wait it seems");
+										    	 room_experiment.addRevisionItem(R,Ag);
 										    }
 										    else
 										    {
 										    	.concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R)
 										    	.print("R is ", R);
 										    	 room_experiment.addRevisionItem(R,Ag);
-										    	  room_experiment.checkRevisionActive(B);
-										    	  .print("Bool is ", B);
+//										    	  room_experiment.checkRevisionActive(B);
+//										    	  .print("Bool is ", B);
 										    }
 										   
 										    
-										    if(pause)
-										    {
-										    	.print("I have to wait because of pause");
-										    }
-										    else
-										    {
-										    	.print("Tell other agents to wait");
-										    	.all_names(Names);
-										    	.my_name(Me);
-										    	for (.member(N,Names))
-									  			{
-									  				//.substring("a","bbacc",0): false. When the third argument is 0, 
-									  				//.substring works like a java startsWith method.
-									  				//
-									  				if(.substring("syn",N,0) & not (Me==N))
-									  				{
-									  					.send(N,tell,pause);
-									  					
-//									  					if(not (my_name(Me)==N))
-//									  					{
-//									  						.send(N,tell,pause);
-//									  					}
-									  					
-									  				}
-									  				
-									  			}
-										    	
-										    }
-										    
+//										    if(pause)
+//										    {
+//										    	.print("I have to wait because of pause");
+//										    }
+//										    else
+//										    {
+//										    	.print("Tell other agents to wait");
+//										    	.all_names(Names);
+//										    	.my_name(Me);
+//										    	for (.member(N,Names))
+//									  			{
+//									  				//.substring("a","bbacc",0): false. When the third argument is 0, 
+//									  				//.substring works like a java startsWith method.
+//									  				//
+//									  				if(.substring("syn",N,0) & not (Me==N))
+//									  				{
+//									  					.send(N,tell,pause);
+//									  					
+////									  					if(not (my_name(Me)==N))
+////									  					{
+////									  						.send(N,tell,pause);
+////									  					}
+//									  					
+//									  				}
+//									  				
+//									  			}
+//										    	
+//										    }
+//										    
 										    .print('Action attempted ', ActAtmpt);
 											checkState(ActAtmpt);
 										    
