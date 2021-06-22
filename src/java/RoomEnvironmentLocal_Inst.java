@@ -263,12 +263,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		else if (action.getFunctor().equals("sense")) {
 			clearPercepts(agName); //remove old percepts and add new percepts
 			
+			String tempInst = inst_file;
+			
+			//inst_file = "roomsInst.lp";
 			String tocheck = (action.getTerm(0)).toString();
 			tocheck= tocheck.replace("\"","");
 			tocheck = "observed("+tocheck+")";
 			//current_action = "observed("+current_action+")";
 			//String ex = act.toString();
 
+			String inst =  (action.getTerm(1)).toString();
+			inst= inst.replace("\"","");
+			inst_file = inst;
+			
 			//clearPercepts(agName); //remove old percepts and add new percepts
 
 			//	public static final Literal check  = Literal.parseLiteral("check");
@@ -279,16 +286,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			for (Map.Entry<String, Literal[]> entry : this.senseInstitution(agName,tocheck,"capacityExceeded").entrySet())
 			{
 
-				System.out.println("Percepts from sense: ");
+				//System.out.println("Percepts from sense: ");
 				for (int i = 0; i < entry.getValue().length; i++)
 				{
 					//if(entry.getValue()[i].equals(Literal.parseLiteral(" ")))
 					addPercept(entry.getKey(), entry.getValue()[i]);
 					//addPercept(entry.getValue()[i]);
-					System.out.println("Percept: "+ entry.getValue()[i]);
+					//System.out.println("Percept: "+ entry.getValue()[i]);
 				}
 			}
-			
+			inst_file = tempInst;
 			inst_state--;
 			return true; 
 			
@@ -672,9 +679,52 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	}
 
 
+	private void Updatefile(String file, String update, String add, String remove)
+	{
+		String line = "";
+		try {
+			
+			// Editing the facts file
+			List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+	    	for (String line2 : lines) {
+
+	    		if(!remove.contentEquals("") && !(line2.contains(remove)))
+	    			line+=line2+"\n";
+	    	}
+	    	if(!add.contentEquals(""))
+	    		line+=add;
+
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
+			Files.write(Paths.get(file), line.toString().getBytes());
+		
+	
+			// updating the config file
+		//	file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc";
+//			lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+//			line="";
+//	    	for (String line2 : lines) {
+//	    		if(line2.contains("Person"))
+//	    			line+=line2+names+" \n";
+//	    		else
+//	    			line+=line2+"\n";
+//
+//	    	}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public Map<String, Literal[]> senseInstitution(String ag, String act, String avoid) {
 		Map<String, Literal[]> m = new HashMap<String, Literal[]>();
 
+		System.out.println("Inst file being used is: "+inst_file);
+		
+		Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting,rooms)\n", "capacityExceededViol");
+
+		
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"),act.getBytes());
 
@@ -782,6 +832,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		return m;
 	}
+	
+	
 
 	//
 	public Map<String, Literal[]> perceptsFromInstitutionLocal(String ag) {

@@ -12,6 +12,7 @@ name(jane).
 
 updateCount(0).
 count(0).
+synCount(0).
 
 !start.
 
@@ -41,23 +42,23 @@ count(0).
 										    +to_inform(Ag,ActAtmpt);
 										    .abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
 										    
-										    .perceive;
-										    
-										    room_experiment.checkRevisionActive(Bool);
-										     //.print("Bool is ", Bool);
-										    if(Bool==0)
-										    {
-										    	.print("I have to wait it seems");
-										    	 room_experiment.addRevisionItem(R,Ag);
-										    }
-										    else
-										    {
-										    	.concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R)
-										    	.print("R is ", R);
-										    	 room_experiment.addRevisionItem(R,Ag);
-//										    	  room_experiment.checkRevisionActive(B);
-//										    	  .print("Bool is ", B);
-										    }
+//										    .perceive;
+//										    
+//										    room_experiment.checkRevisionActive(Bool);
+//										     //.print("Bool is ", Bool);
+//										    if(Bool==0)
+//										    {
+//										    	.print("I have to wait it seems");
+//										    	 room_experiment.addRevisionItem(R,Ag);
+//										    }
+//										    else
+//										    {
+//										    	.concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R)
+//										    	.print("R is ", R);
+//										    	 room_experiment.addRevisionItem(R,Ag);
+////										    	  room_experiment.checkRevisionActive(B);
+////										    	  .print("Bool is ", B);
+//										    }
 										   
 										    
 //										    if(pause)
@@ -228,23 +229,26 @@ count(0).
 								?handlingCur(ActRes,ActAtmpt,Exp,Ag);
 								
 								.print("Action under review: ", ActAtmpt);
-								.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
+								//.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
+								.findall(W,to_inform(W,ActAtmpt),List1); 
 						
 								.length(List1,Sizer)
-								.print("I have to inform ", Sizer, " agents");	
-								
-						
-								room_experiment.getRoom(ActAtmpt,R1);	
-		
-								for (.member(Zn,List1))
-				  				{
-				  					room_experiment.getItems(Zn,2,Agn,Act);
-		
-									.send(Agn,tell,revisionActive);
-				  					.print("Inform ",Agn,", revision solution currently active");
-		
-				  				}
-				  				.abolish(to_inform(_,ActAtmpt));	
+								.print("I have to inform ", Sizer, " agents that the revision solution is currently active");	
+//								
+//						
+//								room_experiment.getRoom(ActAtmpt,R1);	
+//		
+//								for (.member(Zn,List1))
+//				  				{
+//				  					room_experiment.getItems(Zn,2,Agn,Act);
+//		
+//									.send(Agn,tell,revisionActive);
+//				  					.print("Inform ",Agn,", revision solution currently active");
+//		
+//				  				}
+//				  				.abolish(to_inform(_,ActAtmpt));	
+//				  				
+				  				.send(List1,tell,revisionActive);
 							}
 							else
 							{
@@ -260,34 +264,63 @@ count(0).
 +revisionSuccess: true <- .print("A possble revision found, inform agents of change");
 						//	.abolish(revisionSuccess);
 							-revisionSuccess;
-							.broadcast(tell,instRev);
-							.print("Removing relevant to_inform percepts");
-							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-							.print("Action under review: ", ActAtmpt);
-							.abolish(to_inform(_,ActAtmpt));	
-							+updateEnv;
+
+							.all_names(Names);
+							.my_name(Me);
+							for (.member(N,Names))
+							{
+								//.substring("a","bbacc",0): false. When the third argument is 0, 
+								//.substring works like a java startsWith method.
+								
+								if(.substring("syn",N,0) & not (Me==N))
+								{
+									.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
+
+									// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
+								}
+									  				
+							}
+							
+							
+						//	+updateEnv;
 							
 							.
 
+@seekInstChangeConsensus[atomic]
++seekInstChangeConsensus(Action,NewInst)[source(Ag)]: true <- .print(Ag, " is seeking consensus to change the institution"); 
+																.print("Using sense to see if this is an acceptable change"); 
+																+checkingFirst;
+																//suspend;
+																//+sense_time(Action,NewInst);
+																+giveResponseTo(Ag);
+																.print("about to try to sense the institution");
+																sense("enter(sample,room1)",NewInst);
+																
+																. 
+
+													
 +revisionFailed: true <- .print("No possible revisions found");
 						//.abolish(revisionFailed);
 						-revisionFailed;
 						?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-						.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
+						//.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
+						.findall(W,to_inform(W,ActAtmpt),List1); 
 						
 						.length(List1,Sizer)
-						.print("I have to inform ", Sizer, " agents");	
+						.print("I have to inform ", Sizer, " agents that there is no possible revisions");	
 								
-						
-						room_experiment.getRoom(ActAtmpt,R1);	
-		
-						for (.member(Zn,List1))
-		  				{
-		  					room_experiment.getItems(Zn,2,Agn,Act);
-							.send(Agn,tell,revisionFailed);
-		  					.print("Inform ",Agn," no possible revisions");
-
-		  				}
+//						
+//						room_experiment.getRoom(ActAtmpt,R1);	
+//		
+//						for (.member(Zn,List1))
+//		  				{
+//		  					room_experiment.getItems(Zn,2,Agn,Act);
+//							.send(Agn,tell,revisionFailed);
+//		  					.print("Inform ",Agn," no possible revisions");
+//
+//		  				}
+		  				
+		  				.send(List1,tell,revisionFailed);
 		  				.abolish(to_inform(_,ActAtmpt));							
 						!handle;
 						.
@@ -313,7 +346,7 @@ count(0).
 						.abolish(handlingCur(_,_,_,_));
 						
 						//trying something
-						+sense_time;
+						//+sense_time;
 						//!do_sense;
 
 					}				
@@ -340,12 +373,39 @@ count(0).
 					.
 						
 +!do_sense: true <- .print("about to try to sense the institution");
-					sense("enter(pAgent1,room1)");
+					sense("enter(sample,room1)");
 					.
 
++revisionAcceptable: true <- .print("I can accept the revision");
+							 ?giveResponseTo(Ag);
+							 .send(Ag,tell,instChangeConsensusGranted);
+							//resume;
+							 .
+					
++revisionUnacceptable: true <- .print("I cannot accept the revision");
+					?giveResponseTo(Ag);
+					.send(Ag,tell,instChangeConsensusNotGranted);
+					.
+					
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
 
+
++instChangeConsensusGranted: true <- .print("Permission granted");
+							
+							.broadcast(tell,instRev);
+							.print("Removing relevant to_inform percepts");
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							//.print("Action under review: ", ActAtmpt);
+							.abolish(to_inform(_,ActAtmpt));	
+							
+							+updateEnv;
+ 							.
  
+ 
++instChangeConsensusNotGranted: true <- .print("Permission not granted");
+ 							//need to do something else so rework the workflow/pipeline
+							//+updateEnv;
+ 							.						
  
 +updateEnv: true <- .print("Updating the institution");
 				
@@ -355,11 +415,21 @@ count(0).
 					?updateCount(C);
 					if(C==0)
 					{
-						?name(N);
+						
+						
+						
+						.findall(Nm,name(Nm),Names); 
+						.length(Names,Sz);
+						 room_experiment.getRandomNum(1,Sz,Rnd);
+						
+						.nth(Rnd,Names,N);
+						
+						//?name(N);
 						addAgent(N);
 						
-						//can I pass a list as a parameter
+						//can I pass a list as a parameter - YES
 					//	addAgent([alice,bob,jane]);
+					
 						.print("Adding one agent");	
 						.create_agent(N, "agent.asl");
 						
