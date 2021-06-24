@@ -39,6 +39,7 @@ synCount(0).
 											-+entered(Ti+1);
 										    
 										    +handlingCur(ActRes,ActAtmpt,Exp,Ag);
+										    .send(coordinator,tell,informCoordinatorHandlingRevision(ActRes,ActAtmpt,Exp,Ag));
 										    +to_inform(Ag,ActAtmpt);
 										    .abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
 										    
@@ -264,27 +265,56 @@ synCount(0).
 +revisionSuccess: true <- .print("A possble revision found, inform agents of change");
 						//	.abolish(revisionSuccess);
 							-revisionSuccess;
-
-							.all_names(Names);
-							.my_name(Me);
-							for (.member(N,Names))
-							{
-								//.substring("a","bbacc",0): false. When the third argument is 0, 
-								//.substring works like a java startsWith method.
-								
-								if(.substring("syn",N,0) & not (Me==N))
-								{
-									.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
-
-									// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
-								}
-									  				
-							}
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,"roomsInst.lp"));
+//							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+//
+//	
+//							.all_names(Names);
+//							.my_name(Me);
+//							for (.member(N,Names))
+//							{
+//								//.substring("a","bbacc",0): false. When the third argument is 0, 
+//								//.substring works like a java startsWith method.
+//								
+//								if(.substring("syn",N,0) & not (Me==N))
+//								{
+//									.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
+//
+//									// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
+//								}
+//									  				
+//							}
 							
 							
 						//	+updateEnv;
 							
 							.
+							
++coor_permissiongranted[source(Ag)]: true <- .print("Received permission from ",Ag ," to begin discussion");
+											
+											//?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+
+	
+											.all_names(Names);
+											.my_name(Me);
+											for (.member(N,Names))
+											{
+												//.substring("a","bbacc",0): false. When the third argument is 0, 
+												//.substring works like a java startsWith method.
+												
+												if(.substring("syn",N,0) & not (Me==N))
+												{
+													.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
+				
+													// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
+												}
+													  				
+											}
+							
+											
+											
+											. 
 
 @seekInstChangeConsensus[atomic]
 +seekInstChangeConsensus(Action,NewInst)[source(Ag)]: true <- .print(Ag, " is seeking consensus to change the institution"); 
@@ -399,6 +429,7 @@ synCount(0).
 							.abolish(to_inform(_,ActAtmpt));	
 							
 							+updateEnv;
+							.send(coordinator,tell,informCoordinatorComplete);
  							.
  
  
@@ -420,7 +451,7 @@ synCount(0).
 						
 						.findall(Nm,name(Nm),Names); 
 						.length(Names,Sz);
-						 room_experiment.getRandomNum(1,Sz,Rnd);
+						 room_experiment.getRandomNum(0,Sz-1,Rnd);
 						
 						.nth(Rnd,Names,N);
 						

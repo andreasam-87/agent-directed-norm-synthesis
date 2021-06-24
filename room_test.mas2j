@@ -6,6 +6,7 @@ MAS room_experiment {
 	//environment: RoomEnvironmentTimeStep
 
 	agents:
+		coordinator[mindinspector="gui(cycle,html,history)"];
 		synthesizer [mindinspector="gui(cycle,html,history)"] #2;
 		//agentArchClass room_experiment.STAgArch;
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
@@ -14,8 +15,10 @@ MAS room_experiment {
 //		agentArchClass  SomewhatTransparentAgents.JASON.STAgArch
 //  	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase #8;
 		sample sample_agent;
+		synthesizer_test syn_test[mindinspector="gui(cycle,html,history)"];
 		bAgent[mindinspector="gui(cycle,html,history)"]#6;
 		pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		
 	aslSourcePath:
 		"src/asl";
 }

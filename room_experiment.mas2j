@@ -6,6 +6,8 @@ MAS room_experiment {
 	//environment: RoomEnvironmentTimeStep
 
 	agents:
+		syn_test;
+		
 		pAgent;
 		bAgent;
 		synthesizer [mindinspector="gui(cycle,html,history)"];
