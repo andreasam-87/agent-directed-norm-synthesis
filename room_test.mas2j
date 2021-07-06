@@ -7,7 +7,9 @@ MAS room_experiment {
 
 	agents:
 		coordinator[mindinspector="gui(cycle,html,history)"];
+		//coordinator agentArchClass  SomewhatTransparentAgents.JASON.STAgArch;
 		synthesizer [mindinspector="gui(cycle,html,history)"] #2;
+		//synthesizer agentArchClass  SomewhatTransparentAgents.JASON.STAgArch #2;
 		//agentArchClass room_experiment.STAgArch;
 // 	    beliefBaseClass SomewhatTransparentAgents.JASON.STBelBase;
 		//sample_agent #2; // [mindinspector="gui(cycle,html,history)"] #2;
@@ -18,6 +20,7 @@ MAS room_experiment {
 		synthesizer_test syn_test[mindinspector="gui(cycle,html,history)"];
 		bAgent[mindinspector="gui(cycle,html,history)"]#6;
 		pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		
 		
 	aslSourcePath:
 		"src/asl";

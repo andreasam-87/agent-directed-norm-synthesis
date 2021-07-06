@@ -67,6 +67,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		super.init(new String[]{"1000"});
 		//super.setSleep(100);
 		
+		System.out.println("About to Run pyhton file");
+		try {
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/xhail.txt"), compileXHAIL().getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println(compileXHAIL());
+		System.out.println("Finished Running pyhton file");
+		
 		System.out.println("Parsing json file ");
 		try {
 			parseDomainConf("domain.json");
@@ -677,7 +687,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		inst_state++;
 		return true; // the action was executed with success
 	}
-
+	
+	private String compileXHAIL()
+	{
+	//	String cmd = "python3 /Users/andreasamartin/InstalStable/istable/code/instal-stable/compiler.py compile_ial test.txt";
+		String cmd = "python3 compiler.py compile_ial test.txt";
+		
+		String output;
+		try {
+			return Processes.runShellCmdRes(cmd);
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
 
 	private void Updatefile(String file, String update, String add, String remove)
 	{
