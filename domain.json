@@ -1,0 +1,12 @@
+{
+ "role": "x y",
+ "location":"room1 room2",
+ "number" : "1 2 3 4 5 6 7 8 9",
+ "originalfile" : "rooms.ial",
+ "institution": "rooms",
+ "filespath" : "/Users/andreasamartin/Documents/InstalExamples/rooms/",
+ "domainfile" : "roomsConf.idc",
+ "factfile" : "roomsFacts.iaf",
+ "queryfile" : "roomsQuery.iaq",
+ "num_syn" :  "2"
+}
