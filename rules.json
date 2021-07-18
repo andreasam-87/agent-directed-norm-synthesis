@@ -59,243 +59,159 @@
    location(L),
    inst(rooms), instant(I).",
 
-"R8": "initiated(count_type(L,R,N),rooms,exit(P,L),I) :-
+
+"R8": "initiated(perm(enter(P,L)),rooms,exit(P,L),I) :-
    occurred(exit(P,L),rooms,I),
    not occurred(viol(exit(P,L)),rooms,I),
    holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(count_type(L,R,M),rooms,_,I),
-   holdsat(role(P,R),rooms,_,I),
-   holdsat(lessone(M,N),rooms,_,I),
    person(P),
-   number(M),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R9": "initiated(pow(enter(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R10": "initiated(perm(arrive(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R11": "initiated(perm(leave(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R12": "initiated(pow(leave(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R13": "initiated(perm(exit(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R14": "initiated(in_room(P,L),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+
+"R15": "terminated(in_room(P,L),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R16": "terminated(perm(leave(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R17": "terminated(pow(leave(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R18": "terminated(perm(exit(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R19": "terminated(perm(enter(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R20": "terminated(pow(enter(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+
+"R21": "terminated(perm(arrive(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).",
+   
+"R22": "holdsat(typeCount(L,R,N),rooms,nif,I) :- N = #count { P: 
+ holdsat(in_room(P,L),rooms,_,I),
+ holdsat(role(P,R),rooms,_,I) },
    role(R),
    location(L),
    number(N),
    inst(rooms), instant(I).",
-
-"R9": "initiated(occupancy(L,X),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(occupancy(L,Y),rooms,_,I),
-   holdsat(lessone(Y,X),rooms,_,I),
-   person(P),
-   number(Y),
-   location(L),
-   number(X),
-   inst(rooms), instant(I).",
-
-"R10": "initiated(count_type(L,R,N),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(count_type(L,R,M),rooms,_,I),
-   holdsat(role(P,R),rooms,_,I),
-   holdsat(addone(M,N),rooms,_,I),
-   person(P),
-   number(M),
-   role(R),
+ 
+"R23": "holdsat(occupancy(L,N),rooms,nif,I) :- N = #count { P: 
+ holdsat(in_room(P,L),rooms,_,I) },
    location(L),
    number(N),
    inst(rooms), instant(I).",
 
-"R11": "initiated(occupancy(L,X),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(occupancy(L,Y),rooms,_,I),
-   holdsat(addone(Y,X),rooms,_,I),
-   person(P),
-   number(Y),
-   location(L),
-   number(X),
-   inst(rooms), instant(I).",
-
-"R12": "initiated(perm(enter(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R13": "initiated(pow(enter(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R14": "initiated(perm(arrive(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R15": "initiated(perm(leave(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R16": "initiated(pow(leave(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R17": "initiated(perm(exit(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R18": "initiated(in_room(P,L),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R19": "terminated(count_type(L,R,M),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(role(P,R),rooms,_,I),
-   person(P),
-   role(R),
-   location(L),
-   number(M),
-   inst(rooms), instant(I).",
-
-"R20": "terminated(occupancy(L,Y),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   number(Y),
-   inst(rooms), instant(I).",
-
-"R21": "terminated(count_type(L,R,M),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   holdsat(role(P,R),rooms,_,I),
-   person(P),
-   role(R),
-   location(L),
-   number(M),
-   inst(rooms), instant(I).",
-
-"R22": "terminated(occupancy(L,Y),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   number(Y),
-   inst(rooms), instant(I).",
-
-"R23": "terminated(in_room(P,L),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R24": "terminated(perm(leave(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R25": "terminated(pow(leave(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R26": "terminated(perm(exit(P,L)),rooms,exit(P,L),I) :-
-   occurred(exit(P,L),rooms,I),
-   not occurred(viol(exit(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R27": "terminated(perm(enter(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R28": "terminated(pow(enter(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R29": "terminated(perm(arrive(P,L)),rooms,arrive(P,L),I) :-
-   occurred(arrive(P,L),rooms,I),
-   not occurred(viol(arrive(P,L)),rooms,I),
-   holdsat(live(rooms),rooms,_create_,I),inst(rooms),
-   person(P),
-   location(L),
-   inst(rooms), instant(I).",
-
-"R30": "holdsat(potential_role_conflict(L),rooms,nif,I) :-
+"R24": "holdsat(potential_role_conflict(L),rooms,nif,I) :-
    holdsat(potential_occupant_conflict(L),rooms,_,I),
-   holdsat(in_room(A1,L),rooms,_,I),
-   holdsat(in_room(A2,L),rooms,_,I),
-   holdsat(in_room(A3,L),rooms,_,I),
-   holdsat(role(A1,x),rooms,_,I),
-   holdsat(role(A2,y),rooms,_,I),
-   holdsat(role(A3,y),rooms,_,I),
-   A1!=A2,
-   A2!=A3,
-   A1!=A3,
+   holdsat(typeCount(L,R,2),rooms,_,I),
    location(L),
    inst(rooms), instant(I).",
 
-"R31": "holdsat(potential_occupant_conflict(L),rooms,nif,I) :-
+"R25": "holdsat(potential_occupant_conflict(L),rooms,nif,I) :-
    holdsat(occupancy(L,3),rooms,_,I),
    location(L),
    inst(rooms), instant(I).",
 
-"R32": "holdsat(permExit(P,L),rooms,nif,I) :-
+"R26": "holdsat(permExit(P,L),rooms,nif,I) :-
    holdsat(in_room(P,L),rooms,_,I),
    person(P),
    location(L),
    inst(rooms), instant(I).",
 
-"R33": "holdsat(permEntry(P,L),rooms,nif,I) :-
+"R27": "holdsat(permEntry(P,L),rooms,nif,I) :-
    not
    holdsat(in_some_room(P),rooms,_,I),
    person(P),
    location(L),
    inst(rooms), instant(I).",
 
-"R34": "holdsat(in_some_room(P),rooms,nif,I) :-
+"R28": "holdsat(in_some_room(P),rooms,nif,I) :-
    holdsat(in_room(P,L),rooms,_,I),
    person(P),
    inst(rooms), instant(I).",

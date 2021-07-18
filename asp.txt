@@ -423,20 +423,22 @@ holdsat(permExit(P,L),rooms,nif,I) :-
    location(L),
    inst(rooms), instant(I).
 %
-% Translation of typeCount(L,R,N) when ['and', ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]], ['role', ['P', 'R']]]
-holdsat(typeCount(L,R,N),rooms,nif,I) :-
- N = #count {P: 
+% Translation of typeCount(L,R,N) when ['and', ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]], ['role', ['P', 'R']]] inclusive of new predicate definitions if necessary 
+
+holdsat(typeCount(L,R,N),rooms,nif,I) :- N = #count { P: 
  holdsat(in_room(P,L),rooms,_,I),
  holdsat(role(P,R),rooms,_,I) },
+   person(P),
    location(L),
    role(R),
    number(N),
    inst(rooms), instant(I).
 %
-% Translation of occupancy(L,N) when ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]]
-holdsat(occupancy(L,N),rooms,nif,I) :-
- N = #count {P: 
+% Translation of occupancy(L,N) when ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]] inclusive of new predicate definitions if necessary 
+
+holdsat(occupancy(L,N),rooms,nif,I) :- N = #count { P: 
  holdsat(in_room(P,L),rooms,_,I) },
+   person(P),
    location(L),
    number(N),
    inst(rooms), instant(I).

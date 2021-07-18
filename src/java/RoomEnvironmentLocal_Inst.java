@@ -67,16 +67,6 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		super.init(new String[]{"1000"});
 		//super.setSleep(100);
 		
-		System.out.println("About to Run pyhton file");
-		try {
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/xhail.txt"), compileXHAIL().getBytes());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//System.out.println(compileXHAIL());
-		System.out.println("Finished Running pyhton file");
-		
 		System.out.println("Parsing json file ");
 		try {
 			parseDomainConf("domain.json");
@@ -94,7 +84,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		instHandle = new InstitutionHandler("rules.json","modRulesDict.json");
 		//String rule_set = "R1-R31";
-		String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
+		String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28";
 		String str =instHandle.reviseInst(rule_set);
 
 		try {
@@ -405,6 +395,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
 							trace_count++;
 						
+							System.out.println("About to Run pyhton script to create xhail file");
+							try {
+								Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/toRevise"), compileXHAIL().getBytes());
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//System.out.println(compileXHAIL());
+							System.out.println("Finished Running pyhton script for xhail");
+							
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 							
 							
@@ -691,7 +691,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	private String compileXHAIL()
 	{
 	//	String cmd = "python3 /Users/andreasamartin/InstalStable/istable/code/instal-stable/compiler.py compile_ial test.txt";
-		String cmd = "python3 compiler.py compile_ial test.txt";
+		String cmd = "python3 compiler.py compile_ial /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt";
 		
 		String output;
 		try {
