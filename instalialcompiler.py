@@ -70,10 +70,10 @@ class InstalCompiler(object):
                           "\n%")
         
         #Previous prints needed for basic instal
-        #self.instal_print_generates(ial_ir["generates"])
-        #self.instal_print_initiates(ial_ir["initiates"])
-        #self.instal_print_terminates(ial_ir["terminates"])
-        #self.instal_print_noninertials(ial_ir["whens"])
+        self.instal_print_generates(ial_ir["generates"])
+        self.instal_print_initiates(ial_ir["initiates"])
+        self.instal_print_terminates(ial_ir["terminates"])
+        self.instal_print_noninertials(ial_ir["whens"])
         
         #New prints with try del rules
         self.print_prep_generates(ial_ir["generates"])
@@ -917,12 +917,12 @@ class InstalCompiler(object):
     # ------------------------------------------------
 
     #-------------------
-# noninertials
-#-------------------
+    # noninertials
+    #-------------------
 
-# pre-processing for noninertial rules
-#sys.stdout = prep
-#def instal_print_noninertials(self, whens: list) -> None:
+    # pre-processing for noninertial rules
+    #sys.stdout = prep
+    #def instal_print_noninertials(self, whens: list) -> None:
 
     def print_prep_noninertial(self, whens: list) -> None:
 
@@ -977,6 +977,9 @@ class InstalCompiler(object):
 
                 self.rId += 1
 
+    #------------
+    # generates
+    #------------
     def print_prep_generates(self, generates: list) -> None:
         self.instal_print("%")
         self.instal_print("% ---------------------------------------------------------------- ")
@@ -1134,8 +1137,10 @@ class InstalCompiler(object):
 
                 lit = "holdsat(live("+self.names["institution"]+"),"+self.names["institution"]+",I)"
                
-                self.prepPrintTryDel(self.rId, 3, lit, x)
-                
+                #self.prepPrintTryDel(self.rId, 3, lit, x)
+                self.prepPrintTryDel(self.rId, 3, lit, {})
+
+
                 self.bId=4
 
                 self.prepPrintTryUseForCondition(self.rId, self.bId, cond)
@@ -1188,7 +1193,8 @@ class InstalCompiler(object):
                 # extension for the head
                 head = "terminated("+self.extendedterm2string(x)+","+self.names["institution"]+",I)"
                 
-                self.prepPrintExtension(self.rId, head)
+                #self.prepPrintExtension(self.rId, head)
+                self.prepPrintException(self.rId, head)
 
                 # add the head to modehINIT,
                 modeName = 'hTERM_' + str(self.rId)
@@ -1214,7 +1220,8 @@ class InstalCompiler(object):
 
                 lit = "holdsat(live("+self.names["institution"]+"),"+self.names["institution"]+",I)"
                
-                self.prepPrintTryDel(self.rId, 3, lit, x)
+                #self.prepPrintTryDel(self.rId, 3, lit, x)
+                self.prepPrintTryDel(self.rId, 3, lit, {})
                 
                 self.bId=4
 
@@ -1252,6 +1259,10 @@ class InstalCompiler(object):
         #self.instal_print("   extension({rId},{head},(e)),".format(rId = rId, head = h))  
         #ting ting's version ^^^ 
         #what is the (e), I have to figure it out
+
+    def prepPrintException(self,rId, h):
+        self.instal_print("   exception({rId},{head}),".format(rId = rId, head = h))
+
 
 
     def prepPrintTryUseForCondition(self,rId, bId, c):
@@ -1298,8 +1309,16 @@ class InstalCompiler(object):
         
         #self.instal_print("\n")
 
-        self.instal_print("try({rId}, {bId}, {lit}) :- not del({rId}, {bId}), {lit}.\n".format(rId=rId, bId=bId, lit=lit))
+        domainStr = ""
+        for k in vars1:
+            domainStr += self.types[vars1[k]]+'('+k+'), '
+        
+        #domainStr += "inst(rooms), instant(I)"
+        domainStr += "instant(I)"
+        #domainStr = domainStr [:-2]
 
-        self.instal_print("try({rId}, {bId}, {lit}) :- del({rId}, {bId}).\n".format(rId=rId, bId=bId, lit=lit))
+        self.instal_print("try({rId}, {bId}, {lit}) :- not del({rId}, {bId}), {lit}, {dom}.\n".format(rId=rId, bId=bId, lit=lit, dom = domainStr))
+
+        self.instal_print("try({rId}, {bId}, {lit}) :- del({rId}, {bId}), {dom}.\n".format(rId=rId, bId=bId, lit=lit, dom = domainStr))
 
 
