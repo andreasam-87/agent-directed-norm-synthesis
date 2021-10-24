@@ -873,6 +873,141 @@ public class JsonExtractor {
 		//return modeh.toString()+"\n"+modeb.toString()+"\n"+examplepattern.toString();
 		//return modeh.toString()+modeb.toString()+examplepattern.toString();
 	}
+
+	public String getModesFileXhail(String file, String filter)
+	{
+		/*Function to parse a json file with instal dictionary and return a modes file as string 
+		 * This function may need to be modified to should only a specific set of fluents and events rather than all
+		 * */
+		
+		String line="";
+		String toReturn = "";
+		StringBuilder modeh=new StringBuilder();
+		StringBuilder modeb=new StringBuilder();
+		StringBuilder examplepattern=new StringBuilder();
+		
+		tempSet = new HashSet<String>();
+		 
+		try {
+			System.out.println("trying to read this file");
+			List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
+	    	for (String line2 : lines) {
+	    	//System.out.println("line read: " + line2);
+	    		line+=line2;
+	    	}
+
+			JSONObject object = new JSONObject(line);
+		
+			JSONObject niFluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("noninertial_fluents");
+			JSONObject fluents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("fluents");
+			JSONObject ievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("inevents");
+			JSONObject vievents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("vievents");
+			JSONObject exevents = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONObject("exevents");
+			
+			JSONArray initials = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initials");// .getJSONObject("initiates");
+			JSONArray initiates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("initiates");// .getJSONObject("initiates");
+			JSONArray generates = object.getJSONArray("institution_ir").getJSONObject(0).getJSONObject("contents").getJSONArray("generates");// .getJSONObject("initiates");
+			
+			
+			ArrayList <String> modesh = getModesListXhail(niFluents,'f');
+			for(String s: modesh)
+			{
+				modeh.append("#modeh holdsat("+s);
+				modeb.append("#modeb holdsat("+s);
+				modeb.append("#modeb not holdsat("+s);
+			}
+			
+			modesh = getModesListXhail(fluents,'f');
+			for(String s: modesh)
+			{
+				modeh.append("#modeh initiated("+s);
+				modeh.append("#modeh terminated("+s);
+				modeb.append("#modeb holdsat("+s);
+				modeb.append("#modeb not holdsat("+s);
+			}
+			
+			modesh = getModesListXhail(ievents,'e');
+			for(String s: modesh)
+			{
+				modeh.append("#modeh occurred("+s);
+				modeb.append("#modeb occurred("+s);
+				modeb.append("#modeb not occurred("+s);
+			}
+			
+			modesh = getModesListXhail(vievents,'e');
+			for(String s: modesh)
+			{
+				modeh.append("#modeh occurred("+s);
+				modeb.append("#modeb occurred("+s);
+				modeb.append("#modeb not occurred("+s);
+			}
+			
+			//Do I need the exogeneous or observable events 
+			modesh = getModesListXhail(exevents,'e');
+			for(String s: modesh)
+			{
+			//	Deciding to justt add them as possible body elements
+				//modeh.append("modeh(observed("+s);
+				modeb.append("#modeb observed("+s);
+				modeb.append("#modeb not observed("+s);
+			//	examplepattern.append("examplePattern((observed("+s);
+			}
+			
+//			System.out.println("Checking out the initiates and generates");
+//			getModesListFromArray(initiates,'f');
+			System.out.println("Checking out the initiallies");
+		//	getModesListFromArray(initials,'f');
+			
+			modesh = getModesListFromArrayXhail(initials,'f',"none");
+			for(String s: modesh)
+			{
+				modeh.append("#modeh initiated("+s);
+				modeh.append("#modeh terminated("+s);
+				modeb.append("#modeb holdsat("+s);
+				modeb.append("#modeb not holdsat("+s);
+			}
+			
+			toReturn = modeh.toString()+"\n"+modeb.toString()+"\n"; //+examplepattern.toString();
+			
+			if(!(filter.equals("")))
+			{
+				System.out.println("Filtering the modes file for "+filter);
+				
+				//get the items needed to do some filtering on the modes stuff
+				modesh = getModesListFromArrayXhail(initiates,'f',filter);
+				modesh = getModesListFromArrayXhail(generates,'f',filter);
+				
+				String [] s_a = tempSet.toArray(new String[0]); //converts the object array to string array
+				
+				//*alternative method for above stackoverflow
+				//String[] stringArray = Arrays.copyOf(objectArray, objectArray.length, String[].class);*./
+		
+				//Filtering each list
+				HashSet<String> set1 = filterList(modeh.toString(),s_a);
+
+				HashSet<String> set2 = filterList(modeb.toString(),s_a);
+
+				//HashSet<String> set3 = filterList(examplepattern.toString(),s_a);
+				
+				//creating string to return 
+				String write = setToString(set1)+"\n"+setToString(set2); //+"\n"+setToString(set3);
+				toReturn = write;
+			//	System.out.println("After function call");
+				printArrayContents(tempSet.toArray());
+
+			}
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("Error with json modes file");
+			e1.printStackTrace();
+		}
+		toReturn = toReturn + "<<exception>>";
+		return toReturn;
+
+	}
+
+	
 	
 	 /* Function to pull a set's items into a single string*/
 	private String setToString(HashSet<String> set)
@@ -989,6 +1124,63 @@ public class JsonExtractor {
 
 	}
 
+	private ArrayList<String> getModesListFromArrayXhail(JSONArray toext,char t, String custom)
+	{
+		ArrayList <String> retList = new ArrayList<String>();
+
+		for (int j=0; j<toext.length();j++)
+		{
+			JSONArray jArr = (JSONArray)toext.get(j);	
+			StringBuilder tmp = new StringBuilder();
+			
+			this.sbb = tmp;
+			analysisJson((Object)jArr);
+		
+			String str = sbb.toString();
+	//		System.out.println(str);
+			if(custom.equals("none"))
+			{
+				str = parseStr(str,1);
+				str = str.replaceFirst("\\(","");
+				str = str.replaceFirst("\\)","");
+				//System.out.println(str);
+				if(str.startsWith("perm"))
+				{
+					str = str.replace("P","+person");
+					str = str.replace("L","+location");
+					if(t=='e')
+					{
+						str+=",+inst,+instant).\n";
+					}else
+					{
+						str+=",+inst,+event,+instant).\n";
+					}
+					retList.add(str);
+				}
+			
+			}
+			else
+			{
+				//first check the string to see if it contains the custom filter before doing any of this
+				//otherwise move on to the next one.
+				if (str.contains(custom))
+				{
+					System.out.println("String: "+str);
+					
+					String strArr[] = StringUtils.split(str, "("); 
+					Set<String> set = getCustomFluentList(strArr);
+					tempSet.addAll(set);
+				}
+				
+			}
+
+		}
+	//	printArrayContents(tempSet.toArray());
+		return retList;
+
+	}
+
+	
 	
 	/*Function to access extract the fluents to construct a modes list
 	 * */
@@ -1035,6 +1227,38 @@ public class JsonExtractor {
 		return retList;
 	}
 	
+	private ArrayList<String> getModesListXhail(JSONObject toext,char t)
+	{
+		//should use a set rather than an arraylist here to fix duplicates
+		ArrayList <String> retList = new ArrayList<String>();
+		for (String key : toext.keySet()) 
+		{
+			String str="";
+			
+			str+=key+"(";
+			//JSONArray jArr = (JSONArray)niFluents.get(key);
+			JSONArray jArr = (JSONArray)toext.get(key);
+			for(int i=0;i<jArr.length();i++)
+	    	{
+				str+="+"+((String)jArr.get(i)).toLowerCase();
+	    		if(i!=(jArr.length()-1))
+	    		{
+	    		
+	    			str+=",";
+	    		}
+	    	}
+			if(t=='e')
+			{
+				str+="),+inst,+instant).\n";
+			}else
+			{
+				str+="),+inst,+event,+instant).\n";
+			}
+			
+			retList.add(str);
+		}
+		return retList;
+	}
 	public String getTraceFile(int stateKey, int howMuchStates,HashMap <Integer,State> stateList )
 	{
 		/*Function to access state facts and return a trace file as string 

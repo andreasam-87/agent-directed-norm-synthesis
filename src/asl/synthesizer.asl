@@ -14,6 +14,7 @@ updateCount(0).
 count(0).
 synCount(0).
 
+
 !start.
 
 
@@ -458,7 +459,7 @@ synCount(0).
 						
 						//?name(N);
 						addAgent(N);
-						
+						a
 						//can I pass a list as a parameter - YES
 					//	addAgent([alice,bob,jane]);
 					

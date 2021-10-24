@@ -38,7 +38,7 @@
 
 +informCoordinatorComplete[source(Ag)]: true <- .print(Ag," has received consensus and institution updated");
 											
-											.findall([A,Act,Inst],queue(A,Act,Inst),List); 
+											.findall([A,Act,Inst],queue(sA,Act,Inst),List); 
 											
 												//.length(Queue,L);
 												.length(List,L);

@@ -347,15 +347,6 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("revise")) {
 
-//			try {
-//				} catch (NoValueException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//
-//			if(!isRunning(action))
-//			{
-//				markAsExecuting(action);
 			
 			Runnable r = new Runnable() {
 				@Override
@@ -380,21 +371,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 							System.out.println("Revision begins.................");
 
-							String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
-
-						//	System.out.println(modes); //just printing for now
-							System.out.println("Modes file created");
 							
-							//writing to the modes file is what is required so that the ILP can access this file
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
-							
-							String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
-							
-							System.out.println("Trace file created");
-							//writing to the trace file is what is required so that the ILP can access this file
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
-							trace_count++;
-						
 							System.out.println("About to Run pyhton script to create xhail file");
 							try {
 								Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/toRevise"), compileXHAIL().getBytes());
@@ -405,9 +382,45 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//System.out.println(compileXHAIL());
 							System.out.println("Finished Running pyhton script for xhail");
 							
+							
+							String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
+							
+							String modesX = jsonExtractor_prev.getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","");
+
+						//	System.out.println(modes); //just printing for now
+							System.out.println("Modes file created");
+							
+							//writing to the modes file is what is required so that the ILP can access this file
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
+							
+							//writing to the modes file is what is required so that the ILP can access this file
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
+							
+							System.out.println("Updating modes file");
+							
+							String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X";
+							List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+							
+							String add = Files.readString(Paths.get("modesappend"), Charset.defaultCharset());
+							String content="";
+					    	for (String line : lines) {
+					    		if(line.contains("<<exception>>"))
+					    			content+=line+add+" \n";
+					    		else
+					    			content+=line+"\n";
+					    	}
+					
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modesX"), content.getBytes());
+						
+							String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
+							
+							System.out.println("Trace file created");
+							//writing to the trace file is what is required so that the ILP can access this file
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
+							trace_count++;
+
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
-							
-							
+										
 							//String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
 							String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
 							String str =instHandle.reviseInst(rule_set);

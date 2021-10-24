@@ -20,10 +20,8 @@ class InstalCompiler(object):
         self.out = ""
         self.temp = ""
         self.rId = 1
-        self.preTemp=""
         self.condLits = {}
         self.ruleDict = {}
-        self.modesList = []
 
     def print_message(self, msg):
         print(msg)
@@ -42,13 +40,6 @@ class InstalCompiler(object):
         self.vievents = self.ial_ir["vievents"]
 
         self.instal_print_all(self.ial_ir)
-
-        #print extra modes info
-        out=''
-        for line in self.modesList:
-            out+=line+"\n"
-
-        print(out, file=open("modesappend", "w"))
 
         #print(self.out,file=open('asp.txt','w')) 
         return self.out
@@ -79,10 +70,10 @@ class InstalCompiler(object):
                           "\n%")
         
         #Previous prints needed for basic instal
-        #self.instal_print_generates(ial_ir["generates"])
-        #self.instal_print_initiates(ial_ir["initiates"])
-        #self.instal_print_terminates(ial_ir["terminates"])
-        #self.instal_print_noninertials(ial_ir["whens"])
+        self.instal_print_generates(ial_ir["generates"])
+        self.instal_print_initiates(ial_ir["initiates"])
+        self.instal_print_terminates(ial_ir["terminates"])
+        self.instal_print_noninertials(ial_ir["whens"])
         
         #New prints with try del rules
         self.print_prep_generates(ial_ir["generates"])
@@ -991,18 +982,6 @@ class InstalCompiler(object):
                 self.bId=1
                 self.prepPrintTryUseForCondition(self.rId, self.bId, ante)
 
-                temp="int"+str(self.rId)+"("+str(self.rId)+")."
-                self.modesList.append(temp)
-                
-                if len(ante)==1:
-                    temp="clause"+str(self.rId)+"(1)."
-                else:
-                    temp="clause"+str(self.rId)+"(1.."+str(self.bId-1)+")."
-                self.modesList.append(temp)
-
-                temp="#modeh del($int"+str(self.rId)+",$clause"+str(self.rId)+")=3."
-                self.modesList.append(temp)
-
             #moved this increment out of the condition 18/08
             self.rId += 1
 
@@ -1052,7 +1031,7 @@ class InstalCompiler(object):
                     "% Translation of {exev} generates {inev} if {condition}\n"
                     "% Rule ID: {rId} \n"
                     "occurred({inev},{inst},I) :- try({rId}, 1, occurred({exev},{inst},I)),\n"
-                    "   try({rId}, 2, not_occurred(viol({exev}),{inst},I)),"
+                    "   try({rId}, 2, not occurred(viol({exev}),{inst},I)),"
                     .format(exev=self.extendedterm2string(inorexev),
                             inev=self.extendedterm2string(x),
                             inst=self.names["institution"],
@@ -1087,7 +1066,7 @@ class InstalCompiler(object):
                 lit = "occurred("+self.extendedterm2string(inorexev)+","+self.names["institution"]+",I)"
                 self.prepPrintTryDel(self.rId, 1, lit, inorexev)
                
-                lit = "not_occurred(viol("+self.extendedterm2string(inorexev)+"),"+self.names["institution"]+",I)"
+                lit = "not occurred(viol("+self.extendedterm2string(inorexev)+"),"+self.names["institution"]+",I)"
                 
                 self.prepPrintTryDel(self.rId, 2, lit, inorexev)
                 #self.rId =1
@@ -1096,18 +1075,6 @@ class InstalCompiler(object):
 
                 # print try-use pairs for all conditions
                 self.prepPrintTryUseForCondition(self.rId, self.bId, cond)
-
-                temp="int"+str(self.rId)+"("+str(self.rId)+")."
-                self.modesList.append(temp)
-                
-                if len(cond)==0:
-                    temp="clause"+str(self.rId)+"(1..2)."
-                else:
-                    temp="clause"+str(self.rId)+"(1.."+str(self.bId-1)+")."
-                self.modesList.append(temp)
-
-                temp="#modeh del($int"+str(self.rId)+",$clause"+str(self.rId)+")=3."
-                self.modesList.append(temp)
 
                 self.rId +=1
 
@@ -1140,7 +1107,7 @@ class InstalCompiler(object):
                 self.instal_print("% Rule ID: {rId} \n"
                     "initiated({inf},{inst},{ev},I) :-\n"
                     "   try({rId}, 1, occurred({ev},{inst},I)),\n"
-                    "   try({rId}, 2, not_occurred(viol({ev}),{inst},I)),\n"
+                    "   try({rId}, 2, not occurred(viol({ev}),{inst},I)),\n"
                     "   try({rId}, 3, holdsat(live({inst}),{inst},I)),"
                     .format(inf=self.extendedterm2string(x),
                             ev=self.term2string(inev),
@@ -1153,7 +1120,7 @@ class InstalCompiler(object):
                 self.prepPrintCondition(self.rId,bId,cond)
                 
                 # extension for the head
-                head = "initiated("+self.extendedterm2string(x)+","+self.names["institution"]+","+self.term2string(inev)+",I)"
+                head = "initiated("+self.extendedterm2string(x)+","+self.names["institution"]+",I)"
                 
                 #self.prepPrintExtension(self.rId, head)
                 self.prepPrintException(self.rId, head)
@@ -1177,7 +1144,7 @@ class InstalCompiler(object):
                 lit = "occurred("+self.term2string(inev)+","+self.names["institution"]+",I)"
                 self.prepPrintTryDel(self.rId, 1, lit, inev)
                 
-                lit = "not_occurred(viol("+self.term2string(inev)+"),"+self.names["institution"]+",I)"
+                lit = "not occurred(viol("+self.term2string(inev)+"),"+self.names["institution"]+",I)"
                 self.prepPrintTryDel(self.rId, 2, lit, inev)
 
                 lit = "holdsat(live("+self.names["institution"]+"),"+self.names["institution"]+",I)"
@@ -1190,17 +1157,6 @@ class InstalCompiler(object):
 
                 self.prepPrintTryUseForCondition(self.rId, self.bId, cond)
 
-                temp="int"+str(self.rId)+"("+str(self.rId)+")."
-                self.modesList.append(temp)
-                
-                if len(cond)==0:
-                    temp="clause"+str(self.rId)+"(1..3)."
-                else:
-                    temp="clause"+str(self.rId)+"(1.."+str(self.bId-1)+")."
-                self.modesList.append(temp)
-
-                temp="#modeh del($int"+str(self.rId)+",$clause"+str(self.rId)+")=3."
-                self.modesList.append(temp)
 
                 self.rId +=1
 
@@ -1234,7 +1190,7 @@ class InstalCompiler(object):
                 self.instal_print("% Rule ID: {rId} \n"
                     "terminated({inf},{inst},{ev},I) :-\n"
                     "   try({rId}, 1, occurred({ev},{inst},I)),\n"
-                    "   try({rId}, 2, not_occurred(viol({ev}),{inst},I)),\n"
+                    "   try({rId}, 2, not occurred(viol({ev}),{inst},I)),\n"
                     "   try({rId}, 3, holdsat(live({inst}),{inst},I)),"
                     .format(inf=self.extendedterm2string(x),
                             ev=self.term2string(inev),
@@ -1247,10 +1203,8 @@ class InstalCompiler(object):
                 self.prepPrintCondition(self.rId,bId,cond)
                 
                 # extension for the head
-                head = "terminated("+self.extendedterm2string(x)+","+self.names["institution"]+","+self.term2string(inev)+",I)"
-                #head = "initiated("+self.extendedterm2string(x)+","+self.names["institution"]+","+self.term2string(inev)+",I)"
+                head = "terminated("+self.extendedterm2string(x)+","+self.names["institution"]+",I)"
                 
-
                 #self.prepPrintExtension(self.rId, head)
                 self.prepPrintException(self.rId, head)
 
@@ -1273,7 +1227,7 @@ class InstalCompiler(object):
                 lit = "occurred("+self.term2string(inev)+","+self.names["institution"]+",I)"
                 self.prepPrintTryDel(self.rId, 1, lit, inev)
                 
-                lit = "not_occurred(viol("+self.term2string(inev)+"),"+self.names["institution"]+",I)"
+                lit = "not occurred(viol("+self.term2string(inev)+"),"+self.names["institution"]+",I)"
                 self.prepPrintTryDel(self.rId, 2, lit, inev)
 
                 lit = "holdsat(live("+self.names["institution"]+"),"+self.names["institution"]+",I)"
@@ -1285,38 +1239,12 @@ class InstalCompiler(object):
 
                 self.prepPrintTryUseForCondition(self.rId, self.bId, cond)
 
-                #generate the del clauses
-
-                #modeh del($clause,$literal)=3.
-
-                #modeh del($int1,$clause1)=3.
-
-                temp="int"+str(self.rId)+"("+str(self.rId)+")."
-                self.modesList.append(temp)
-                
-                if len(cond)==0:
-                    temp="clause"+str(self.rId)+"(1..3)."
-                else:
-                    temp="clause"+str(self.rId)+"(1.."+str(self.bId-1)+")."
-                self.modesList.append(temp)
-
-                temp="#modeh del($int"+str(self.rId)+",$clause"+str(self.rId)+")=3."
-                self.modesList.append(temp)
-                
-                #%think of how to generate these ^^^
-                #%where the trys get generated, define the int and clause 
-                #%then define the del ones too
-
-                #int1(1).
-                #clause3(1..3).
-                #clause2(1..2).
 
                 self.rId +=1
 
     def prepPrintCondition(self,rId, bId, c):
         #global condLits
         #bId+=1
-        
         if c==[]: return
         if c[0]=='and':
             #bId+=1
@@ -1325,20 +1253,15 @@ class InstalCompiler(object):
             #self.prepPrintCondition(rId,bId,c[2])
             self.prepPrintCondition(rId,bId+1,c[2])
         elif c[0]=='not':
-            ##### figure this out 
-            self.preTemp='not_'
             self.prepPrintCondition(rId,bId,c[1])
         else:
-            self.instal_print("   try({rId}, {bId}, {p}holdsat({fluent},{inst},I)),".format(
-                fluent=self.term2string(c),rId = rId, bId = self.bId,inst = self.names["institution"],p=self.preTemp))
-            #lit = self.preTemp+" holdsat("+ self.term2string(c)+","+self.names["institution"]+",I)"
-            lit = self.preTemp+"holdsat("+ self.term2string(c)+","+self.names["institution"]+",I)"
-            
+            self.instal_print("   try({rId}, {bId}, holdsat({fluent},{inst},I)),".format(
+                fluent=self.term2string(c),rId = rId, bId = self.bId,inst = self.names["institution"]))
+            lit = "holdsat("+ self.term2string(c)+","+self.names["institution"]+",I)"
             vars1 = {}
             self.collectVars(c,vars1)
             self.condLits[lit] = vars1
             self.bId+=1
-            self.preTemp=''
 
 
     def prepPrintExtension(self,rId, h):
@@ -1351,18 +1274,6 @@ class InstalCompiler(object):
 
     def prepPrintException(self,rId, h):
         self.instal_print("   not exception({rId},{head}),".format(rId = rId, head = h))
-        temp="#modeh exception($int"+str(rId)+","+h+")=1."
-        temp=temp.replace("I","+instant")
-        temp=temp.replace("L","+location")
-        temp=temp.replace("P","+person")
-        temp=temp.replace("N","+number")
-        temp=temp.replace(",rooms,",",$inst,")
-        #not exception(19,holdsat(capacityExceededViol(L),rooms,I)),
-        ##modeh exception($clause,holdsat(capacityExceededViol(+location),$inst,+instant))=1.
-
-        self.modesList.append(temp)
-        # #modeh exception($clause,holdsat(permEntry(+person,+location),$inst,+instant))=1.
-
 
 
 
@@ -1372,15 +1283,13 @@ class InstalCompiler(object):
             self.prepPrintTryUseForCondition(rId,bId,c[1])
             self.prepPrintTryUseForCondition(rId,bId+1,c[2])
         elif c[0]=='not':
-            self.preTemp='not_'
             self.prepPrintTryUseForCondition(rId,bId,c[1])
         else:
-            lit = self.preTemp+"holdsat("+ self.term2string(c)+","+self.names["institution"]+",I)"
+            lit = "holdsat("+ self.term2string(c)+","+self.names["institution"]+",I)"
             #inst = self.names["institution"]
             #self.prepPrintTryUse(rId, bId, lit, c)
             self.prepPrintTryDel(rId, self.bId, lit, c)
             self.bId+=1
-            self.preTemp=''
 
     def prepPrintTryUse(self,rId, bId, lit, ev):
         vars1 = {}
@@ -1420,8 +1329,7 @@ class InstalCompiler(object):
         domainStr += "instant(I)"
         #domainStr = domainStr [:-2]
 
-        #removing the _ from not_occurred or not_holdsat from the try predicates
-        self.instal_print("try({rId}, {bId}, {lit}) :- not del({rId}, {bId}), {litR}, {dom}.\n".format(rId=rId, bId=bId, lit=lit, dom = domainStr,litR=lit.replace("not_","not ")))
+        self.instal_print("try({rId}, {bId}, {lit}) :- not del({rId}, {bId}), {lit}, {dom}.\n".format(rId=rId, bId=bId, lit=lit, dom = domainStr))
 
         self.instal_print("try({rId}, {bId}, {lit}) :- del({rId}, {bId}), {dom}.\n".format(rId=rId, bId=bId, lit=lit, dom = domainStr))
 

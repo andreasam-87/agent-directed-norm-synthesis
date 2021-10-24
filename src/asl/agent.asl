@@ -115,8 +115,8 @@
 //					.send(synthesizer,tell,request(prob(enter), A, perm(leave)));
 //					
 //								.
-							
-+perm(idle)	: true <- .print("I left so I am chillin");
+		
+		+perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);
 						.random(Rnd);
 					//.print('random: ',Rd);
@@ -137,7 +137,7 @@
 					//	experiment5.myPrint('I left so I am chillin').
 					
 					
-		
+	
 
 +prob(enter) :  true <- ?role(P,R);
 						//.print("I cannot enter, I am role -",R);
