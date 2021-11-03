@@ -51,7 +51,8 @@
 					.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
 					?overseer(O);
 					//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
-					.send(O,tell,request(roomCapacityExceededViol, A, noViol));		
+					//.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));
+					.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));			
 					//	.print(request(roomCapacityExceededViol, A, noViol));
 					
 					//TO DO -- include the logic to have them decide to move 

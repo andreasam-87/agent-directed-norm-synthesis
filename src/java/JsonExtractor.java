@@ -1259,6 +1259,7 @@ public class JsonExtractor {
 		}
 		return retList;
 	}
+	
 	public String getTraceFile(int stateKey, int howMuchStates,HashMap <Integer,State> stateList )
 	{
 		/*Function to access state facts and return a trace file as string 
@@ -1293,6 +1294,75 @@ public class JsonExtractor {
 					ret.append(str+"\n");
 				}
 				
+			}
+			ret.append("\n\n");
+		}
+		System.out.println("Finished Retrieval");
+		return ret.toString();
+	
+	}
+	
+	public String getTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify )
+	{
+		/*Function to access state facts and return a trace file as string 
+		 * This function may need to be modified to allow changes to the fluents and events 
+		 * to properly represent/demonstrate the rule that needs to be learnt
+		 * */
+
+		System.out.print("Retrieving states: ");
+		System.out.println("To modify ///////// "+ toModify);
+		StringBuilder ret=new StringBuilder();
+		
+		int count = 0;
+		// Loop through to identify states to use
+		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
+		{
+			if(stateList.containsKey(find))
+			{
+				System.out.print(find+" ");
+				
+				String facts=getStateFactsandEvents(find,stateList);
+		
+				String [] facts_array = facts.split("\n");
+			//	System.out.println("Size of facts: "+ facts_array.length);
+				ret.append("%Timestep "+count+".\n");
+				for(String str: facts_array)
+				{
+					//StringUtils.
+					str = str.replace("initially","holdsat");
+					str = replaceLast(")",","+count+")",str);
+					
+					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
+					//probably need to remove this to a new structure to retrieve for the example file.
+					if(str.contains(toModify))
+					{
+						str = "not "+str;
+					}
+					
+					ret.append(str+"\n");
+					
+					
+				}
+				// add a new fluent if necessary
+				if(find>=stateKey)
+				{
+					String add = toAdd+",rooms,"+count+")";
+				/*	if(toAdd.contains("(")) {
+						int count = StringUtils.countMatches(reason, "(");
+						if(count>1)
+						{
+							reason = StringUtils.substringBetween(reason, "(", "))");
+							toAdd = reason+"("+room+"),rooms,"+when+")";
+						}else {
+							reason = StringUtils.substringBetween(reason, "(", ")");
+							toAdd = reason+",rooms,"+when+")";
+						}
+						
+					}*/
+					System.out.println("//////"+add);
+					ret.append(add+"\n");
+				}
+				count++;
 			}
 			ret.append("\n\n");
 		}

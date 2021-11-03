@@ -214,7 +214,7 @@ synCount(0).
 							.print("What is happening - ", D);
 							-+what(D+1);
 							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-                           revise(When,3,ActAtmpt,ActRes);
+                           revise(When,3,ActAtmpt,ActRes,Exp);
                            -eventOccurred(When);
                          // .abolish(eventOccurred(When)); //something strange happens when I abolish
                          //the previous event returns and then this part runs twice again, how and why? 
@@ -459,7 +459,7 @@ synCount(0).
 						
 						//?name(N);
 						addAgent(N);
-						a
+						//a
 						//can I pass a list as a parameter - YES
 					//	addAgent([alice,bob,jane]);
 					

@@ -359,6 +359,31 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 						String problem = (action.getTerm(3)).toString();
 						
+						//Will probably need to make this more robust but currently works for holdsat. meeting
+						String reason = (action.getTerm(4)).toString();
+						String toAdd = "";
+						String room = StringUtils.substringBetween(atmpt, "\"", "\"");
+						if(reason.contains("(")) {
+							int count = StringUtils.countMatches(reason, "(");
+							if(count>1)
+							{
+								reason = StringUtils.substringBetween(reason, "(", "))");
+								//toAdd = reason+"("+room+"),rooms,"+when+")";
+								toAdd = reason+"("+room+")";
+							}else {
+								reason = StringUtils.substringBetween(reason, "(", ")");
+								//toAdd = reason+",rooms,"+when+")";
+								toAdd = reason;
+							}
+							
+						}
+						String prob = problem+"("+room+")";
+						
+						//holdsat(pow(leave(bAgent6,room1)),rooms,3) FORMAT
+						
+
+						System.out.println("Reason for complaint "+reason+ " what to add "+toAdd);
+						
 						System.out.println("Checking if the problem has an existing solution");
 						
 						//public String checkExistingMods(String act, String prob)
@@ -414,11 +439,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 							String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
 							
+							String traceX = jsonExtractor_prev.getTraceFileXhail(when,numStates,stateList,toAdd,prob);
+							
 							System.out.println("Trace file created");
 							//writing to the trace file is what is required so that the ILP can access this file
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
+							
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+"_X.txt"), traceX.getBytes());
+							
 							trace_count++;
-
+							
+							System.out.println("Updating trace file");
+							/*
+							 * Need to work this out logically
+							 */
+							
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 										
 							//String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
