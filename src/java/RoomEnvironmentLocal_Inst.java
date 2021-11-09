@@ -449,17 +449,33 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							trace_count++;
 							
-							System.out.println("Updating trace file");
-							/*
-							 * Need to work this out logically
-							 */
+							System.out.println("Retreiving examples definitions from trace data");
+							String examples = jsonExtractor_prev.getExampleDefintions();
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/example"+trace_count+"_X.txt"), examples.getBytes());
+							
 							
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
-										
+								
+							
+							
+							/*XHAIL logic will go here after all the definitions are found
+							 * */
+							
+							String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_rev3v3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/outP_nov9.txt", "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt");
+							
+						
+
+							
+							//private void reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile)
+							
+							
 							//String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
 							String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
 							String str =instHandle.reviseInst(rule_set);
 							/** the above probably shouldn't happen here, to rethink*/
+							
+							
+							
 							
 							System.out.println("Revision has ended.... Completing action ......");
 							
@@ -1255,6 +1271,48 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		//maybe do the file thing here or have t
 		
 		return "roomsInst.lp";
+	}
+	
+	private String reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile)
+	{
+		System.out.println(("Run XHAIL to commence revision on input files...."));
+		
+		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " > "+output ;
+		
+		String processOut="";
+		try {
+			processOut = Processes.runShellCmdRes(cmd) + "\n";
+			//return Processes.runShellCmdRes(cmd);
+			
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(("XHAIL revision complete. Analyse results...."));
+		
+		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i /Users/andreasamartin/Desktop/Sharing_Virtual/rooms_testaug11.ial -d "+dictfile+" -x "+output+ " -o rooms_revised.ial";
+		try {
+			processOut += Processes.runShellCmdRes(cmd);
+			//return Processes.runShellCmdRes(cmd);
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(("Analysis complete. Updated revision file created...."));
+		/*
+		 * 
+
+#subprocess.call("python3 analyseXhail.py"+" -i /Users/andreasamartin/Documents/InstalExamples/rooms/rooms_testaug11.ial"+" -d /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt"+" -x out3"+ " -o rooms_revised.ial", shell=True)
+subprocess.call("python3 analyseXhail.py"+" -i rooms_testaug11.ial -d "+dictfile+" -x "+xhailoutfile+ " -o rooms_revised.ial", shell=True)
+
+print("Analysis complete.")
+		 * */
+		
+		
+		return processOut;
+		
 	}
 	
 	private boolean getDecisionOracle()

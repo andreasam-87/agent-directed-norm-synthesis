@@ -51,7 +51,7 @@
 					if((B mod 2)==0)
 					{
 						?overseer(O);
-						.send(O,tell,request(roomCapacityExceededViol, A, noViol));	
+						.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));	
 						
 						.print("I am not happy about this, complaining to synthesiser");
 						//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	

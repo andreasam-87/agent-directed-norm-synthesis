@@ -83,7 +83,7 @@ toenter(room2,2).
 					{
 						?overseer(O);
 						.print("I am not happy about this, complaining to synthesiser");
-						.send(O,tell,request(roomCapacityExceededViol, A, noViol));	
+						.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));	
 						
 						//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
 						+conflict;

@@ -27,6 +27,8 @@ public class JsonExtractor {
 	StringBuilder temp = new StringBuilder("");
 	Set<String> tempSet;// = new HashSet<String>();
 	
+	StringBuilder examples = new StringBuilder("");
+	
 	public JsonExtractor(String inst) {
 		this.inst = inst;
 	}
@@ -1334,12 +1336,15 @@ public class JsonExtractor {
 					
 					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
 					//probably need to remove this to a new structure to retrieve for the example file.
-					if(str.contains(toModify))
+					if(str.contains(toModify) && find>=stateKey)
 					{
 						str = "not "+str;
+						examples.append("#example "+str+".\n");
 					}
 					
 					ret.append(str+"\n");
+					
+					
 					
 					
 				}
@@ -1365,10 +1370,16 @@ public class JsonExtractor {
 				count++;
 			}
 			ret.append("\n\n");
+			examples.append("\n\n");
 		}
 		System.out.println("Finished Retrieval");
 		return ret.toString();
 	
+	}
+	
+	public String getExampleDefintions()
+	{
+		return examples.toString();
 	}
 	
 	/* Found here https://bytenota.com/java-replace-last-occurrence-of-a-string/ */
