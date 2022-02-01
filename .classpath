@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="libs/httpcore5-h2-5.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/httpcore5-reactive-5.0.2.jar"/>
 	<classpathentry kind="lib" path="libs/httpcore5-testing-5.0.2.jar"/>
+	<classpathentry kind="lib" path="libs/commons-io-2.11.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

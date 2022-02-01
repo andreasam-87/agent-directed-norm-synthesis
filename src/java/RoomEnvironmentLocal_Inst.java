@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import jason.asSyntax.NumberTerm;
 import jason.asSyntax.NumberTermImpl;
 import jason.asSyntax.Structure;
 
+import org.apache.commons.io.FileUtils;
+
 
 public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
@@ -51,6 +54,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
 	String inst_file;// = "rooms.ial"; //which institutional file we will be running
+	String files_directory;
+	String temp_files_directory;
 	
 	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
 	String ruleSet2Mod="";
@@ -81,6 +86,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		inst_file = domainConf.get("originalfile").toString();
 		jsonExtractor_prev = new JsonExtractor(domainConf.get("institution").toString());
+		
+		files_directory = domainConf.get("filespath").toString();
+		temp_files_directory = domainConf.get("tempfilespath").toString();
 		
 		instHandle = new InstitutionHandler("rules.json","modRulesDict.json");
 		//String rule_set = "R1-R31";
@@ -421,16 +429,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//writing to the modes file is what is required so that the ILP can access this file
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
 							
-							System.out.println("Updating modes file");
+							System.out.println("Updating modes file for Xhail");
 							
-							String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X";
+							String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/modesTemp";
 							List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
 							
 							String add = Files.readString(Paths.get("modesappend"), Charset.defaultCharset());
+							String add1 = Files.readString(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), Charset.defaultCharset());
 							String content="";
 					    	for (String line : lines) {
 					    		if(line.contains("<<exception>>"))
-					    			content+=line+add+" \n";
+					    			content+=add+" \n";
+					    		else if(line.contains("<<modes>>"))
+					    		{
+					    			content+=add1+" \n";
+					    		}
 					    		else
 					    			content+=line+"\n";
 					    	}
@@ -447,10 +460,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+"_X.txt"), traceX.getBytes());
 							
-							trace_count++;
+							
 							
 							System.out.println("Retreiving examples definitions from trace data");
 							String examples = jsonExtractor_prev.getExampleDefintions();
+							//System.out.println("Example definitions are : ////\\\\\\n"+examples);
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/example"+trace_count+"_X.txt"), examples.getBytes());
 							
 							
@@ -460,11 +474,25 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							/*XHAIL logic will go here after all the definitions are found
 							 * */
+							String xhail_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/out"+inst_state;
+							String revised_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/rooms_revised"+inst_state+".ial";
 							
-							String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_rev3v3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/outP_nov9.txt", "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt");
 							
+							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_rev3v3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/outP_nov22.txt", "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt");
+							
+							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_revRole.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", xhail_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt",revised_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/narX" );
+							
+							String out = reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", files_directory+"example"+trace_count+"_X.txt", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+							
+							System.out.println("----Analysis of xhail console output ----\n"+out);
 						
-
+							if(compareFiles(files_directory+inst_file,revised_output))
+							{
+								System.out.println("Files are the same, no revision necessary");
+							}
+							else {
+								System.out.println("Files are different, revision successful");
+							}
 							
 							//private void reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile)
 							
@@ -496,7 +524,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									//curInstRuleSet = rule_set;
 									ruleSet2Mod = rule_set;
 									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-									}
+								}
 								else
 								{
 									System.out.println("Revision not approved by Oracle, will be discarded");
@@ -504,6 +532,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									addPercept(agName, Literal.parseLiteral("revisionFailed"));
 								}
 							}
+							
+							trace_count++;
 
 						}
 						else
@@ -755,9 +785,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	private String compileXHAIL()
 	{
 	//	String cmd = "python3 /Users/andreasamartin/InstalStable/istable/code/instal-stable/compiler.py compile_ial test.txt";
-		String cmd = "python3 compiler.py compile_ial /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt";
+		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/compiler.py compile_ial /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt";
 		
-		String output;
+		//String output;
 		try {
 			return Processes.runShellCmdRes(cmd);
 		} catch (IOException | InterruptedException e) {
@@ -765,6 +795,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			e.printStackTrace();
 		}
 		return "";
+	}
+	
+	private boolean compareFiles(String file1_path,String file2_path) throws IOException
+	{
+		boolean comp = FileUtils.contentEquals(new File(file1_path),new File(file2_path));
+		//FileUtils.co
+	
+		return comp;
 	}
 
 	private void Updatefile(String file, String update, String add, String remove)
@@ -953,12 +991,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//what occurred this timestep
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
 			String occurred = strRet.toString();
-		//	System.out.println("\nwhat occurred "+strRet.toString());
+			//System.out.println("\nwhat occurred "+strRet.toString());
 			
 			
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
 			String observed = strRet.toString();
-			//	System.out.println("\nwhat occurred "+strRet.toString());
+			//System.out.println("\nwhat is observed "+strRet.toString());
 
 			//get the new facts sorted and saved to file for next run
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",0);
@@ -987,7 +1025,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			boolean entered = false;
 			for (String var : percepts)
 			{
-				//System.out.println(var);
+				//System.out.println("PERCEPTS - "+var);
 				if(var.contains("capacityExceeded"))
 				{
 					viol=true; //indicates a violation of the
@@ -995,6 +1033,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 				if (var.contains(ag) && !var.matches("(.*)"+ag+"[0-9]+(.*)"))
 				{
+					//System.out.println("PERCEPTS - "+var);
 					//populates the percepts with the agent name to be sent to the agent
 					inst_sensors[c] = Literal.parseLiteral(var);
 					inst_sense.add(Literal.parseLiteral(var));
@@ -1042,6 +1081,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//could be problematic given array size, maybe use an array list then turn it into an arrray. 
 //			if (!(var.contains("in_room")) && current_action.contains("enter"))
 //				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+			//System.out.println("What is happening /// "+entered);
 			if (!entered && current_action.contains("enter"))
 			{
 				inst_sense.add(Literal.parseLiteral("prob(enter)"));
@@ -1110,22 +1150,37 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	protected void initialiseInstitution() {
 		System.out.println(("Initialising institution..."));
 		StringBuilder config = new StringBuilder();
+		StringBuilder includes = new StringBuilder();
+		
 		ArrayList<String> facts = new ArrayList<String>();
 		int count=0;
 		config.append("Person: ");
 		strRet.append("\n");
+		
+		includes.append("\nlocation(room1).\nlocation(room2).\n"+
+				"holdsat(max(room1,2),rooms,0).\n" +
+				"holdsat(max(room2,1),rooms,0).\n");
+		
+		
 		for (String ag : getNamesAgents()) {
 			config.append(ag + " ");
+			includes.append("person("+ag + ").\n");
 			if(count%2==0)
 			{
 				//facts.add("initially(role("+ag+", x), rooms)");
 				strRet.append("initially(role("+ag+", x), rooms)\n");
+
+				includes.append("holdsat(role("+ag+",x),rooms,0).\n");
+				
 				addPercept(ag,Literal.parseLiteral("role(x)"));
 				addPercept(ag,Literal.parseLiteral("bold("+count+")"));
 			}else
 			{
 				//facts.add("initially(role("+ag+", y), rooms)");
 				strRet.append("initially(role("+ag+", y), rooms)\n");
+				
+				includes.append("holdsat(role("+ag+",y),rooms,0).\n");
+				
 				addPercept(ag,Literal.parseLiteral("role(y)"));
 				addPercept(ag,Literal.parseLiteral("bold("+count+")"));
 			}
@@ -1201,6 +1256,22 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), config.toString().getBytes());
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+			
+			
+			String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/narTemp";
+			List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+			
+			String content="";
+	    	
+			for (String line : lines) {
+	    		if(line.contains("<<include>>"))
+	    			content+=includes.toString()+" \n";
+	    		else
+	    			content+=line+"\n";
+	    	}
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), content.getBytes());
+			
+
 			//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes(),StandardOpenOption.APPEND);
 
 			//	System..pause();
@@ -1273,11 +1344,18 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		return "roomsInst.lp";
 	}
 	
-	private String reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile)
+	private String reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile, String revise, String narrativefile)
 	{
+		/*
+		 * reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_revRole.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", xhail_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt",revised_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/narX" );
+							
+		  reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+							
+		 */
+		
 		System.out.println(("Run XHAIL to commence revision on input files...."));
 		
-		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " > "+output ;
+		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " "+narrativefile+ " > "+output ;
 		
 		String processOut="";
 		try {
@@ -1291,7 +1369,9 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		
 		System.out.println(("XHAIL revision complete. Analyse results...."));
 		
-		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i /Users/andreasamartin/Desktop/Sharing_Virtual/rooms_testaug11.ial -d "+dictfile+" -x "+output+ " -o rooms_revised.ial";
+		//cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i  /Users/andreasamartin/Desktop/Sharing_Virtual/rooms_testaug11.ial -d "+dictfile+" -x "+output+ " -o " + revise;
+		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i rooms.ial -d "+dictfile+" -x "+output+ " -o " + revise;
+				
 		try {
 			processOut += Processes.runShellCmdRes(cmd);
 			//return Processes.runShellCmdRes(cmd);
@@ -1363,8 +1443,16 @@ print("Analysis complete.")
 					StringBuilder sbb = new StringBuilder("");
 					String str = jsonExtractor_prev.extract(ob.get(i),sbb).toString();
 					str = jsonExtractor_prev.parseStr(str,flag);
+					
+					//System.out.println("before: "+str+"\n");
 					str = str.replaceFirst("\\(","");
-					str =str+")";
+					
+					if(str.chars().filter(ch -> ch == '(').count() > str.chars().filter(ch -> ch == ')').count() )
+					{
+						str =str+")";
+					}
+					
+					//System.out.println("after: "+str+"\n");
 					strRet.append(str+"\n");
 
 					//System.out.println(request+": "+jsonExtractor_prev.parseStr(str,flag)+"\n");

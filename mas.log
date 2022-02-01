@@ -1,110 +1,144 @@
 [sample] hello world. I am the basic agent
-[synthesizer1] hello world.
 [synthesizer_test] hello world.
 [coordinator] hello world. I am the coordinator
 [synthesizer2] hello world.
+[synthesizer1] hello world.
 [synthesizer_test] I am waiting a couple of seconds
-[agent3] hello world.
-[agent1] hello world.
-[bAgent5] hello world.
-[bAgent2] hello world.
-[agent6] hello world.
 [agent2] hello world.
-[bAgent4] hello world.
-[pAgent1] hello world.
-[bAgent1] hello world.
-[agent5] hello world.
-[pAgent2] hello world.
-[agent4] hello world.
-[bAgent3] hello world.
+[agent3] hello world.
+[bAgent2] hello world.
 [bAgent6] hello world.
+[bAgent4] hello world.
+[bAgent3] hello world.
+[bAgent5] hello world.
+[bAgent1] hello world.
+[pAgent2] hello world.
+[agent1] hello world.
+[pAgent1] hello world.
+[agent4] hello world.
+[agent6] hello world.
+[agent5] hello world.
+[bAgent5] you can enter
 [agent3] you can enter
 [agent2] you can enter
-[agent6] you can enter
-[bAgent2] you can enter
-[agent3] I tried to enter
-[agent1] you can enter
 [bAgent4] you can enter
-[bAgent5] you can enter
-[agent5] you can enter
 [agent4] you can enter
-[bAgent3] you can enter
-[bAgent6] you can enter
+[agent1] you can enter
 [bAgent1] you can enter
-[pAgent2] you can enter
+[agent6] you can enter
+[bAgent6] you can enter
+[bAgent2] you can enter
+[bAgent3] you can enter
 [pAgent1] you can enter
-[agent2] I tried to enter
+[pAgent2] you can enter
+[agent5] you can enter
 [bAgent5] I tried to enter
+[agent2] I tried to enter
+[bAgent4] I tried to enter
+[bAgent6] I tried to enter
+[agent3] I tried to enter
 [bAgent2] I tried to enter
 [agent1] I tried to enter
-[agent5] I tried to enter
-[bAgent4] I tried to enter
 [agent4] I tried to enter
 [agent6] I tried to enter
-[bAgent3] I tried to enter
-[bAgent6] I tried to enter
 [bAgent1] I tried to enter
-[pAgent2] I tried to enter
+[bAgent3] I tried to enter
 [pAgent1] I tried to enter
-[pAgent1] I still need to enter 2 rooms
+[pAgent2] I tried to enter
+[agent5] I tried to enter
 [pAgent2] I still need to enter 2 rooms
+[pAgent1] I still need to enter 2 rooms
 [synthesizer_test] Messaging the coordinator
 [coordinator] synthesizer_test has commenced handling a revision task
-[agent3] I am in room2 and my role is y  I will exit when ready
-[bAgent4] I am in room1 and my role is ', R, '  I will exit when ready
-[bAgent2] I am in room1 and my role is ', R, '  I will exit when ready
-[agent2] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[bAgent2] Decided to leave, leaving now
-[bAgent4] Decided to remain in room for now
-[synthesizer2] Request received from agent2 will handle
-[synthesizer_test] Signalling complete
-[agent3] Decided to remain in room for now
-[agent4] I am in room1 and my role is x  I will exit when ready
-[pAgent1] I will be in room1 for 3 timesteps.
 [pAgent2] I will be in room1 for 3 timesteps.
-[coordinator] synthesizer2 has commenced handling a revision task
-[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
-[pAgent1] I am in room1 and my role is y  I will exit when ready
+[bAgent5] I am in room2 and my role is ', R, '  I will exit when ready
+[agent3] I am in room2 and my role is y  I will exit when ready
+[bAgent4] I am in room2 and my role is ', R, '  I will exit when ready
+[bAgent1] I am in room2 and my role is ', R, '  I will exit when ready
+[agent5] I am in room2 and my role is y  I will exit when ready
+[agent1] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[agent4] I am in room2 and my role is x  I will exit when ready
 [pAgent2] I am in room1 and my role is x  I will exit when ready
-[bAgent5] I am in Room room2 and my role is y but it is full, I may need to leave the room
-[agent5] I am in Room room1 and my role is y but it is full, I may need to leave the room
-[agent1] I am in Room room2 and my role is y but it is full, I may need to leave the room
-[bAgent3] I am in Room room2 and my role is y but it is full, I may need to leave the room
+[bAgent6] I am in room1 and my role is ', R, '  I will exit when ready
+[agent2] I am in room1 and my role is x  I will exit when ready
+[bAgent2] I am in Room room2 and my role is x but it is full, I may need to leave the room
 [agent6] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[bAgent6] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[synthesizer2] Action attempted enter(agent2,"room1")
-[agent4] Decided to leave, leaving now
-[bAgent3] I am not happy about this, but I am staying in the room
-[bAgent5] I am not happy about this, but I am staying in the room
-[bAgent2] I left so I am chillin
+[bAgent1] Decided to leave, leaving now
+[bAgent3] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[agent3] Decided to leave, leaving now
+[synthesizer2] Request received from agent6 will handle
 [synthesizer1] Request received from agent1 will handle
-[bAgent1] Decided to remain in room for now
-[bAgent6] I am not happy about this, complaining to synthesiser
-[bAgent6] Decided to leave, leaving now
+[bAgent4] Decided to leave, leaving now
+[bAgent5] Decided to leave, leaving now
+[agent4] Decided to remain in room for now
+[pAgent1] I will be in room1 for 3 timesteps.
+[bAgent6] Decided to remain in room for now
+[bAgent2] I am not happy about this, complaining to synthesiser
+[agent5] Decided to leave, leaving now
+[agent2] Decided to leave, leaving now
+[bAgent3] I am not happy about this, but I am staying in the room
+[pAgent1] I am in room1 and my role is y  I will exit when ready
 [coordinator] synthesizer1 has commenced handling a revision task
-[agent4] I left so I am chillin
-[synthesizer1] Action attempted enter(agent1,"room2")
+[bAgent2] Decided to leave, leaving now
+[coordinator] synthesizer2 has commenced handling a revision task
+[bAgent1] I left so I am chillin
+[synthesizer1] Action attempted enter(agent1,"room1")
+[synthesizer_test] Signalling complete
+[synthesizer2] Action attempted enter(agent6,"room1")
 [coordinator] Received a coordinator permission request for revision consensus
+[bAgent4] I left so I am chillin
+[agent5] I left so I am chillin
+[agent3] I left so I am chillin
+[agent2] I left so I am chillin
+[bAgent1] I tried to enter
+[bAgent5] I left so I am chillin
 [synthesizer_test] Received permission from coordinator to begin discussion
-[bAgent2] I tried to enter
 [synthesizer_test] Done!!!!
 [coordinator] synthesizer_test has received consensus and institution updated
-[synthesizer2] Checking out other requests
-[synthesizer2] Queued request for agent6
-[synthesizer2] Need to inform this agent agent6
-[synthesizer2] Removed request from list
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Queued request for bAgent6
-[synthesizer1] Only 1 request to handle and currently handling
 [pAgent2] Decided to leave, leaving now
-[agent4] I tried to enter
-[synthesizer1] Queued request for agent5
-[bAgent2] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I left so I am chillin
-[pAgent2] I left so I am chillin
+[synthesizer1] Checking out other requests
+[synthesizer2] Only 1 request to handle and currently handling
+[synthesizer1] Attempting to revise norms
+[synthesizer2] Queued request for bAgent2
+[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
+[synthesizer1] What is happening - 0
+[bAgent1] Decided to leave, leaving now
 [synthesizer2] Size: 0, Count: 0
-[synthesizer1] Size: 0, Count: 0
-[bAgent2] I am not happy about this, complaining to synthesiser
 [synthesizer2] Adding a request to the official queue
-[synthesizer1] Adding a request to the official queue
-[bAgent2] Decided to leave, leaving now
+[agent2] I tried to enter
+[pAgent2] I left so I am chillin
+[bAgent4] I tried to enter
+[bAgent1] I left so I am chillin
+[agent5] I tried to enter
+[pAgent1] Decided to leave, leaving now
+[agent3] I tried to enter
+[bAgent5] I tried to enter
+[synthesizer2] Removed request from list
+[synthesizer2] Attempting to revise norms
+[synthesizer2] What is happening - 0
+[pAgent2] I tried to enter
+[pAgent1] I left so I am chillin
+[bAgent1] I tried to enter
+[bAgent4] I am in room1 and my role is ', R, '  I will exit when ready
+[agent2] I am in room2 and my role is x  I will exit when ready
+[agent5] I am in room1 and my role is y  I will exit when ready
+[bAgent5] I am in room1 and my role is ', R, '  I will exit when ready
+[agent3] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[pAgent2] I still need to enter 1 rooms
+[synthesizer1] Queued request for agent3
+[agent2] Decided to remain in room for now
+[bAgent4] Decided to remain in room for now
+[agent5] Decided to remain in room for now
+[bAgent5] Decided to leave, leaving now
+[synthesizer1] Need to inform this agent agent3
+[synthesizer1] Removed request from list
+[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
+[bAgent1] Decided to leave, leaving now
+[bAgent5] I left so I am chillin
+[pAgent1] I tried to enter
+[bAgent1] I left so I am chillin
+[pAgent2] I will be in room2 for 2 timesteps.
+[pAgent2] I am in Room room2 and my role is x but it is full, I may need to leave the room
+[pAgent1] I still need to enter 1 rooms
+[pAgent2] I am not happy about this, complaining to synthesiser
+[synthesizer2] Queued request for pAgent2

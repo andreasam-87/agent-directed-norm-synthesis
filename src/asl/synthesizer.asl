@@ -1,8 +1,6 @@
 // Agent supervisor in project experiment5
 
 /* Initial beliefs and rules */
-
-/* Initial goals */
 entered(0).
 what(0).
 name(bob).
@@ -13,6 +11,9 @@ name(jane).
 updateCount(0).
 count(0).
 synCount(0).
+
+/* Initial goals */
+
 
 
 !start.

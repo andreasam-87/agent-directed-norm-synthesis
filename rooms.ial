@@ -101,7 +101,8 @@ capacityExceeded(L) initiates capacityExceededViol(L);
 %I suggest instead (maybe use arithmetic operations from ASP rather than having to define smallerOrNotEqualTo(X,Y);)
 %capacityExceeded(Location) when occupancy(L,X), max(L,Y), not smallerOrNotEqualTo(X,Y);
 
-
+%room conflict issue defined here when the occupancy is 2 and there is 1 of eahc role here
+room_conflict(L) when occupancy(L,2), typeCount(L,R,1);
 
 
 

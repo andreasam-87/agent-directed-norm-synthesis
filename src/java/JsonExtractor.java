@@ -213,15 +213,10 @@ public class JsonExtractor {
 	    }
 	 
 	/*public void loopThroughJson(Object input) throws JSONException {
-
 	    if (input instanceof JSONObject) {
-
 	        Iterator<?> keys = ((JSONObject) input).keys();
-
 	        while (keys.hasNext()) {
-
 	            String key = (String) keys.next();
-
 	            if (!(((JSONObject) input).get(key) instanceof JSONArray))
 	                if (((JSONObject) input).get(key) instanceof JSONObject) {
 	                    loopThroughJson(((JSONObject) input).get(key));
@@ -231,14 +226,12 @@ public class JsonExtractor {
 	                loopThroughJson(new JSONArray(((JSONObject) input).get(key).toString()));
 	        }
 	    }
-
 	    if (input instanceof JSONArray) {
 	        for (int i = 0; i < ((JSONArray) input).length(); i++) {
 	            JSONObject a = ((JSONArray) input).getJSONObject(i);
 	            loopThroughJson(a);
 	        }
 	    }
-
 	}*/
 	
 	
@@ -1004,7 +997,8 @@ public class JsonExtractor {
 			System.out.println("Error with json modes file");
 			e1.printStackTrace();
 		}
-		toReturn = toReturn + "<<exception>>";
+		//not needed since already in the template file
+		//toReturn = toReturn + "<<exception>>";
 		return toReturn;
 
 	}
@@ -1157,6 +1151,7 @@ public class JsonExtractor {
 					{
 						str+=",+inst,+event,+instant).\n";
 					}
+					//str+=",+inst,+instant).\n";
 					retList.add(str);
 				}
 			
@@ -1249,15 +1244,24 @@ public class JsonExtractor {
 	    			str+=",";
 	    		}
 	    	}
-			if(t=='e')
+			/*if(t=='e')
 			{
 				str+="),+inst,+instant).\n";
 			}else
 			{
 				str+="),+inst,+event,+instant).\n";
+			}*/
+			int count = StringUtils.countMatches(str,"number");
+			if(count==2)
+			{
+				str = replaceLast("number","number2",str);
 			}
 			
-			retList.add(str);
+			str+="),+inst,+instant).\n";
+			if(!str.contains("revise"))
+			{
+				retList.add(str);	
+			}
 		}
 		return retList;
 	}
@@ -1341,8 +1345,15 @@ public class JsonExtractor {
 						str = "not "+str;
 						examples.append("#example "+str+".\n");
 					}
+					else
+					{
+						if(!str.contains("revise"))
+						{
+							ret.append(str+".\n");	
+						}
+						//ret.append(str+"\n");
+					}
 					
-					ret.append(str+"\n");
 					
 					
 					
@@ -1365,7 +1376,7 @@ public class JsonExtractor {
 						
 					}*/
 					System.out.println("//////"+add);
-					ret.append(add+"\n");
+					ret.append(add+".\n");
 				}
 				count++;
 			}

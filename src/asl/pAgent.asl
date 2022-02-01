@@ -186,7 +186,7 @@ toenter(room2,2).
 					//	experiment5.myPrint('I left so I am chillin').
 							
 
-+prob(enter) :  true <- ?role(R);
++prob(enter) :  true <- ?role(Nm,R);
 						//.print("I cannot enter, I am role -",R);
 						?current_action(A);
 						//experiment5.myPrint('I cannot enter, I am role - ',R, ' I was trying to ',A);
