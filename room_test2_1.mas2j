@@ -1,0 +1,23 @@
+MAS room_experiment {
+
+	infrastructure: Centralised
+
+	environment: RoomEnvironmentLocal_Inst
+	//environment: RoomEnvironmentTimeStep
+
+	agents:
+		coordinator[mindinspector="gui(cycle,html,history)"];
+		//coordinator agentArchClass  SomewhatTransparentAgents.JASON.STAgArch;
+		synthesizer [mindinspector="gui(cycle,html,history)"]#2;
+		
+		agent [mindinspector="gui(cycle,html,history)"]#2; 
+
+		//sample sample_agent;
+		
+		bAgent[mindinspector="gui(cycle,html,history)"]#2;
+		pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		
+		
+	aslSourcePath:
+		"src/asl";
+}

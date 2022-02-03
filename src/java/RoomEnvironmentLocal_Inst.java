@@ -56,6 +56,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	String inst_file;// = "rooms.ial"; //which institutional file we will be running
 	String files_directory;
 	String temp_files_directory;
+	String mas2jfile;
 	
 	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
 	String ruleSet2Mod="";
@@ -89,6 +90,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		files_directory = domainConf.get("filespath").toString();
 		temp_files_directory = domainConf.get("tempfilespath").toString();
+		mas2jfile = domainConf.get("mas2jfile").toString();
 		
 		instHandle = new InstitutionHandler("rules.json","modRulesDict.json");
 		//String rule_set = "R1-R31";
@@ -413,13 +415,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								e.printStackTrace();
 							}
 							//System.out.println(compileXHAIL());
-							System.out.println("Finished Running pyhton script for xhail");
+							System.out.println("Finished Running pyhton script to create xhail asp file");
 							
 							
 							String modes = jsonExtractor_prev.getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
 							
-							String modesX = jsonExtractor_prev.getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","");
+							//String modesX = jsonExtractor_prev.getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","");
+							String modesX = jsonExtractor_prev.getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
 
+							modesX = modesX + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
+									"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
+															
 						//	System.out.println(modes); //just printing for now
 							System.out.println("Modes file created");
 							
@@ -468,6 +474,15 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/example"+trace_count+"_X.txt"), examples.getBytes());
 							
 							
+							System.out.println("Updating narrative file");
+							int narCount = jsonExtractor_prev.getTraceCount();
+							String narUpdate = "final("+narCount+").\n";
+							try {
+							    Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), narUpdate.getBytes(), StandardOpenOption.APPEND);
+							}catch (IOException e) {
+							    //exception handling left as an exercise for the reader
+							}
+							
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 								
 							
@@ -481,8 +496,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_rev3v3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/outP_nov22.txt", "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt");
 							
 							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_revRole.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", xhail_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt",revised_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/narX" );
-							
+
+							System.out.println("Started Running python XHAIL Revision process");
 							String out = reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", files_directory+"example"+trace_count+"_X.txt", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+
+							System.out.println("Finished Running python XHAIL Revision process");
+							trace_count++;
 							
 							System.out.println("----Analysis of xhail console output ----\n"+out);
 						
@@ -533,7 +552,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								}
 							}
 							
-							trace_count++;
+							//something strange happening here
+							//trace_count++;
 
 						}
 						else
@@ -1127,7 +1147,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	public List<String> getNamesAgents() {
 		List<String> names = new ArrayList<String>();
 		try {
-			jason.mas2j.MAS2JProject project = new jason.mas2j.MAS2JProject().parse("room_test.mas2j");
+			jason.mas2j.MAS2JProject project = new jason.mas2j.MAS2JProject().parse(mas2jfile);
 
 			for (jason.mas2j.AgentParameters ap : project.getAgents()) {
 				String agName = ap.name;
@@ -1347,6 +1367,8 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 	private String reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile, String revise, String narrativefile)
 	{
 		/*
+		 * String out = reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", files_directory+"example"+trace_count+"_X.txt", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+							
 		 * reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_revRole.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", xhail_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt",revised_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/narX" );
 							
 		  reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
@@ -1370,7 +1392,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		System.out.println(("XHAIL revision complete. Analyse results...."));
 		
 		//cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i  /Users/andreasamartin/Desktop/Sharing_Virtual/rooms_testaug11.ial -d "+dictfile+" -x "+output+ " -o " + revise;
-		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i rooms.ial -d "+dictfile+" -x "+output+ " -o " + revise;
+		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i "+inst_file + " -d "+dictfile+" -x "+output+ " -o " + revise;
 				
 		try {
 			processOut += Processes.runShellCmdRes(cmd);

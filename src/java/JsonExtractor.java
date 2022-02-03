@@ -21,7 +21,7 @@ public class JsonExtractor {
 
 	//private static final Class<? extends Object>  = null;
 	StringBuilder sbb = new StringBuilder("");
-	int check =0,pass=0,first=0;
+	int check =0,pass=0,first=0,traceCount=0;
 	String inst;
 	
 	StringBuilder temp = new StringBuilder("");
@@ -1144,14 +1144,14 @@ public class JsonExtractor {
 				{
 					str = str.replace("P","+person");
 					str = str.replace("L","+location");
-					if(t=='e')
+					/*if(t=='e')
 					{
 						str+=",+inst,+instant).\n";
 					}else
 					{
 						str+=",+inst,+event,+instant).\n";
-					}
-					//str+=",+inst,+instant).\n";
+					}*/
+					str+=",+inst,+instant).\n";
 					retList.add(str);
 				}
 			
@@ -1258,7 +1258,7 @@ public class JsonExtractor {
 			}
 			
 			str+="),+inst,+instant).\n";
-			if(!str.contains("revise"))
+			if(!str.contains("revise") || !str.contains("_create_"))
 			{
 				retList.add(str);	
 			}
@@ -1319,6 +1319,7 @@ public class JsonExtractor {
 		System.out.println("To modify ///////// "+ toModify);
 		StringBuilder ret=new StringBuilder();
 		
+		traceCount = 0;
 		int count = 0;
 		// Loop through to identify states to use
 		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
@@ -1340,17 +1341,37 @@ public class JsonExtractor {
 					
 					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
 					//probably need to remove this to a new structure to retrieve for the example file.
-					if(str.contains(toModify) && find>=stateKey)
+					
+					//if(str.contains(toModify.substring(, endIndex))) 
+					//substringBefore("This is my string", " "));
+					
+					String forExamplesList =StringUtils.substringBefore(toModify, "(");
+					
+					if(str.contains(forExamplesList))
 					{
-						str = "not "+str;
-						examples.append("#example "+str+".\n");
+						if(str.contains(toModify) && find>=stateKey)
+						{
+							str = "not "+str;
+							examples.append("#example "+str+".\n");
+						}
+						else {
+							examples.append("#example "+str+".\n");
+						}
 					}
 					else
 					{
 						if(!str.contains("revise"))
 						{
-							ret.append(str+".\n");	
+							if(!str.contains("_create_"))
+							{
+								ret.append(str+".\n");	
+							}
+							
 						}
+						/*if(!str.contains("revise") || !str.contains("_create_"))
+						{
+							ret.append(str+".\n");	
+						}*/
 						//ret.append(str+"\n");
 					}
 					
@@ -1379,6 +1400,7 @@ public class JsonExtractor {
 					ret.append(add+".\n");
 				}
 				count++;
+				traceCount++;
 			}
 			ret.append("\n\n");
 			examples.append("\n\n");
@@ -1388,6 +1410,10 @@ public class JsonExtractor {
 	
 	}
 	
+	public int getTraceCount()
+	{
+		return traceCount;
+	}
 	public String getExampleDefintions()
 	{
 		return examples.toString();
