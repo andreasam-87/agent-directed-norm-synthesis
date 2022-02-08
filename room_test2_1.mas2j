@@ -12,7 +12,8 @@ MAS room_experiment {
 		
 		agent [mindinspector="gui(cycle,html,history)"]#2; 
 
-		//sample sample_agent;
+		//
+		sample sample_agent;
 		
 		bAgent[mindinspector="gui(cycle,html,history)"]#2;
 		pAgent[mindinspector="gui(cycle,html,history)"] #2;

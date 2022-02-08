@@ -357,6 +357,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("revise")) {
 
+			/*Agent ID in the file names */
 			
 			Runnable r = new Runnable() {
 				@Override
@@ -398,6 +399,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 						//public String checkExistingMods(String act, String prob)
 						String solution = checkExistingMods(atmpt,problem);
+						String solutionFile = checkExistingModsLive(atmpt,problem);
 						if(solution.equals("none"))
 						{
 							System.out.println("A solution does not currently exists for this action and problem");
@@ -408,8 +410,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 							
 							System.out.println("About to Run pyhton script to create xhail file");
+							
+							/*
+							 * File set up
+							 * 
+							 */
+							String r_path = files_directory+"toRevise"+agName;
+							String m_path = files_directory+"modesX"+agName;
+							String e_path = files_directory+"example"+trace_count+"_X"+agName;
+							String t_path = files_directory+"trace"+trace_count+"_X"+agName;
+							String n_path = files_directory+"narX"+agName;
+							
 							try {
-								Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/toRevise"), compileXHAIL().getBytes());
+								//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/toRevise"), compileXHAIL().getBytes());
+								Files.write(Paths.get(r_path), compileXHAIL().getBytes());
+								
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -433,7 +448,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
 							
 							//writing to the modes file is what is required so that the ILP can access this file
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
+							
 							
 							System.out.println("Updating modes file for Xhail");
 							
@@ -454,38 +471,53 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					    			content+=line+"\n";
 					    	}
 					
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modesX"), content.getBytes());
-						
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modesX"), content.getBytes());
+							Files.write(Paths.get(m_path), content.getBytes());
+							
 							String trace = jsonExtractor_prev.getTraceFile(when,numStates,stateList);
 							
 							String traceX = jsonExtractor_prev.getTraceFileXhail(when,numStates,stateList,toAdd,prob);
+							
+							//Getting this earlier
+
+							int narCount = jsonExtractor_prev.getTraceCount();
+							String narUpdate = "final("+narCount+").\n";
 							
 							System.out.println("Trace file created");
 							//writing to the trace file is what is required so that the ILP can access this file
 							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
 							
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+"_X.txt"), traceX.getBytes());
+							Files.write(Paths.get(t_path), traceX.getBytes());
 							
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+"_X.txt"), traceX.getBytes());
 							
 							
 							System.out.println("Retreiving examples definitions from trace data");
 							String examples = jsonExtractor_prev.getExampleDefintions();
 							//System.out.println("Example definitions are : ////\\\\\\n"+examples);
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/example"+trace_count+"_X.txt"), examples.getBytes());
+							
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/example"+trace_count+"_X.txt"), examples.getBytes());
+							Files.write(Paths.get(e_path), examples.getBytes());
 							
 							
 							System.out.println("Updating narrative file");
-							int narCount = jsonExtractor_prev.getTraceCount();
-							String narUpdate = "final("+narCount+").\n";
+							//TRYING TO MOVE THIS
+							//int narCount = jsonExtractor_prev.getTraceCount();
+							//String narUpdate = "final("+narCount+").\n";
+							String fileContents = Files.readString(Paths.get(files_directory+"narX"), Charset.defaultCharset());
+							fileContents = fileContents+"\n"+narUpdate;
 							try {
-							    Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), narUpdate.getBytes(), StandardOpenOption.APPEND);
+							    //Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), narUpdate.getBytes(), StandardOpenOption.APPEND);
+								//System.out.println("Nar file:\n"+fileContents);
+								Files.write(Paths.get(n_path),fileContents.getBytes());
 							}catch (IOException e) {
 							    //exception handling left as an exercise for the reader
 							}
 							
+							
 							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 								
-							
+							trace_count++;
 							
 							/*XHAIL logic will go here after all the definitions are found
 							 * */
@@ -498,13 +530,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_revRole.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", xhail_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt",revised_output, "/Users/andreasamartin/Documents/InstalExamples/rooms/narX" );
 
 							System.out.println("Started Running python XHAIL Revision process");
-							String out = reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", files_directory+"example"+trace_count+"_X.txt", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+							//String out = reviseInstitutionXHAIL(files_directory+"trace"+trace_count+"_X.txt", files_directory+"modesX", files_directory+"example"+trace_count+"_X.txt", files_directory+"toRevise",temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,files_directory+"narX");
+							String out = reviseInstitutionXHAIL(t_path, m_path, e_path, r_path,temp_files_directory+"instalPrelude3.lp", xhail_output, files_directory+"outDict.txt",revised_output,n_path);
 
+							
 							System.out.println("Finished Running python XHAIL Revision process");
-							trace_count++;
+							//trace_count++;
 							
 							System.out.println("----Analysis of xhail console output ----\n"+out);
 						
+							//CAN THIS BE CHECKED FIRST
 							if(compareFiles(files_directory+inst_file,revised_output))
 							{
 								System.out.println("Files are the same, no revision necessary");
@@ -526,6 +561,38 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							System.out.println("Revision has ended.... Completing action ......");
 							
+							//For now, check the existance of the file to ensure the revision works
+							if(new File(r_path).exists())
+							{
+								//Revision is successful, otherwise not
+								
+								if(getDecisionOracle())
+								{
+									//XHAIL version
+									instModList.add(new InstMods(atmpt,revised_output,problem));
+									
+									System.out.println("Revision approved by Oracle, can be implemented");
+									
+									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+									
+									
+								}
+								else
+								{
+									System.out.println("Revision not approved by Oracle, will be discarded");
+									
+									addPercept(agName, Literal.parseLiteral("revisionFailed"));
+								}
+							}
+							else
+							{
+								//Revision is unsuccessful, no solution
+								System.out.println("No solution available currently.");
+								
+								addPercept(agName, Literal.parseLiteral("revisionFailed"));
+							}
+							
+							/*
 							if(str.equals("none"))
 							{
 								System.out.println("No solution available currently.");
@@ -542,7 +609,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									instModList.add(new InstMods(atmpt,problem,rule_set,str));
 									//curInstRuleSet = rule_set;
 									ruleSet2Mod = rule_set;
+									
 									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+									
+									//XHAIL version
+									instModList.add(new InstMods(atmpt,revised_output,problem));
 								}
 								else
 								{
@@ -550,7 +621,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									
 									addPercept(agName, Literal.parseLiteral("revisionFailed"));
 								}
-							}
+							}*/
 							
 							//something strange happening here
 							//trace_count++;
@@ -1350,6 +1421,21 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 			{
 				if(ins.getProblem().equals(prob))
 					return ins.getRuleSet(); //old -> .getInstFile();
+			}
+		}
+		return ret;
+	}
+	
+	private String checkExistingModsLive(String act, String prob)
+	{
+		String ret="none";
+		for(InstMods ins: instModList)
+		{
+			String ac = ins.getAction();
+			if(StringUtils.substringBefore(ac,"(").equals(StringUtils.substringBefore(act,"(")))
+			{
+				if(ins.getProblem().equals(prob))
+					return ins.getInstFile();
 			}
 		}
 		return ret;

@@ -1314,19 +1314,24 @@ public class JsonExtractor {
 		 * This function may need to be modified to allow changes to the fluents and events 
 		 * to properly represent/demonstrate the rule that needs to be learnt
 		 * */
-
+		
+		examples.setLength(0);
+		HashSet<String> examp = new HashSet();
 		System.out.print("Retrieving states: ");
 		System.out.println("To modify ///////// "+ toModify);
 		StringBuilder ret=new StringBuilder();
 		
 		traceCount = 0;
 		int count = 0;
+		
+		String forExamplesList =StringUtils.substringBefore(toModify, "(");
+		
 		// Loop through to identify states to use
 		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
 		{
 			if(stateList.containsKey(find))
 			{
-				System.out.print(find+" ");
+				//System.out.print(find+" ");
 				
 				String facts=getStateFactsandEvents(find,stateList);
 		
@@ -1345,17 +1350,20 @@ public class JsonExtractor {
 					//if(str.contains(toModify.substring(, endIndex))) 
 					//substringBefore("This is my string", " "));
 					
-					String forExamplesList =StringUtils.substringBefore(toModify, "(");
+					
 					
 					if(str.contains(forExamplesList))
 					{
+						//System.out.print("Contains capacaity exceeded - "+str);
 						if(str.contains(toModify) && find>=stateKey)
 						{
 							str = "not "+str;
 							examples.append("#example "+str+".\n");
+							examp.add("#example "+str+".\n");
 						}
 						else {
 							examples.append("#example "+str+".\n");
+							examp.add("#example "+str+".\n");
 						}
 					}
 					else
@@ -1404,16 +1412,22 @@ public class JsonExtractor {
 			}
 			ret.append("\n\n");
 			examples.append("\n\n");
+			examp.add("\n");
 		}
+		examples.append("%%%For 1st agent");
 		System.out.println("Finished Retrieval");
+		//System.out.println("Examples are : \n"+examples.toString());
+
+		//System.out.println("Examples from hashset are also : \n"+examp.toString());
 		return ret.toString();
 	
 	}
 	
 	public int getTraceCount()
 	{
-		return traceCount;
+		return traceCount-1;
 	}
+	
 	public String getExampleDefintions()
 	{
 		return examples.toString();
