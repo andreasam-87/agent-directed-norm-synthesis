@@ -60,6 +60,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
 	String ruleSet2Mod="";
+	String instFile2Mod="";
 	//Boolean decision = true;
 	
 	int count_inst =0; //keep track of the institutional file
@@ -397,6 +398,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 						System.out.println("Checking if the problem has an existing solution");
 						
+						String revised_file_path = "";
+						
 						//public String checkExistingMods(String act, String prob)
 						String solution = checkExistingMods(atmpt,problem);
 						String solutionFile = checkExistingModsLive(atmpt,problem);
@@ -415,11 +418,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							 * File set up
 							 * 
 							 */
-							String r_path = files_directory+"toRevise"+agName;
-							String m_path = files_directory+"modesX"+agName;
-							String e_path = files_directory+"example"+trace_count+"_X"+agName;
-							String t_path = files_directory+"trace"+trace_count+"_X"+agName;
-							String n_path = files_directory+"narX"+agName;
+							String r_path = files_directory+"toRevise_"+agName;
+							String m_path = files_directory+"modesX_"+agName;
+							String e_path = files_directory+"example"+trace_count+"_X_"+agName;
+							String t_path = files_directory+"trace"+trace_count+"_X_"+agName;
+							String n_path = files_directory+"narX_"+agName;
 							
 							try {
 								//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/toRevise"), compileXHAIL().getBytes());
@@ -521,9 +524,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							/*XHAIL logic will go here after all the definitions are found
 							 * */
-							String xhail_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/out"+inst_state;
-							String revised_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/rooms_revised"+inst_state+".ial";
+							//String xhail_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/out"+inst_state;
+							//String revised_output = "/Users/andreasamartin/Desktop/Sharing_Virtual/rooms_revised"+inst_state+".ial";
+							String xhail_output = files_directory+"out_"+agName+"_"+inst_state;
+							String revised_output = files_directory+"rooms_revised_"+agName+"_"+inst_state+".ial";
 							
+							revised_file_path = "rooms_revised"+inst_state+".ial";
 							
 							//String out = reviseInstitutionXHAIL("/Users/andreasamartin/Desktop/Sharing_Virtual/trace31", "/Users/andreasamartin/Desktop/Sharing_Virtual/modes", "/Users/andreasamartin/Desktop/Sharing_Virtual/nar312.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/asp_rev3v3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/instalPrelude3.lp", "/Users/andreasamartin/Desktop/Sharing_Virtual/outP_nov22.txt", "/Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt");
 							
@@ -643,6 +649,20 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 								
 							//System.out.println("Solution ruleset - "+solution+" active ruleset - "+curInstRuleSet);
+							
+							//CAN THIS BE CHECKED FIRST
+							if(compareFiles(files_directory+inst_file,files_directory+revised_file_path))
+							{
+								System.out.println("Solution is active");
+								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
+							}
+							else {
+								System.out.println("Changing to the existing solution");
+								instFile2Mod = revised_file_path;
+								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+							}
+							/*
+							
 							if(solution.equals(curInstRuleSet))
 							{
 								System.out.println("Solution is active");
@@ -660,7 +680,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								ruleSet2Mod = solution;
 								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 						
-							}
+							}*/
 						}
 
 //						if(decision)
@@ -723,7 +743,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String file = (action.getTerm(0)).toString();
 			inst_file = StringUtils.replaceAll(file,"\"", "");  //file
 			//inst_file = file;  //file
-			//inst_file = "roomsInst.lp";  //file
+			
+			//Make the change
+			//inst_file = instFile2Mod;  //file
 			
 			//need to do this before or something
 			curInstRuleSet = ruleSet2Mod;
@@ -1478,7 +1500,7 @@ Number: 0 1 2 3 4 5 6 7 8 9 */
 		System.out.println(("XHAIL revision complete. Analyse results...."));
 		
 		//cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i  /Users/andreasamartin/Desktop/Sharing_Virtual/rooms_testaug11.ial -d "+dictfile+" -x "+output+ " -o " + revise;
-		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i "+inst_file + " -d "+dictfile+" -x "+output+ " -o " + revise;
+		cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/analyseXhail.py"+" -i "+(files_directory+inst_file) + " -d "+dictfile+" -x "+output+ " -o " + revise;
 				
 		try {
 			processOut += Processes.runShellCmdRes(cmd);

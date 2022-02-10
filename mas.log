@@ -1,146 +1,128 @@
 [sample] hello world. I am the basic agent
 [coordinator] hello world. I am the coordinator
-[synthesizer1] hello world.
 [synthesizer2] hello world.
-[bAgent2] hello world.
-[agent1] hello world.
+[synthesizer1] hello world.
+[agent3] hello world.
 [agent2] hello world.
-[pAgent1] hello world.
-[pAgent2] hello world.
 [bAgent1] hello world.
-[agent1] you can enter
+[pAgent2] hello world.
+[bAgent2] hello world.
+[pAgent1] hello world.
+[agent1] hello world.
+[bAgent1] you can enter
+[agent3] you can enter
 [bAgent2] you can enter
 [agent2] you can enter
-[pAgent1] you can enter
-[bAgent1] you can enter
-[pAgent2] you can enter
-[agent1] I tried to enter
 [bAgent1] I tried to enter
+[pAgent1] you can enter
+[pAgent2] you can enter
+[agent1] you can enter
+[agent3] I tried to enter
 [agent2] I tried to enter
 [bAgent2] I tried to enter
-[pAgent1] I tried to enter
 [pAgent2] I tried to enter
-[pAgent1] I still need to enter 2 rooms
+[pAgent1] I tried to enter
+[agent1] I tried to enter
 [pAgent2] I still need to enter 2 rooms
-[bAgent2] I am in room1 and my role is ', R, '  I will exit when ready
-[agent1] I am in Room room1 and my role is y but it is full, I may need to leave the room
-[bAgent2] Decided to remain in room for now
-[synthesizer1] Request received from agent1 will handle
-[coordinator] synthesizer1 has commenced handling a revision task
-[synthesizer1] Action attempted enter(agent1,"room1")
+[pAgent1] I still need to enter 2 rooms
 [pAgent2] I will be in room1 for 3 timesteps.
 [pAgent1] I will be in room1 for 3 timesteps.
-[agent2] I am in room2 and my role is x  I will exit when ready
-[bAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[pAgent2] I am in Room room1 and my role is y but it is full, I may need to leave the room
-[pAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[pAgent2] I am not happy about this, but I am staying in the room
-[agent2] Decided to remain in room for now
-[bAgent1] I am not happy about this, complaining to synthesiser
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Request received from bAgent1 will handle
+[bAgent2] I am in room2 and my role is ', R, '  I will exit when ready
+[bAgent1] I am in room2 and my role is ', R, '  I will exit when ready
+[pAgent2] I am in room1 and my role is x  I will exit when ready
+[agent1] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[agent3] I am in room2 and my role is y  I will exit when ready
+[agent2] I am in Room room1 and my role is x but it is full, I may need to leave the room
+[pAgent1] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[synthesizer1] Request received from agent1 will handle
+[pAgent1] I am not happy about this, but I am staying in the room
 [bAgent1] Decided to leave, leaving now
+[synthesizer2] Request received from agent2 will handle
+[agent3] Decided to leave, leaving now
+[bAgent2] Decided to remain in room for now
+[coordinator] synthesizer1 has commenced handling a revision task
 [coordinator] synthesizer2 has commenced handling a revision task
+[synthesizer1] Action attempted enter(agent1,"room1")
+[synthesizer2] Action attempted enter(agent2,"room1")
+[bAgent1] I left so I am chillin
+[agent3] I left so I am chillin
+[pAgent2] Decided to leave, leaving now
 [synthesizer1] Checking out other requests
-[pAgent1] Decided to leave, leaving now
+[synthesizer2] Checking out other requests
+[synthesizer2] Attempting to revise norms
 [synthesizer1] Attempting to revise norms
-[synthesizer1] What is happening - 0
-[synthesizer2] Action attempted enter(bAgent1,"room1")
-[pAgent1] I left so I am chillin
-[synthesizer2] Only 1 request to handle and currently handling
-[pAgent2] Decided to leave, leaving now
-[synthesizer2] Queued request for pAgent1
-[synthesizer2] Size: 0, Count: 0
-[synthesizer2] Adding a request to the official queue
-[synthesizer2] Removed request from list
-[synthesizer2] Attempting to revise norms
-[pAgent2] I left so I am chillin
 [synthesizer2] What is happening - 0
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 2 rooms
-[pAgent2] I tried to enter
-[pAgent1] I will be in room1 for 3 timesteps.
-[pAgent2] I still need to enter 1 rooms
-[pAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[pAgent2] I will be in room2 for 2 timesteps.
-[pAgent2] I am in room2 and my role is y  I will exit when ready
-[synthesizer2] Size: 1, Count: 1
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[pAgent1] I left so I am chillin
-[synthesizer2] Removed request from list
-[pAgent2] Decided to leave, leaving now
-[synthesizer2] A possble revision found, inform agents of change
-[coordinator] Received a coordinator permission request for revision consensus
-[synthesizer2] Received permission from coordinator to begin discussion
-[pAgent2] I left so I am chillin
-[synthesizer1] synthesizer2 is seeking consensus to change the institution
-[synthesizer1] Using sense to see if this is an acceptable change
-[synthesizer1] about to try to sense the institution
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 2 rooms
-[pAgent2] I tried to enter
-[pAgent1] I will be in room1 for 3 timesteps.
-[pAgent2] I still need to enter 0 rooms
-[pAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[pAgent2] I am finished, I can leave the building now
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 1, Count: 1
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer1] A possble revision found, inform agents of change
-[pAgent1] I left so I am chillin
-[synthesizer1] I can accept the revision
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[coordinator] Received a coordinator permission request for revision consensus
-[coordinator] Added to queue
-[synthesizer2] Removed request from list
-[synthesizer2] Permission granted
-[bAgent2] The institution has changed, message reveived from synthesizer2
-[bAgent1] The institution has changed, message reveived from synthesizer2
-[agent2] The institution has changed, message reveived from synthesizer2
-[agent1] The institution has changed, message reveived from synthesizer2
-[pAgent2] The institution has changed, message reveived from synthesizer2
-[pAgent1] The institution has changed, message reveived from synthesizer2
-[synthesizer2] Removing relevant to_inform percepts
-[synthesizer2] Updating the institution
-[synthesizer2] Adding one agent
-[jo] The mindinspector argument does not parse as a predicate! null --  (see Jason FAQ) -- error: java.lang.NullPointerException
-[jo] hello world.
-[jo] you can enter
-[jo] I tried to enter
+[synthesizer1] What is happening - 0
 [bAgent1] I tried to enter
-[pAgent1] I tried to enter
-[synthesizer2] Handling the others
-[pAgent1] I still need to enter 2 rooms
-[synthesizer2] Number of to_handle beliefs found 1
-[synthesizer2] Count: 1
-[synthesizer2] Preparing to handle the first item in the list
-[jo] I am in room1 and my role is y  I will exit when ready
-[jo] Decided to remain in room for now
-[synthesizer2] handling next request
-[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
-[bAgent1] Decided to remain in room for now
-[coordinator] synthesizer2 has received consensus and institution updated
-[synthesizer2] Attempting to revise norms
-[pAgent1] I tried to enter
-[synthesizer2] What is happening - 1
-[pAgent1] I still need to enter 2 rooms
-[pAgent1] I will be in room1 for 3 timesteps.
-[pAgent1] I am in room1 and my role is x  I will exit when ready
-[pAgent1] I will be in room1 for 3 timesteps.
+[pAgent2] I left so I am chillin
+[agent3] I tried to enter
 [pAgent1] Decided to leave, leaving now
+[pAgent2] I tried to enter
 [pAgent1] I left so I am chillin
+[bAgent1] I am in room2 and my role is ', R, '  I will exit when ready
+[agent3] I am in room2 and my role is y  I will exit when ready
+[pAgent2] I still need to enter 1 rooms
+[bAgent1] Decided to remain in room for now
+[agent3] Decided to remain in room for now
+[pAgent2] I will be in room2 for 2 timesteps.
+[pAgent2] I am in room2 and my role is x  I will exit when ready
+[pAgent2] Decided to leave, leaving now
+[pAgent2] I left so I am chillin
 [pAgent1] I tried to enter
 [pAgent1] I still need to enter 1 rooms
 [pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in room2 and my role is x  I will exit when ready
+[pAgent1] I am in room2 and my role is y  I will exit when ready
+[pAgent2] I tried to enter
+[pAgent2] I still need to enter 0 rooms
+[pAgent2] I am finished, I can leave the building now
 [pAgent1] Decided to leave, leaving now
+[synthesizer1] A possble revision found, inform agents of change
+[synthesizer2] Could not finish intention: intention 39: 
+    +eventOccurred(0)[source(percept)] <- ... revise(When,3,ActAtmpt,ActRes,Exp); -eventOccurred(When) / {When=0, D=0, Ag=agent2, ActRes=capacityExceededViol, _303=0, Exp=noViol(holdsat(meeting)), ActAtmpt=enter(agent2,"room1")}
+	Trigger: +eventOccurred(0)[code(revise(0,3,enter(agent2,"room1"),capacityExceededViol,noViol(holdsat(meeting)))),code_line(219),code_src("synthesizer.asl"),error(action_failed),error_msg(""),source(percept)]
 [pAgent1] I left so I am chillin
+[coordinator] Received a coordinator permission request for revision consensus
+[synthesizer1] Received permission from coordinator to begin discussion
+[synthesizer2] synthesizer1 is seeking consensus to change the institution
+[synthesizer2] Using sense to see if this is an acceptable change
+[synthesizer2] about to try to sense the institution
+[synthesizer2] I can accept the revision
+[synthesizer1] Permission granted
+[bAgent1] The institution has changed, message reveived from synthesizer1
+[agent2] The institution has changed, message reveived from synthesizer1
+[pAgent2] The institution has changed, message reveived from synthesizer1
+[pAgent1] The institution has changed, message reveived from synthesizer1
+[bAgent2] The institution has changed, message reveived from synthesizer1
+[agent3] The institution has changed, message reveived from synthesizer1
+[synthesizer1] Removing relevant to_inform percepts
+[agent1] The institution has changed, message reveived from synthesizer1
+[synthesizer1] Updating the institution
 [pAgent1] I tried to enter
 [pAgent1] I still need to enter 0 rooms
 [pAgent1] I am finished, I can leave the building now
+[synthesizer1] Adding one agent
+[alice] The mindinspector argument does not parse as a predicate! null --  (see Jason FAQ) -- error: java.lang.NullPointerException
+[alice] hello world.
+[alice] you can enter
+[alice] I tried to enter
+[synthesizer1] Handling the others
+[synthesizer1] Number of to_handle beliefs found 0
+[synthesizer1] Count: 0
+[synthesizer1] No events to handle
+[coordinator] synthesizer1 has received consensus and institution updated
+[alice] I am in room2 and my role is y  I will exit when ready
+[alice] Decided to leave, leaving now
+[alice] I left so I am chillin
+[alice] I tried to enter
+[alice] I am in room2 and my role is y  I will exit when ready
+[alice] Decided to leave, leaving now
+[alice] I left so I am chillin
+[alice] I tried to enter
+[alice] I am in room1 and my role is y  I will exit when ready
+[alice] Decided to leave, leaving now
+[alice] I left so I am chillin
+[alice] I tried to enter
+[alice] I am in room1 and my role is y  I will exit when ready
+[alice] Decided to leave, leaving now
+[alice] I left so I am chillin
+[alice] I tried to enter
