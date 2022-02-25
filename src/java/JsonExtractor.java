@@ -27,10 +27,14 @@ public class JsonExtractor {
 	StringBuilder temp = new StringBuilder("");
 	Set<String> tempSet;// = new HashSet<String>();
 	
-	StringBuilder examples = new StringBuilder("");
+	//StringBuilder examples = new StringBuilder("");
 	
 	public JsonExtractor(String inst) {
 		this.inst = inst;
+	}
+	
+	public JsonExtractor() {
+		this.inst = "rooms";
 	}
 	
 	protected String extractDeeper(JSONArray ext)
@@ -1308,23 +1312,25 @@ public class JsonExtractor {
 	
 	}
 	
-	public String getTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify )
+	public ArrayList<Object> getTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify )
 	{
 		/*Function to access state facts and return a trace file as string 
 		 * This function may need to be modified to allow changes to the fluents and events 
 		 * to properly represent/demonstrate the rule that needs to be learnt
 		 * */
 		
-		examples.setLength(0);
+		StringBuilder examples = new StringBuilder(); //examples.setLength(0);
 		HashSet<String> examp = new HashSet();
 		System.out.print("Retrieving states: ");
-		System.out.println("To modify ///////// "+ toModify);
+		toModify = toModify.trim();
+		System.out.println("To modify /////////"+ toModify+"/////////// ");
 		StringBuilder ret=new StringBuilder();
 		
-		traceCount = 0;
+		int traceCount = 0;
 		int count = 0;
 		
-		String forExamplesList =StringUtils.substringBefore(toModify, "(");
+		final String forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
+		System.out.println("To modify 2 /////////"+ forExamplesList+"/////////// ");
 		
 		// Loop through to identify states to use
 		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
@@ -1351,7 +1357,7 @@ public class JsonExtractor {
 					//substringBefore("This is my string", " "));
 					
 					
-					
+				//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
 					if(str.contains(forExamplesList))
 					{
 						//System.out.print("Contains capacaity exceeded - "+str);
@@ -1372,19 +1378,23 @@ public class JsonExtractor {
 						{
 							if(!str.contains("_create_"))
 							{
-								ret.append(str+".\n");	
+								if(str.length()>0)
+								{
+									ret.append(str+".\n");	
+								}
+								
 							}
 							
 						}
 						/*if(!str.contains("revise") || !str.contains("_create_"))
 						{
 							ret.append(str+".\n");	
-						}*/
-						//ret.append(str+"\n");
+						}
+						//ret.append(str+"\n");*/
 					}
 					
 					
-					
+				//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
 					
 					
 				}
@@ -1419,11 +1429,55 @@ public class JsonExtractor {
 		//System.out.println("Examples are : \n"+examples.toString());
 
 		//System.out.println("Examples from hashset are also : \n"+examp.toString());
-		return ret.toString();
+		//return ret.toString();
 	
+		ArrayList<Object> response = new ArrayList<Object>();
+		response.add(ret);
+		response.add(traceCount - 1);
+		response.add(examples);
+		return response;
 	}
 	
-	public int getTraceCount()
+	public String modifyFact(String fact, String examples, String mod, int find, int stateKey)
+	{
+		String modifiedFact = "";
+		String eFile = "";
+		
+		if(fact.contains(examples))
+		{
+			//System.out.print("Contains capacaity exceeded - "+str);
+			if(fact.contains(mod) && find>=stateKey)
+			{
+				fact = "not "+fact;
+				eFile = eFile + "#example "+fact+".\n";
+			}
+			else {
+				eFile = eFile + "#example "+fact+".\n";
+			}
+		}
+		else
+		{
+			if(!fact.contains("revise"))
+			{
+				if(!fact.contains("_create_"))
+				{
+					modifiedFact=fact+".\n";	
+				}
+				
+			}
+			
+		}
+		try {
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/examplesTest"), eFile.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return modifiedFact;
+	}
+	
+	/*public int getTraceCount()
 	{
 		return traceCount-1;
 	}
@@ -1431,7 +1485,7 @@ public class JsonExtractor {
 	public String getExampleDefintions()
 	{
 		return examples.toString();
-	}
+	}*/
 	
 	/* Found here https://bytenota.com/java-replace-last-occurrence-of-a-string/ */
 	 public static String replaceLast(String find, String replace, String string) 
