@@ -294,7 +294,7 @@ synCount(0).
 						//	+updateEnv;
 							
 							.
-							
+													
 +coor_permissiongranted[source(Ag)]: true <- .print("Received permission from ",Ag ," to begin discussion");
 											
 											//?handlingCur(ActRes,ActAtmpt,Exp,Ag);
@@ -410,6 +410,7 @@ synCount(0).
 					sense("enter(sample,room1)");
 					.
 
+
 +revisionAcceptable: true <- .print("I can accept the revision");
 							 ?giveResponseTo(Ag);
 							 .send(Ag,tell,instChangeConsensusGranted);
@@ -423,6 +424,12 @@ synCount(0).
 					
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
 
+
+
+//need to count and ensure all the permission is received, or max required permission given	
+
++instChangeConsensusRequest(Granted): .print("Permission granted").
++instChangeConsensusRequest(NotGranted): .print("Permission not granted").
 
 +instChangeConsensusGranted: true <- .print("Permission granted");
 							

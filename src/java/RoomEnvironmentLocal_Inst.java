@@ -408,10 +408,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						String revised_file_path = "";
 						
 						//public String checkExistingMods(String act, String prob)
-						String solution = checkExistingMods(atmpt,problem);
+						//String solution = checkExistingMods(atmpt,problem);
 						String solutionFile = checkExistingModsLive(atmpt,problem);
 						//if(solution.equals("none"))
-						if(solutionFile.equals("none"))
+						if(solutionFile.equals("none") || solutionFile.length()<1)
 						{
 							System.out.println("A solution does not currently exists for this action and problem");
 							
@@ -558,13 +558,6 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							System.out.println("----Analysis of xhail console output ----\n"+out);
 						
 							//CAN THIS BE CHECKED FIRST
-							if(compareFiles(files_directory+inst_file,revised_output))
-							{
-								System.out.println("Files are the same, no revision necessary");
-							}
-							else {
-								System.out.println("Files are different, revision successful");
-							}
 							
 							//private void reviseInstitutionXHAIL(String tracefile, String modesfile, String examplefile, String aspfile, String preludefile, String output, String dictfile)
 							
@@ -573,14 +566,66 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
 							String str =instHandle.reviseInst(rule_set);
 							/** the above probably shouldn't happen here, to rethink*/
-							
-							
+							File temp = new File(revised_output);
+							if(temp.exists())
+							{
+								if(temp.length()<2)
+								{
+									//Revision is unsuccessful, no solution
+									System.out.println("No solution available currently, empty file from XHAIL output analysis.");
+									
+									addPercept(agName, Literal.parseLiteral("revisionFailed"));
+								}
+								else
+								{
+									if(compareFiles(files_directory+inst_file,revised_output))
+									{
+										System.out.println("Files are the same, no revision necessary");
+										addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
+									}
+									else {
+										System.out.println("Files are different, revision successful");
+										
+										//Revision is successful, otherwise not
+										
+										if(getDecisionOracle())
+										{
+											//XHAIL version
+											//instModList.add(new InstMods(atmpt,revised_output,problem));
+											instModList.add(new InstMods(atmpt,revised_file_path,problem));
+											instFile2Mod = revised_file_path;
+											
+											System.out.println("Revision approved by Oracle, can be implemented");
+											
+											addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+											
+												
+											
+										}
+										else
+										{
+											System.out.println("Revision not approved by Oracle, will be discarded");
+											
+											addPercept(agName, Literal.parseLiteral("revisionFailed"));
+										}
+									}
+									
+								}
+							}
+							else {
+								//Revision is unsuccessful, no solution
+								System.out.println("No solution available currently, no output file created from XHAIL.");
+								
+								addPercept(agName, Literal.parseLiteral("revisionFailed"));
+							}
 							
 							
 							System.out.println("Revision has ended.... Completing action ......");
 							
+							
+							
 							//For now, check the existance of the file to ensure the revision works
-							if(new File(revised_output).exists())
+							/*if(new File(revised_output).exists())
 							{
 								//Revision is successful, otherwise not
 								
@@ -595,8 +640,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									
 									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 									
-									
-									
+										
 									
 								}
 								else
@@ -612,41 +656,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								System.out.println("No solution available currently.");
 								
 								addPercept(agName, Literal.parseLiteral("revisionFailed"));
-							}
-							
-							/*
-							if(str.equals("none"))
-							{
-								System.out.println("No solution available currently.");
-								
-								addPercept(agName, Literal.parseLiteral("revisionFailed"));
-							}
-							else
-							{
-								if(getDecisionOracle())
-								{
-									System.out.println("Revision approved by Oracle, can be implemented");
-									
-									//Add solution to the solution set
-									instModList.add(new InstMods(atmpt,problem,rule_set,str));
-									//curInstRuleSet = rule_set;
-									ruleSet2Mod = rule_set;
-									
-									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-									
-									//XHAIL version
-									instModList.add(new InstMods(atmpt,revised_output,problem));
-								}
-								else
-								{
-									System.out.println("Revision not approved by Oracle, will be discarded");
-									
-									addPercept(agName, Literal.parseLiteral("revisionFailed"));
-								}
 							}*/
 							
-							//something strange happening here
-							//trace_count++;
 
 						}
 						else
@@ -666,21 +677,24 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								
 							//System.out.println("Solution ruleset - "+solution+" active ruleset - "+curInstRuleSet);
 							
+					
 							
-							//File tempFile = new File("c:/temp/temp.txt");
-							boolean exists = new File(files_directory+revised_file_path).exists();
+							
+							//We need to use the f
+							boolean exists = new File(files_directory+solutionFile).exists();
 							
 							if(exists)
 							{
+								System.out.println("File paths:\n"+files_directory+inst_file+"\n"+files_directory+solutionFile+"\n End");
 								//CAN THIS BE CHECKED FIRST
-								if(compareFiles(files_directory+inst_file,files_directory+revised_file_path))
+								if(compareFiles(files_directory+inst_file,files_directory+solutionFile))
 								{
 									System.out.println("Solution is active");
 									addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
 								}
 								else {
 									System.out.println("Changing to the existing solution");
-									instFile2Mod = revised_file_path;
+									instFile2Mod = solutionFile;
 									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
 								}
 							}
