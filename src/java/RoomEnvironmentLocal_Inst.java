@@ -50,6 +50,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	HashMap <Integer,State> stateList = new HashMap<>(); //collection of states of the inst
 	
+	HashMap <String,String> potentialRevision = new HashMap<>(); //collection of states of the inst
+	
 	HashSet <InstMods> instModList = new HashSet<>();
 
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
@@ -62,6 +64,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
 	String ruleSet2Mod="";
 	String instFile2Mod="";
+	String instRevLog="";
 	//Boolean decision = true;
 	
 	int count_inst =0; //keep track of the institutional file
@@ -273,6 +276,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		}
 		else if (action.getFunctor().equals("sense")) {
+			System.out.println(agName+ "is trying to sense ");
 			clearPercepts(agName); //remove old percepts and add new percepts
 			
 			final String tempInst = inst_file;
@@ -285,7 +289,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//String ex = act.toString();
 
 			String inst =  (action.getTerm(1)).toString();
+			System.out.println("inst file from agent: "+ inst + " checking -"+tocheck);
+			
 			inst= inst.replace("\"","");
+			
+			//System.out.println("inst file from agent after: "+ inst);
 			inst_file = inst;
 			
 			//clearPercepts(agName); //remove old percepts and add new percepts
@@ -358,6 +366,45 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//action = true;
 			//inst_state++;
 			//stateList.put(inst_state, new State(occurred,holdsat));
+		}
+		else if (action.getFunctor().equals("verifyRevisionAcceptable")) {
+	
+			try {
+				String revFile = (action.getTerm(0)).toString();
+				String logFile = (action.getTerm(1)).toString();
+				
+				System.out.println("Checking if revision okay: "+revFile);
+				System.out.println("Checking if revision okay: "+logFile);
+				
+				if(getDecisionOracleLive(logFile))
+				{
+						
+					System.out.println("Revision approved by Oracle, can be implemented");
+					
+					addPercept(agName, Literal.parseLiteral("revisionAcceptable("+revFile+")"));
+		
+					
+				}
+				else
+				{
+					System.out.println("Revision not approved by Oracle, will be discarded");
+					
+					addPercept(agName, Literal.parseLiteral("revisionUnacceptable("+revFile+")"));
+				}
+				
+				
+
+			//	addPercept(agName, Literal.parseLiteral("revisionAcceptable("+revFile+")"));
+				
+				//addPercept(agName, Literal.parseLiteral("revisionAcceptable"));
+
+				inst_state--;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Error here ");
+			}
+
 		}
 		else if (action.getFunctor().equals("revise")) {
 
@@ -444,7 +491,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							System.out.println("Finished Running pyhton script to create xhail asp file");
 							
 							
-							String modes = new JsonExtractor().getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
+							//String modes = new JsonExtractor().getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
 							
 							//String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","");
 							final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
@@ -457,7 +504,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							System.out.println("Modes file created");
 							
 							//writing to the modes file is what is required so that the ILP can access this file
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+""), modes.getBytes());
 							
 							//writing to the modes file is what is required so that the ILP can access this file
 							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
@@ -499,7 +546,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							System.out.println("Trace file created");
 							//writing to the trace file is what is required so that the ILP can access this file
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
 							
 							Files.write(Paths.get(t_path), traceX.getBytes());
 							
@@ -530,7 +577,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							}
 							
 							
-							String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
+							//String revision = reviseInstitution("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt","/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"");
 								
 							trace_count++;
 							
@@ -563,8 +610,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							
 							//String rule_set = "R1;R2;R3;R4;R5;R6;M1R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28;R29;R30;R31;R32;R33";
-							String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
-							String str =instHandle.reviseInst(rule_set);
+							//String rule_set = instHandle.getRuleSet(problem, atmpt,curInstRuleSet);
+							//String str =instHandle.reviseInst(rule_set);
+							
 							/** the above probably shouldn't happen here, to rethink*/
 							File temp = new File(revised_output);
 							if(temp.exists())
@@ -587,13 +635,29 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 										System.out.println("Files are different, revision successful");
 										
 										//Revision is successful, otherwise not
+										addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+										addPercept(agName, Literal.parseLiteral("revisionFile("+revised_file_path+")"));
 										
-										if(getDecisionOracle())
+										instFile2Mod = revised_file_path;
+										
+										int ext = revised_file_path.indexOf(".");
+										instRevLog = revised_file_path.substring(0, ext)+"revLog";
+										
+										addPercept(agName, Literal.parseLiteral("revisionLog("+instRevLog+")"));
+										
+										
+										potentialRevision.put(revised_file_path, instRevLog);
+										
+										//temporarily doing this
+										//instModList.add(new InstMods(atmpt,revised_file_path,problem));
+										
+									/*To Move to Oracle action	
+									 * if(getDecisionOracle())
 										{
 											//XHAIL version
 											//instModList.add(new InstMods(atmpt,revised_output,problem));
 											instModList.add(new InstMods(atmpt,revised_file_path,problem));
-											instFile2Mod = revised_file_path;
+											//instFile2Mod = revised_file_path;
 											
 											System.out.println("Revision approved by Oracle, can be implemented");
 											
@@ -607,7 +671,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 											System.out.println("Revision not approved by Oracle, will be discarded");
 											
 											addPercept(agName, Literal.parseLiteral("revisionFailed"));
-										}
+										}*/
 									}
 									
 								}
@@ -621,64 +685,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							
 							System.out.println("Revision has ended.... Completing action ......");
-							
-							
-							
-							//For now, check the existance of the file to ensure the revision works
-							/*if(new File(revised_output).exists())
-							{
-								//Revision is successful, otherwise not
-								
-								if(getDecisionOracle())
-								{
-									//XHAIL version
-									//instModList.add(new InstMods(atmpt,revised_output,problem));
-									instModList.add(new InstMods(atmpt,revised_file_path,problem));
-									instFile2Mod = revised_file_path;
-									
-									System.out.println("Revision approved by Oracle, can be implemented");
-									
-									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-									
-										
-									
-								}
-								else
-								{
-									System.out.println("Revision not approved by Oracle, will be discarded");
-									
-									addPercept(agName, Literal.parseLiteral("revisionFailed"));
-								}
-							}
-							else
-							{
-								//Revision is unsuccessful, no solution
-								System.out.println("No solution available currently.");
-								
-								addPercept(agName, Literal.parseLiteral("revisionFailed"));
-							}*/
-							
+																
 
 						}
 						else
 						{
 							System.out.println("A solution exists for this problem");
 							System.out.println("Checking if the solution is currently in place");
-//							System.out.println("Solution - "+solution+" active inst file - "+inst_file);
-//							if(solution.equals(inst_file))
-//							{
-//								System.out.println("Solution is active");
-//								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
-//							}
-//							else	
-//							{
-//								System.out.println("Changing to the existing solution");
-//								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-								
-							//System.out.println("Solution ruleset - "+solution+" active ruleset - "+curInstRuleSet);
-							
-					
-							
+
 							
 							//We need to use the f
 							boolean exists = new File(files_directory+solutionFile).exists();
@@ -702,40 +716,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							{
 								System.out.println("///The file does not exist, I do not know why the program thinks it does ARGHHH///");
 							}
-							
-							
-							/*
-							
-							if(solution.equals(curInstRuleSet))
-							{
-								System.out.println("Solution is active");
-								addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
-							}
-							else	
-							{
-								//	TODO:CHANGE TO THE NEW INSTITUTION, WORK THAT OUT WITH PERCEPTS
-								
-								//maybe need to do below as well
-								//add a record to the changepoint list
-								//instChangePoint.put(inst_state, inst_file);
-								
-								System.out.println("Changing to the existing solution");
-								ruleSet2Mod = solution;
-								addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-						
-							}*/
+	
 						}
 
-//						if(decision)
-//						{
-//							addPercept(agName, Literal.parseLiteral("revisionSuccess"));
-//							decision = false; 
-//						}
-//						else
-//						{
-//							addPercept(agName, Literal.parseLiteral("revisionFailed"));
-//							decision = true; 
-//						}	
 						
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
 					}catch (Exception ex) {
@@ -783,26 +766,60 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("changeInst")) {
 			System.out.println("Setting up new institution:");
+			
+			
+			
+			
 			String file = (action.getTerm(0)).toString();
 			
-			//inst_file = StringUtils.replaceAll(file,"\"", "");  //file
-			//inst_file = file;  //file
+			String act = (action.getTerm(1)).toString();
+			String room=StringUtils.substringBetween(act, ",", ")");
 			
-			//Make the change
-			//if the file exists then we change to it, otherwise it doesn't
-
-			System.out.println("The file to be updated is :"+instFile2Mod);
+			String add = "initially(meeting("+room+"),rooms)\n";
+			
+			//update institutional modifications with new solution
+			instModList.add(new InstMods(act,file,"capacityExceededViol"));
+			
+			/*System.out.println("The file to be updated is :"+instFile2Mod);
 			if(new File(files_directory+instFile2Mod).exists())
 			{
 				inst_file = instFile2Mod;  //file
+			}*/
+			
+			
+			System.out.println("The file to be updated is : "+file);
+			if(new File(files_directory+file).exists())
+			{
+				inst_file = file;  //file
 			}
 			
-			//need to do this before or something
-			curInstRuleSet = ruleSet2Mod;
+			
+			String line = "";
+			String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			try {
+				
+				// Editing the facts file
+				List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+		    	for (String line2 : lines) {
+		    		if(!(line2.contains("capacityExceededViol")))
+		    			line+=line2+"\n";
+
+		    	}
+				line+=add;
+				
+				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
 			
 			
 			//add a record to the changepoint list
-			instChangePoint.put(inst_state, curInstRuleSet);
+			//instChangePoint.put(inst_state, curInstRuleSet);
+			instChangePoint.put(inst_state, file);
+			
 			
 			System.out.println("New institution enabled");
 			inst_state--;
@@ -1011,7 +1028,12 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		System.out.println("Inst file being used is: "+inst_file);
 		
-		Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting,rooms)\n", "capacityExceededViol");
+		String room=StringUtils.substringBetween(act, ",", ")");
+		avoid = avoid + "("+room+ ")";
+		
+		//Need to be generic with these updates, using information passed rather than fixed
+		
+		Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
 
 		
 		try {
@@ -1418,44 +1440,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				"Location: room1 room2\n" +
 				"Number: 0 1 2 3 4 5 6 7 8 9 ");
 		
-//		String r = domainConf.get("role").toString();
-//		String l = domainConf.get("location").toString();
-//		String n = domainConf.get("number").toString();
-//		
-//		String r1 = "x y";
-//		String r = (String) domainConf.get("role");
-//		String l = (String) domainConf.get("location");
-//		String n = (String) domainConf.get("number");
-		//System.out.println(domainConf.get("role")+ " --test--" + domainConf.get("role").toString());
-		
-//		r = r.replace("\"","");
-//		l = l.replace("\"","");
-//		n = n.replace("\"","");
-		
-//		if(r1.equals(r))
-//		{
-//			System.out.println("No problem");
-//		}
-//		else
-//			System.out.println("Problem");
-//		
-//		String con = "\nRole: "+r+
-//				"\nLocation: "+l +
-//				"\nNumber: " + n+ " ";
-		
-//		config.append("\nRole: "+r1+
-//				"\nLocation: "+l +
-//				"\nNumber: " + n+ " ");
-//		
-//		config.append(con);
-		//domainConf.get("institution").toString()
-		/* Structure of file to create
-		 * Person: alice bob eve tony lily jem
-Role: x y
-Location: room1
-Number: 0 1 2 3 4 5 6 7 8 9 */
 
-		//strRet.append(new JsonExtractor().parseStr(str,flag)+"\n");
 
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), config.toString().getBytes());
@@ -1620,6 +1605,30 @@ print("Analysis complete.")
 	{
 		return true;
 	}
+	
+	private boolean getDecisionOracleLive(String filePath)
+	{
+		boolean approve = true;
+		String line = "";
+		String path = files_directory+ filePath;
+		try {
+			
+			// Editing the facts file
+			List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+	    	for (String line2 : lines) {
+	    		//simply for now
+	    		if((line2.contains("deleteRule")))
+	    			approve = false;
+
+	    	}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return approve;
+	}
+
 	
 	public void getJSONObjectFromFile(String file,String request,int flag)
 	{

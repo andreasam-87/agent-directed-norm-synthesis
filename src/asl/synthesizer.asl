@@ -272,40 +272,31 @@ received(0).
 						!handle;
 							.
 
-+revisionSuccess: true <- .print("A possble revision found, inform agents of change");
-						//	.abolish(revisionSuccess);
+/* +revisionSuccess: true <- .print("A possble revision found, inform agents of change");
+						
 							-revisionSuccess;
 							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
 							.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,"roomsInst.lp"));
-//							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-//
-//	
-//							.all_names(Names);
-//							.my_name(Me);
-//							for (.member(N,Names))
-//							{
-//								//.substring("a","bbacc",0): false. When the third argument is 0, 
-//								//.substring works like a java startsWith method.
-//								
-//								if(.substring("syn",N,0) & not (Me==N))
-//								{
-//									.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
-//
-//									// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
-//								}
-//									  				
-//							}
 							
+							.*/
 							
-						//	+updateEnv;
-							
++revisionSuccess: revisionFile(File) <- .print("A possble revision found, inform agents of change");
+						
+							-revisionSuccess;
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,File));
+							+fileFromRevision(File);
+							//.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,"roomsInst.lp"));
 							.
+							
++revisionLog(RFile): true <- .print("Log file received");
+							+logForOracle(RFile).
 													
-+coor_permissiongranted[source(Ag)]: true <- .print("Received permission from ",Ag ," to begin discussion");
++coor_permissiongranted[source(Agn)]: true <- .print("Received permission from ",Agn ," to begin discussion");
 											
-											//?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+											?handlingCur(ActRes,ActAtmpt,Exp,Ag);
 
-	
+											?fileFromRevision(F);
 											.all_names(Names);
 											.my_name(Me);
 											for (.member(N,Names))
@@ -315,7 +306,9 @@ received(0).
 												
 												if(.substring("syn",N,0) & not (Me==N))
 												{
-													.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
+													.send(N,tell,seekInstChangeConsensus(ActAtmpt,F));
+				
+													//.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
 				
 													// .concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R) 					
 												}
@@ -334,7 +327,12 @@ received(0).
 																//+sense_time(Action,NewInst);
 																+giveResponseTo(Ag);
 																.print("about to try to sense the institution");
-																sense("enter(sample,room1)",NewInst);
+																room_experiment.getRoom(Action,R1);
+																//.print("Which room --> ",R1); 
+																 .concat("enter(sample,",R1,")",Act);
+																 //.print("After Concat --> ",Msg); 
+																 .print("Why am I stuck here ---> ",Act);
+																sense(Act,NewInst);
 																
 																. 
 
@@ -407,14 +405,14 @@ received(0).
 						checkState(I);
 						.
 
-+sense_time: true <- !do_sense;
+/* +sense_time: true <- !do_sense;
 				
 					-sense_time;
 					.
 						
 +!do_sense: true <- .print("about to try to sense the institution");
 					sense("enter(sample,room1)");
-					.
+					.*/
 
 
 +revisionAcceptable: true <- .print("I can accept the revision");
@@ -493,22 +491,65 @@ received(0).
  							.
 
 +instChangeConsensusGranted: true <- .print("Permission granted");
+							?fileFromRevision(F);
+							?logForOracle(RF);
 							
-							.broadcast(tell,instRev);
+							.send(oracle,tell,decideRevision(F,RF));
+							//decideRevision();
+							
+							/* .broadcast(tell,instRev);
 							.print("Removing relevant to_inform percepts");
 							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
 							//.print("Action under review: ", ActAtmpt);
 							.abolish(to_inform(_,ActAtmpt));	
 							
 							+updateEnv;
-							.send(coordinator,tell,informCoordinatorComplete);
+							.send(coordinator,tell,informCoordinatorComplete);*/
  							.
- 
- 
+
+
 +instChangeConsensusNotGranted: true <- .print("Permission not granted");
  							//need to do something else so rework the workflow/pipeline
 							//+updateEnv;
- 							.						
+ 							.		
+
++oraclePermissionGranted(NewInst): true <- .print("Finally, the institution can be revised");
+											
+											+updateInEnv(NewInst);
+											.send(coordinator,tell,informCoordinatorComplete);
+											
+											.
+											
+
++oraclePermissionNotGranted(NewInst): true <- .print("Nooo, the institution cannot be revised at this time");
+											
+											
+										/* 	.broadcast(tell,instRev);
+											
+											.print("Removing relevant to_inform percepts");
+											?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+											.abolish(to_inform(_,ActAtmpt));	
+											
+											+updateInEnv(NewInst);*/
+											.send(coordinator,tell,informCoordinatorComplete);
+											
+											
+											.
+ 
+				
+ 
+ +updateInEnv(NewInst): true <- .print("I'm about to update the institution");
+ 								//updateInst(NewInst);
+ 								
+ 								.broadcast(tell,instRev);
+											
+								.print("Removing relevant to_inform percepts");
+								?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+								.abolish(to_inform(_,ActAtmpt));	
+ 								
+ 								changeInst(NewInst,ActAtmpt);
+ 								!handle;
+ 								.
  
 +updateEnv: true <- .print("Updating the institution");
 				

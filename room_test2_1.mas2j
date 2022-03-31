@@ -18,6 +18,7 @@ MAS room_experiment {
 		bAgent[mindinspector="gui(cycle,html,history)"]#2;
 		pAgent[mindinspector="gui(cycle,html,history)"] #2;
 		
+		oracle;
 		
 	aslSourcePath:
 		"src/asl";
