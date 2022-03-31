@@ -12,6 +12,12 @@ updateCount(0).
 count(0).
 synCount(0).
 
+accept(1).
+refuse(0).
+consensus(1).
+min_vote(1).
+received(0).
+
 /* Initial goals */
 
 
@@ -414,12 +420,14 @@ synCount(0).
 +revisionAcceptable: true <- .print("I can accept the revision");
 							 ?giveResponseTo(Ag);
 							 .send(Ag,tell,instChangeConsensusGranted);
+							 // .send(Ag,tell,instChangeConsensusRequest(Granted));
 							//resume;
 							 .
 					
 +revisionUnacceptable: true <- .print("I cannot accept the revision");
 					?giveResponseTo(Ag);
 					.send(Ag,tell,instChangeConsensusNotGranted);
+					//.send(Ag,tell,instChangeConsensusRequest(NotGranted));
 					.
 					
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
@@ -428,8 +436,61 @@ synCount(0).
 
 //need to count and ensure all the permission is received, or max required permission given	
 
-+instChangeConsensusRequest(Granted): .print("Permission granted").
-+instChangeConsensusRequest(NotGranted): .print("Permission not granted").
++instChangeConsensusRequest(Granted)[source(Ag)]: true <- .print("Permission granted");
+										?accept(N);
+										-+accept(N+1);
+										//?received(C);
+										//-+received(C+1);
+										.
+										
++instChangeConsensusRequest(NotGranted)[source(Ag)]:true <- .print("Permission not granted");
+										?refuse(N);
+										-+refuse(N+1);
+										//?received(C);
+										//-+received(C+1);
+	
+										.
+
++countVotes(C)  : refuse(R) & accept(A) & C = R + A.	
+
++enoughVotes  : countVotes(CO) &  min_vote(MV) & CO >=MV.	
+
++consensusMet  : enoughVotes &  accept(A) & consensus(C) & A >= C <- !completeRevision.	
+
++consensusNotMet  : enoughVotes &  accept(A) & consensus(C) & A < C <- !completeRevision.	
+       
+
+//countVotes(C)
+  //  :- refuse(R) & accept(A) & min_vote(MV) &
+    //  C = R + A.										.
+	
+//+determineConsensus : accept(A) & received(R) & consensus(C) & min_vote(MV) &  A>=C  <- .count(introduction(participant,_),NP); //&
+     //and accept(N2) and consensus(N3)
+      // .count(propose(CNPId,_), NO) &
+       //.count(refuse(CNPId), NR) &
+  //     NP = NO + NR;
+    //   .
+	
+	//-+accept(0);
+	//				-+refuses(0);										
+//
+
++completeRevision: consensusMet <- .print("TESTING::: Permission granted");
+							
+							/* .print("Permission granted");
+							 * .broadcast(tell,instRev);
+							.print("Removing relevant to_inform percepts");
+							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							//.print("Action under review: ", ActAtmpt);
+							.abolish(to_inform(_,ActAtmpt));	
+							
+							+updateEnv;
+							.send(coordinator,tell,informCoordinatorComplete);*/
+ 							.
+
+
++completeRevision: consensusNotMet <- .print("TESTING::: Permission not granted");
+ 							.
 
 +instChangeConsensusGranted: true <- .print("Permission granted");
 							
@@ -483,6 +544,8 @@ synCount(0).
 						-+updateCount(C+1);
 					}
 		
+					-+accept(0);
+					-+refuses(0);
 					!handle;
 					.
 
