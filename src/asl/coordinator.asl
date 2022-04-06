@@ -36,9 +36,9 @@
 										.
 
 
-+informCoordinatorComplete[source(Ag)]: true <- .print(Ag," has received consensus and institution updated");
-											
-											.findall([A,Act,Inst],queue(sA,Act,Inst),List); 
++informCoordinatorComplete[source(Ag)]: true <- //.print(Ag," has received consensus and institution updated");
+											.print(Ag," has completed the revision task");
+											.findall([A,Act,Inst],queue(A,Act,Inst),List); 
 											
 												//.length(Queue,L);
 												.length(List,L);
@@ -60,31 +60,48 @@
 													.print('Found1: ',Agn, ' ',A_R1, ' ', A_A1, ' ', E1, ' ', Aa1);
 													room_experiment.checkSimilarRequest(A_R, A_A,E,A_R1,A_A1,E1,S);
 													
+													?active(Ag,Action1,Inst1)
 													//May need to check if the solutions are similar too, rather than just the original problem
 													if(S==1) //1 means they are similar
 													{
-														.print("Requests are not similar");
+														.print("Requests are not similar, let me grant permission to next synthesizer");
 														.send(Agn,tell,coor_permissiongranted);
 														
 														+active(Agn,Action,Inste);
 													}
 													else
 													{
-														.print("Requests are similar");
-														.send(Agn,tell,revisionSuccessful(active));
+														.print("Requests are similar, let's check the solutions'");
 														
-														//Moved these here since they only get removed if the requests are similar
-														+completed(Agn,Action,Inste);
+														room_experiment.solutionDifferent(Inste,Inst1,Dif);
+														if(Dif==1) //means solution files are different
+														{
+															.print("Solutions are different, let me grant permission to next synthesizer");
+															.send(Agn,tell,coor_permissiongranted);
 														
-														+revisionCompleted(Agn,A_R1,A_A1,E1,Aa1);
+															+active(Agn,Action,Inste);
+															
+														}else //solution files are the same
+														{
+															.print("Solutions are same, inform next synthesizer solution is active");
+															.send(Agn,tell,revisionSuccessful(active));
 														
-														-revisionInProgress(Agn,A_R1,A_A1,E1,Aa1);
+															//Moved these here since they only get removed if the requests are similar
+															+completed(Agn,Action,Inste);
+															
+															+revisionCompleted(Agn,A_R1,A_A1,E1,Aa1);
+															
+															-revisionInProgress(Agn,A_R1,A_A1,E1,Aa1);
+														}
+														
+														
 													}
 	
 													
 												}
 												else
 												{
+													.print("No more permission requests to handle");
 													-perm_requested;
 													?revisionInProgress(Ag,A_R,A_A,E,Aa);
 													//?active(Ag,Action2,Inste2);

@@ -774,6 +774,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 			String act = (action.getTerm(1)).toString();
 			String room=StringUtils.substringBetween(act, ",", ")");
+			room = room.replace("\"","");
 			
 			String add = "initially(meeting("+room+"),rooms)\n";
 			
@@ -947,6 +948,49 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 			inst_state--;
 			return true;
+		}
+		else if (action.getFunctor().equals("updateState")) {
+			System.out.println("I will update the fact file if necessary.");
+			String act = (action.getTerm(1)).toString();
+			
+			String file = (action.getTerm(0)).toString();
+			String room=StringUtils.substringBetween(act, ",", ")");
+			room = room.replace("\"","");
+			
+			String add = "initially(meeting("+room+"),rooms)\n";
+			
+			String line = "";
+			String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			boolean contains = false;
+			try {
+				
+				// Editing the facts file
+				List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+		    	for (String line2 : lines) {
+		    		if(line2.contains(add))
+		    		{
+		    			contains = true;
+		    		}  
+		    		line+=line2+"\n";
+
+		    	}
+		    	
+		    	if(!contains)
+		    	{
+		    		line += add;
+					
+					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+
+				
+		    	}
+				} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Fact file updated");
+			inst_state--;
+			return true;
+				
 		}
 		else
 		{

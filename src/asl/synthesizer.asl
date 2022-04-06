@@ -267,7 +267,7 @@ received(0).
 							}
 							.abolish(revisionSuccessful(_));
 							//-revisionSuccessful(_);
-						
+							updateState(ActAtmpt);
 																				
 						!handle;
 							.
@@ -331,8 +331,9 @@ received(0).
 																//.print("Which room --> ",R1); 
 																 .concat("enter(sample,",R1,")",Act);
 																 //.print("After Concat --> ",Msg); 
+																 room_experiment.stripString(Act,Act1);
 																 .print("Why am I stuck here ---> ",Act);
-																sense(Act,NewInst);
+																sense(Act1,NewInst);
 																
 																. 
 
