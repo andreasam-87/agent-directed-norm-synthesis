@@ -293,6 +293,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 			inst= inst.replace("\"","");
 			
+			String toavoid = (action.getTerm(2)).toString();
+			toavoid= toavoid.replace("\"","");
+			
 			//System.out.println("inst file from agent after: "+ inst);
 			inst_file = inst;
 			
@@ -305,7 +308,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			System.out.println("/////// The file in use is :"+inst_file);
 			
 			//senseInstitution(String ag, String act, String avoid) {
-			for (Map.Entry<String, Literal[]> entry : this.senseInstitution(agName,tocheck,"capacityExceeded").entrySet())
+			
+			//for (Map.Entry<String, Literal[]> entry : this.senseInstitution(agName,tocheck,"capacityExceeded").entrySet())
+			for (Map.Entry<String, Literal[]> entry : this.senseInstitution(agName,tocheck,toavoid).entrySet())
+					
 			{
 
 				//System.out.println("Percepts from sense: ");
@@ -765,64 +771,102 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			return true;
 		}
 		else if (action.getFunctor().equals("changeInst")) {
-			System.out.println("Setting up new institution:");
-			
-			
-			
 			
 			String file = (action.getTerm(0)).toString();
 			
-			String act = (action.getTerm(1)).toString();
-			String room=StringUtils.substringBetween(act, ",", ")");
-			room = room.replace("\"","");
+			/*
+			 * It's possible that you have reached here and there is no need to change 
+			 * because the file is the same as what is in place so check this first 
+			 * only change if different
+			 */
+			System.out.println("Checking if the solution is currently in place since this is possible");
+
 			
-			String add = "initially(meeting("+room+"),rooms)\n";
+			//We need to use the f
+			boolean exists = new File(files_directory+file).exists();
 			
-			//update institutional modifications with new solution
-			instModList.add(new InstMods(act,file,"capacityExceededViol"));
-			
-			/*System.out.println("The file to be updated is :"+instFile2Mod);
-			if(new File(files_directory+instFile2Mod).exists())
+			if(exists)
 			{
-				inst_file = instFile2Mod;  //file
-			}*/
-			
-			
-			System.out.println("The file to be updated is : "+file);
-			if(new File(files_directory+file).exists())
+				
+				try {
+					if(compareFiles(files_directory+inst_file,files_directory+file))
+					{
+						System.out.println("An identical solution is active, no need to update");				
+					}
+					else {
+						
+						
+						System.out.println("Setting up new institution:");
+						
+						
+						
+						
+						String act = (action.getTerm(1)).toString();
+						String room=StringUtils.substringBetween(act, ",", ")");
+						room = room.replace("\"","");
+						
+						String add = "initially(meeting("+room+"),rooms)\n";
+						
+						//update institutional modifications with new solution
+						instModList.add(new InstMods(act,file,"capacityExceededViol"));
+						
+						/*System.out.println("The file to be updated is :"+instFile2Mod);
+						if(new File(files_directory+instFile2Mod).exists())
+						{
+							inst_file = instFile2Mod;  //file
+						}*/
+						
+						
+						System.out.println("The file to be updated is : "+file);
+						if(new File(files_directory+file).exists())
+						{
+							inst_file = file;  //file
+						}
+						
+						
+						String line = "";
+						String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+						try {
+							
+							// Editing the facts file
+							List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
+					    	for (String line2 : lines) {
+					    		if(!(line2.contains("capacityExceededViol")))
+					    			line+=line2+"\n";
+
+					    	}
+							line+=add;
+							
+							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+							
+						
+						
+						//add a record to the changepoint list
+						//instChangePoint.put(inst_state, curInstRuleSet);
+						instChangePoint.put(inst_state, file);
+						
+						
+						System.out.println("New institution enabled");
+						
+						
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else
 			{
-				inst_file = file;  //file
+				System.out.println("///The file does not exist, I do not know why the program thinks it does ARGHHH///");
 			}
 			
 			
-			String line = "";
-			String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
-			try {
-				
-				// Editing the facts file
-				List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
-		    	for (String line2 : lines) {
-		    		if(!(line2.contains("capacityExceededViol")))
-		    			line+=line2+"\n";
-
-		    	}
-				line+=add;
-				
-				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-				
 			
-			
-			//add a record to the changepoint list
-			//instChangePoint.put(inst_state, curInstRuleSet);
-			instChangePoint.put(inst_state, file);
-			
-			
-			System.out.println("New institution enabled");
 			inst_state--;
 			return true;
 		}
@@ -951,9 +995,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("updateState")) {
 			System.out.println("I will update the fact file if necessary.");
-			String act = (action.getTerm(1)).toString();
+			String act = (action.getTerm(0)).toString();
 			
-			String file = (action.getTerm(0)).toString();
+			//String mode = (action.getTerm(1)).toString(); //delete (del) or add
 			String room=StringUtils.substringBetween(act, ",", ")");
 			room = room.replace("\"","");
 			
@@ -1258,11 +1302,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String stateToCheck2 = "State "+inst_state+"\n"+occurred+"\n"+observed+"\n"+current_action+"\n"+stateFacts+"\n/////////\n";
 			
 			
-			
-			
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
 
+			
 			//get feedback for the agents as percepts
 			//System.out.println("\npotentially agent output "+strRet.toString());
 			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);

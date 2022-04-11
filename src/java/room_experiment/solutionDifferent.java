@@ -12,6 +12,7 @@ import jason.*;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 
+
 public class solutionDifferent extends DefaultInternalAction {
 
     @Override
@@ -19,21 +20,33 @@ public class solutionDifferent extends DefaultInternalAction {
         
         // execute the internal action
       	int ret =-1;
-      	
+      	String directory = "/Users/andreasamartin/Documents/InstalExamples/rooms/";
       	//getting the files to compare
       	String file1 = args[0].toString();
       	String file2 = args[1].toString();
       	
-      	boolean comp = FileUtils.contentEquals(new File(file1),new File(file2));
+      	boolean comp;
       	
-       	if (comp)
-       	{
-       		ret = 0;
-       	}
-       	else
-       	{
-       		ret = 1;
-       	}
+      	try {
+			
+      		comp = FileUtils.contentEquals(new File(directory+file1),new File(directory+file2));
+      		
+      		System.out.println("Solution files are \n"+file1+"\n"+file2+"\nsame? "+comp);
+           	if (comp)
+           	{
+           		ret = 0;
+           	}
+           	else
+           	{
+           		ret = 1;
+           	}
+      		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      	
+      	
       	return un.unifies(new NumberTermImpl(ret), args[2]);
     }
 }

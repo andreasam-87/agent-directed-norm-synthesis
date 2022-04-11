@@ -279,13 +279,21 @@ received(0).
 							.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,"roomsInst.lp"));
 							
 							.*/
-							
-+revisionSuccess: revisionFile(File) <- .print("A possble revision found, inform agents of change");
+		
++revisionSuccess: true <- -revisionSuccess;
+							!discussRevision;
+										.	
+										
++revisionFile(File): true <- 	+fileFromRevision(File).
+		
++!discussRevision: true <- 	.print("A possble revision found, inform agents of change");
+//+revisionSuccess: revisionFile(File) <- .print("A possble revision found, inform agents of change");
 						
-							-revisionSuccess;
+							//-revisionSuccess;
 							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+							?fileFromRevision(File);
 							.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,File));
-							+fileFromRevision(File);
+							
 							//.send(coordinator,tell,getCoordinatorPermission(ActAtmpt,"roomsInst.lp"));
 							.
 							
@@ -306,7 +314,7 @@ received(0).
 												
 												if(.substring("syn",N,0) & not (Me==N))
 												{
-													.send(N,tell,seekInstChangeConsensus(ActAtmpt,F));
+													.send(N,tell,seekInstChangeConsensus(ActAtmpt,F,ActRest,Exp));
 				
 													//.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
 				
@@ -320,7 +328,7 @@ received(0).
 											. 
 
 @seekInstChangeConsensus[atomic]
-+seekInstChangeConsensus(Action,NewInst)[source(Ag)]: true <- .print(Ag, " is seeking consensus to change the institution"); 
++seekInstChangeConsensus(Action,NewInst,Avoid,Prefer)[source(Ag)]: true <- .print(Ag, " is seeking consensus to change the institution"); 
 																.print("Using sense to see if this is an acceptable change"); 
 																+checkingFirst;
 																//suspend;
@@ -333,12 +341,17 @@ received(0).
 																 //.print("After Concat --> ",Msg); 
 																 room_experiment.stripString(Act,Act1);
 																 .print("Why am I stuck here ---> ",Act);
-																sense(Act1,NewInst);
+																sense(Act1,NewInst,Avoid,Prefer);
 																
 																. 
 
 													
-+revisionFailed: true <- .print("No possible revisions found");
++revisionFailed: true <- 
+						-revisionFailed;
+						!discussFailedRevision;
+						.
+
++!discussFailedRevision: true <- 	.print("No possible revisions found");
 						//.abolish(revisionFailed);
 						-revisionFailed;
 						?handlingCur(ActRes,ActAtmpt,Exp,Ag);
@@ -348,16 +361,7 @@ received(0).
 						.length(List1,Sizer)
 						.print("I have to inform ", Sizer, " agents that there is no possible revisions");	
 								
-//						
-//						room_experiment.getRoom(ActAtmpt,R1);	
-//		
-//						for (.member(Zn,List1))
-//		  				{
-//		  					room_experiment.getItems(Zn,2,Agn,Act);
-//							.send(Agn,tell,revisionFailed);
-//		  					.print("Inform ",Agn," no possible revisions");
-//
-//		  				}
+
 		  				
 		  				.send(List1,tell,revisionFailed);
 		  				.abolish(to_inform(_,ActAtmpt));							
@@ -534,7 +538,7 @@ received(0).
 											+updateInEnv(NewInst);*/
 											.send(coordinator,tell,informCoordinatorComplete);
 											
-											
+											!handle;
 											.
  
 				

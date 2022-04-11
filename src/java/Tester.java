@@ -14,7 +14,7 @@ public class Tester {
 		
 		System.out.println("hello");
 		String file1 = "/Users/andreasamartin/Documents/InstalExamples/rooms/rooms_revised_synthesizer1_5.ial";
-		String file2 = "/Users/andreasamartin/Documents/InstalExamples/rooms/rooms_revised_synthesizer2_5.ial";
+		String file2 = "/Users/andreasamartin/Documents/InstalExamples/rooms/rooms_revised_synthesizer2_4.ial";
 		//String file2 = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsInst.ial";
 		
 		//System.out.println("////\\\\\n"+x.modifyFact("holdsat(capacityExceededViol(room1),rooms,0).","capacityExceededViol", "capacityExceededViol(room1)", 3, 1));
