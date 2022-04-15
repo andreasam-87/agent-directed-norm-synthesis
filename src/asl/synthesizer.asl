@@ -454,9 +454,9 @@ received(0).
 	
 										.
 
-+countVotes(C)  : refuse(R) & accept(A) & C = R + A.	
+countVotes(C)  :- refuse(R) & accept(A) & C = R + A.	
 
-+enoughVotes  : countVotes(CO) &  min_vote(MV) & CO >=MV.	
+enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.	
 
 +consensusMet  : enoughVotes &  accept(A) & consensus(C) & A >= C <- !completeRevision.	
 

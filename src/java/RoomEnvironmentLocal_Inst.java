@@ -1698,16 +1698,51 @@ print("Analysis complete.")
 		boolean approve = true;
 		String line = "";
 		String path = files_directory+ filePath;
+		
+		String oracleFilePath = domainConf.get("oraclefile").toString();
 		try {
 			
-			// Editing the facts file
-			List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
-	    	for (String line2 : lines) {
-	    		//simply for now
+			
+			List<String> lines = Files.readAllLines(Paths.get(oracleFilePath), Charset.defaultCharset());
+			String firstLine = Files.readAllLines(Paths.get(path), Charset.defaultCharset()).get(0);
+			//String [] multiple = firstLine.split("|");
+			//if(multiple.length>1)
+			if(firstLine.contains("|"))
+			{
+				String [] multiple = firstLine.split("|");
+				for (String line1 : multiple) {
+		    		
+		    		if((lines.contains(line1)))
+		    		{
+		    			approve = false;
+		    			break;
+		    		}
+		    		if(line1.contains("deleteRule") && lines.contains("deleteRule(all)"))
+		    		{
+		    			approve = false;
+		    			break;
+		    		}
+
+		    	}
+				
+			}
+			else
+			{
+				if((lines.contains(firstLine)))
+	    			approve = false;
+				else if(firstLine.contains("deleteRule") && lines.contains("deleteRule(all)"))
+	    		{
+	    			approve = false;
+
+	    		}
+			}
+			
+	    	/*for (String line2 : lines) {
+	    		//simple for now
 	    		if((line2.contains("deleteRule")))
 	    			approve = false;
 
-	    	}
+	    	}*/
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
