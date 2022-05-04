@@ -249,6 +249,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 			}
 			updateAgsPercept();
+			
+			inst_state++;
 //
 //			if(agName.equals("bob"))
 //				System.out.println("Bob leaving enter block " );
@@ -273,6 +275,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					//System.out.println("Percept 2: "+ entry.getValue()[i]);
 				}
 			}
+			inst_state++;
 
 		}
 		else if (action.getFunctor().equals("sense")) {
@@ -324,7 +327,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 			}
 			inst_file = tempInst;
-			inst_state--;
+			//inst_state--;
 			return true; 
 			
 
@@ -360,7 +363,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 				//probably should just do something that puts the facts of the previous
 				//state back in to the new slot
-				inst_state--;
+				
+				//inst_state--;
 				//System.out.println("reached here too");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -372,6 +376,48 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//action = true;
 			//inst_state++;
 			//stateList.put(inst_state, new State(occurred,holdsat));
+		}
+		else if (action.getFunctor().equals("checkVipRoom")) {
+
+			try {
+				String lookingFor = (action.getTerm(0)).toString();
+				lookingFor = lookingFor.replace("\"","");
+				//System.out.println("Checking state for vip rooms "+lookingFor);
+				
+				State stateToCheck = stateList.get(0);
+				String stateFacts = stateToCheck.getFactsStr();
+				String viproom = "";
+				for (String fact : stateFacts.split("\n"))
+		        {
+		            if (fact.contains(lookingFor))
+		            {
+		                viproom = fact;
+		                int i = viproom.indexOf("(");
+		                int i2 = viproom.lastIndexOf(")");
+		                String temp = viproom.substring(i+1,i2);
+		                System.out.println("Temp string: "+temp);
+		                String room = StringUtils.substringBetween(temp, "(", ")");
+		                
+		                viproom = room;
+		                //initially(vip_room(room1),rooms)
+		                 
+		                break;
+		            }
+		        }
+				//if(stateFacts.con)
+				//int whenOcc = new JsonExtractor().checkStateForEvent(eventOccurred,stateList);
+				System.out.println("VIP room found : "+viproom);
+				
+				addPercept(agName, Literal.parseLiteral("vipRoomFound("+viproom+")"));
+			
+				//inst_state--;
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Error here ");
+			}
+			
 		}
 		else if (action.getFunctor().equals("verifyRevisionAcceptable")) {
 	
@@ -404,7 +450,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				
 				//addPercept(agName, Literal.parseLiteral("revisionAcceptable"));
 
-				inst_state--;
+				//inst_state--;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -429,7 +475,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 						//Will probably need to make this more robust but currently works for holdsat. meeting
 						String reason = (action.getTerm(4)).toString();
-						String toAdd = "";
+						
+						
+						
+						//0-problem,1-toAdd, 3-modetoadd 
+						ArrayList<String> tempArr = decodeString(problem,atmpt,reason); 
+						String toAdd = tempArr.get(1);
+						String modeAdd=tempArr.get(2);
+						String prob = tempArr.get(0);
+						
+						/*
 						//get room in both cases "room1" or room 
 						//String room = StringUtils.substringBetween(atmpt, "\"", "\"");
 						String room = StringUtils.substringBetween(atmpt, ",", ")");
@@ -449,7 +504,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							}
 							
 						}
-						String prob = problem+"("+room+")";
+						String prob = problem+"("+room+")";*/
 						
 						//holdsat(pow(leave(bAgent6,room1)),rooms,3) FORMAT
 						
@@ -500,8 +555,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//String modes = new JsonExtractor().getModesFile("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter");
 							
 							//String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","");
-							final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
-									"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
+							//final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
+							//"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
+
+							final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + modeAdd;
 
 							//modesX = modesX + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
 							//		"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
@@ -737,7 +794,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			t.start();
 
 			//addPercept(agName, Literal.parseLiteral("revisionFailed"));
-			inst_state--;
+			//inst_state--;
 			// return true; //do I need a separate return here or the one to the bottom will do.
 			
 		//	}
@@ -763,11 +820,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			Thread t = new Thread(r);
 			t.start();
 			//return true;
-			inst_state--;
+			//inst_state--;
 		}
 		else if (action.getFunctor().equals("skip_steps")) {
 			System.out.println("Skipping a step or 2");
-			inst_state--;
+			//inst_state--;
 			return true;
 		}
 		else if (action.getFunctor().equals("changeInst")) {
@@ -867,7 +924,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 			
 			
-			inst_state--;
+			//inst_state--;
 			return true;
 		}
 		else if (action.getFunctor().equals("addAgent")) {
@@ -990,7 +1047,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			inst_state--;
+			//inst_state--;
 			return true;
 		}
 		else if (action.getFunctor().equals("updateState")) {
@@ -1032,7 +1089,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				e.printStackTrace();
 			}
 			System.out.println("Fact file updated");
-			inst_state--;
+			//inst_state--;
 			return true;
 				
 		}
@@ -1046,7 +1103,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //		if(agName.equals("bob"))
 //			System.out.println("What is happening to Bob? " + action.toString());
 //		//System.out.print("Stuck here ");
-		inst_state++;
+		
+		//Decided to do this increment only when an action updates the institution, this should solve my problem
+		//inst_state++;
 		return true; // the action was executed with success
 	}
 	
@@ -1073,6 +1132,64 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		return comp;
 	}
 
+	private ArrayList<String> decodeString(String prob, String atmpt, String reason)
+	{
+		ArrayList<String> response= new ArrayList<String>();;
+	
+		String toAdd = "";
+		String modeToAdd = "";
+		String problem = "";
+		//get room in both cases "room1" or room 
+		//String room = StringUtils.substringBetween(atmpt, "\"", "\"");
+		String room = StringUtils.substringBetween(atmpt, ",", ")");
+		room = room.replaceAll("\"", "");
+		
+		
+		//to handle this type of problem
+		//prob				atmpt					reason
+		//restrictedAccess, enter(vipAgent,room2), allowedAccess(vip))
+		//capacityExceededViol, A, noViol(holdsat(meeting))
+		
+		if(prob.contains("capacity"))
+		{
+			problem = prob+"("+room+")";
+			modeToAdd = "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
+					"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
+			
+			
+			if(reason.contains("(")) {
+				int count = StringUtils.countMatches(reason, "(");
+				if(count>1)
+				{
+					reason = StringUtils.substringBetween(reason, "(", "))");
+					//toAdd = reason+"("+room+"),rooms,"+when+")";
+					toAdd = reason+"("+room+")";
+				}else {
+					reason = StringUtils.substringBetween(reason, "(", ")");
+					//toAdd = reason+",rooms,"+when+")";
+					toAdd = reason;
+				}
+				
+			}
+		}
+		else if(prob.contains("restrict"))
+		{
+			 int i = atmpt.indexOf("(");
+			 String temp = atmpt.substring(0,i);
+			 problem = atmpt.replace(temp, prob); 
+			 toAdd = atmpt.replace(temp, "occurred(arrive"); 
+			 //toAdd = toAdd + ")";
+		}
+		
+		
+		
+		response.add(problem);
+		response.add(toAdd);
+		response.add(modeToAdd);
+		
+		return response;
+	}
+	
 	private void Updatefile(String file, String update, String add, String remove)
 	{
 		String line = "";
@@ -1297,13 +1414,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//String stateToCheck = "State "+inst_state+"\n"+occurred+"\n"+observed+"\n"+current_action+"\n"+stateFacts+"\n/////////\n";
 			
 			stateList.put(inst_state, new State(occurred,observed,fileContents));
-			String stateToCheck = "State "+inst_state+"\n"+occurred+"\n"+observed+"\n"+current_action+"\n"+fileContents+"\n/////////\n";
+			String stateToCheck = "State "+inst_state+"\n"+occurred+"\n"+observed+"\nAction attempted:"+current_action+"\n"+fileContents+"\n/////////\n";
 			
-			String stateToCheck2 = "State "+inst_state+"\n"+occurred+"\n"+observed+"\n"+current_action+"\n"+stateFacts+"\n/////////\n";
+			String stateToCheck2 = "State "+inst_state+"\n"+occurred+"\n"+observed+"\nAction attempted:"+current_action+"\n"+stateFacts+"\n/////////\n";
 			
 			
-			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
-			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
+			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
 
 			
 			//get feedback for the agents as percepts
@@ -1395,11 +1512,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //			if (!(var.contains("in_room")) && current_action.contains("enter"))
 //				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			//System.out.println("What is happening /// "+entered);
-			if (!entered && current_action.contains("enter"))
+			if (!entered && current_action.contains("enter") && !occurred.contains("restrictedAccess"))
 			{
 				inst_sense.add(Literal.parseLiteral("prob(enter)"));
 				
 			}
+			
+			
+			//check if agent was denied entry because of restricted access
+			if (!entered && occurred.contains("restrictedAccess") && current_action.contains("enter"))
+			//if (!entered && current_action.contains("enter"))
+			{
+				inst_sense.add(Literal.parseLiteral("restrictedAccess(vip_room)"));
+				
+			}
+			
 			
 			inst_sense.add(Literal.parseLiteral("extraPercept"));
 //	    	//System.out.println(inst_sensors.length);
@@ -1470,10 +1597,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		config.append("Person: ");
 		strRet.append("\n");
 		
+		//includes.append("\nlocation(room1).\nlocation(room2).\nlocation(room3).\n"+
 		includes.append("\nlocation(room1).\nlocation(room2).\n"+
 				"holdsat(max(room1,2),rooms,0).\n" +
-				"holdsat(max(room2,1),rooms,0).\n");
+				"holdsat(max(room2,1),rooms,0).\n" +
+				//"holdsat(max(room3,2),rooms,0).\n" +
+				"holdsat(vip_room(room2),rooms,0).\n");
 		
+		strRet.append("initially(max(room1,2),rooms)\n" +
+				"initially(max(room2,1),rooms)\n" +
+				//"initially(max(room3,2),rooms)\n" +
+				"initially(vip_room(room2),rooms)\n");
 		
 		for (String ag : getNamesAgents()) {
 			config.append(ag + " ");
@@ -1521,9 +1655,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					
 				}
 			}
+			if(ag.contains("vip"))
+			{
+				strRet.append("initially(is_vip("+ag+"), rooms)\n");
+				
+				includes.append("holdsat(is_vip("+ag+"),rooms,0).\n");
+				
+				addPercept(ag,Literal.parseLiteral("is_vip(me)"));
+				
+			}
 
 		}
 		config.append("\nRole: x y\n" +
+				//"Location: room1 room2 room3\n" +
 				"Location: room1 room2\n" +
 				"Number: 0 1 2 3 4 5 6 7 8 9 ");
 		
@@ -1864,7 +2008,7 @@ print("Analysis complete.")
 
 	}
 	
-	/*A very of the method that returns a string rather than using the publically accessible stringbuilder*/
+	/*A variation of the method that returns a string rather than using the publically accessible stringbuilder*/
 	public String getJSONObjectFromFileStringRtr(String file,String request,int flag)
 	{
 		StringBuilder retStr=new StringBuilder();

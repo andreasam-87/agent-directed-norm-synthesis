@@ -1,9 +1,13 @@
+#modeh exception($int3,occurred(restrictedAccess(+person,+location),$inst,+instant))=1.
+int3(3).
+clause3(1..4).
+#modeh del($int3,$clause3)=3.
+#modeh exception($int5,occurred(arrive(+person,+location),$inst,+instant))=1.
+int5(5).
+clause5(1..4).
+#modeh del($int5,$clause5)=3.
 #modeh exception($int12,initiated(in_room(+person,+location),$inst,arrive(+person2,+location2),+instant))=1.
 int12(12).
 clause12(1..3).
 #modeh del($int12,$clause12)=3.
-#modeh exception($int22,holdsat(capacityExceededViol(+location),$inst,+instant))=1.
-int22(22).
-clause22(1..3).
-#modeh del($int22,$clause22)=3.
 

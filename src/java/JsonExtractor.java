@@ -1297,10 +1297,31 @@ public class JsonExtractor {
 				{
 					//StringUtils.
 					str = str.replace("initially","holdsat");
+					String tempstr = str;
 					str = replaceLast(")",","+find+")",str);
 					
+					/*
+					 * Attempting to find the occurrence of an agent in the string 
+					 * and filtering only for agents related to the synthesiser revising now
+					 * 
+					System.out.println("#### Filtered String - "+ tempstr);
+					int index1= tempstr.indexOf("(");
+					int index2= tempstr.lastIndexOf(",");
+					String tempSubString = tempstr.substring(index1+1, index2);
+					System.out.println("#### Filtered String 2 - "+ tempSubString);
 					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case
-					
+					if(tempSubString.matches("\\w+\\(\\w+\\)"))
+					{
+						//\(+\w+(?:\(+\w+\))?,\w+,\w+\)
+						//result = re.findall('(?:not )?holdsat+\(+\w+(?:\(+\w+\))?,\w+,\w+\)|(?:not )?occurred+\(+\w+(?:\(\w+,?\w+\))?,\w+,\w+\)', toAdd)
+		                
+						System.out.println("#### Matches string with only one item in bracket - "+ tempSubString);
+					}
+					if(tempSubString.matches("\\w+(?:\\(+\\w+\\))?,\\w+,\\w+\\)"))
+					{
+						System.out.println("#### Matches normal string with comma - "+ tempSubString);
+					}
+					*/
 					ret.append(str+"\n");
 				}
 				

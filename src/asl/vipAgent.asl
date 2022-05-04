@@ -1,9 +1,8 @@
 // Agent agent in project room_experiment
 
 /* Initial beliefs and rules */
-toenter(room1,3).
-toenter(room2,2).
-//is_vip(me).
+toenter(vip_room).
+
 
 /* Initial goals */
 
@@ -18,16 +17,40 @@ toenter(room2,2).
 +!initialise_logger_and_start : true  <- //jason_logger.initialise; 
 										!start.
 
-+!start : true <-  .print("hello world.");
-					//experiment5.myPrint('hello world');
-					!check_act.
++!start : true <-  .print("hello world. I am a VIP agent");
+					skip_steps(2);
+					//delay(2000);	
+					.print("Finished skipping steps");
+					!check_vip_room.
 
-+!check_act: true <-  .print("you can enter");
+//+!check_act: true <-  .print("you can enter");
 					//		experiment5.myPrint('you can enter');
-							!enter_room.
+//							!enter_room.
 							//. 
-								
-							
+
++!check_vip_room: true <-  .print("Checking for VIP rooms to enter");
+							?toenter(What);
+							checkVipRoom(What);
+							//!enter_room.
+							. 								
+
+
++vipRoomFound(R): true <- .print("Entering VIP room");
+						!enter_vip_room(R);
+						.
+
+
++!enter_vip_room(Rm): true <- .print("I am trying to enter the VIP now");
+					
+					.my_name(N);
+					
+					+room_entered(Rm);
+					enter(N,Rm);
+					
+					-+current_action(enter(N,Rm));
+				 .
+			 			
+													
 +!enter_room: true <- .print("I tried to enter");
 					//experiment5.myPrint('I tried to enter');
 					.my_name(N);
@@ -55,25 +78,63 @@ toenter(room2,2).
 						.print("I am finished, I can leave the building now");
 					}
 					
-					
-//					for (.member(P,Plans))
-//	  				{
-//						room_experiment.getItems(P,2,Rm,Tm);
-//	//					.substring(Rm,P,1,6); //: true and R unifies with "20".
-//	  				//	.print("The room I should be entering is  ",Rm);
-//	  					
-//	  					 +room_entered(Rm);
-//						 enter(N,Rm);
-//	
-//						 -+current_action(enter(N,Rm));
-//	  					
-//						//.substring(Tm,P,6,7); //: true and R unifies with "20".
-//	  					.print("I will be in ", Rm, " for ",Tm, " timesteps.");
-//					}
-					
 			 .
+			 
+
++in_room(_,_) : true <- ?role(P,R);
+						?room_entered(Rm);
+						
+						?current_action(A);
+						.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
+					
+						?boldness(B);
+						
+						/* 
+						if((B mod 2)==0)
+						{
+							?overseer(O);
+							.print("I am not happy about this, complaining to synthesiser");
+							//.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));	
+							
+							.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));	
+							
+							//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
+							+conflict;
+							!leave_now;		
+						}
+						else
+						{
+							.print("I am not happy about this, but I am staying in the room");
+							?toenter(Rm,N);
+							skip_steps(N);
+							.abolish(toenter(Rm,N));
+							!leave_now;	
+						}
+						*/
+						.
 		
-+perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
+/* +restrictedAccess :  true <- ?role(Nm,R);
+						?current_action(A);
+						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						
+						?overseer(O);
+						.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
+						
+						.*/
+								
+
+
+							
++restrictedAccess(Reas) :  true <- ?role(Nm,R);
+						?current_action(A);
+						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						
+						?overseer(O);
+						
+						.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
+						.		
+								
+/* +perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
 						?room_entered(Rm);
 						
 						?current_action(A);
@@ -118,26 +179,9 @@ toenter(room2,2).
 					.abolish(toenter(Rm,N));
 					!leave_now;	
 					
-//					.print("I am in ",Rm," and my role is ', R, '  I will exit when ready"); 
-//					.my_name(N);
-//					
-//					.random(Rd);
-//					//.print('random: ',Rd);
-//					
-//					if (Rd>0.5)
-//					{
-//					 	!leave_now;				
-//					}
-//					else
-//					{
-//						!idle_now;
-//					}								
-						
-						
-											
-					//leave(N,Rm); 
-				//	 -+current_action(leave(N,RM));
-					.
+					. 
+					* */
+					
 
 +!leave_now: true <- .print("Decided to leave, leaving now");
 					?room_entered(Rm);
@@ -187,53 +231,7 @@ toenter(room2,2).
 						!enter_room;
 						.
 					//	experiment5.myPrint('I left so I am chillin').
-
 							
-/* +restrictedAccess :  true <- ?role(Nm,R);
-						?current_action(A);
-						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
-						
-						?overseer(O);
-						?room_entered(Rm);
-						.send(O,tell,request(restrictedAccess, A, allowedAccess(Rm)));
-						
-							
-
-								.							
-+restrictedAccess(R): true <- .print("Unfortunately I cannot enter a VIP room since I am not a VIP");
-						?room_entered(Rm);
-						.print("Removing plans to enter VIP rooms since I am not a VIP");
-						-toenter(Rm,T);
-						
-				
-						.	*/		
-
-+restrictedAccess(Reas) :  true <- ?role(Nm,R);
-						?current_action(A);
-						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
-						
-						?overseer(O);
-						?room_entered(Rm);
-						if(Reas==vip_room)
-						{
-							//?is_vip(Me);
-							if(.ground(is_vip(Me)))
-							{
-								.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
-							}
-							else
-							{
-								.send(O,tell,request(restrictedAccess, A, allowedAccess(no_vip)));
-							}
-						}
-						
-						.			
-						
-+noAccessVIProom(Rm):		true <- .print("Unfortunately I cannot enter a VIP room since I am not a VIP");
-						//?room_entered(Rm);
-						.print("Removing plans to enter VIP rooms since I am not a VIP");
-						-toenter(Rm,T);	
-						.			
 
 +prob(enter) :  true <- ?role(Nm,R);
 						//.print("I cannot enter, I am role -",R);

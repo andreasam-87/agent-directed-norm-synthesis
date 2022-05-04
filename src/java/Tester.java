@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Tester {
 	
@@ -28,6 +29,20 @@ public class Tester {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+        System.out.println("Hello, World!"); 
+        String fact = "initially(vip_room(room1),rooms)";
+         String viproom = fact;
+		 int i = viproom.indexOf("(");
+		  int i2 = viproom.lastIndexOf(")");
+		  System.out.println(i+"-"+i2);
+        String temp = viproom.substring(i+1,i2);
+        System.out.println("Temp string: "+temp);
+       // String room = temp.substring(temp.indexOf("("));
+        String room = StringUtils.substringBetween(temp, "(", ")");
+        
+        viproom = room;
+        System.out.println("String after: "+viproom);
 	}
 	
 	private boolean compareFiles(String file1_path,String file2_path) throws IOException

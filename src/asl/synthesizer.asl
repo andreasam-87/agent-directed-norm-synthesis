@@ -35,90 +35,74 @@ received(0).
 									. 
 
 
-
- 
 @request[atomic]
++request(restrictedAccess, ActAtmpt,allowedAccess(no_vip))[source(Ag)] : true <- 
+													.print("This is a restricted access request");
+											    	//.send(Ag,askOne,is_vip(me),Response);
+											    	//.print("Response is ",Response);
+											    //	if(Response==false)
+											    //	{
+											    	room_experiment.getRoom(ActAtmpt,Room);
+											    	room_experiment.stripString(Room,Room2);
+											    		.send(Ag,tell,noAccessVIProom(Room2));
+											    		//-handling;
+											    //	}
+											    .abolish(request(restrictedAccess,ActAtmpt,allowedAccess(no_vip))[source(Ag)]);
+																.
+ 
+@request_b[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : not handling <- 
 										   
 										    +handling;
 										    
 										    .print("Request received from ",Ag," will handle");
 										    
+									/* 	    if(ActRes==restrictedAccess)
+										    {
+										    	.print("This is a restricted access request");
+										    	.send(Ag,askOne,is_vip(me),Response);
+										    	.print("Response is ",Response);
+										    	if(Response==false)
+										    	{
+										    		.send(Ag,tell,restrictedAccess(vip_room));
+										    		//-handling;
+										    	}
+										    }
+										    */
 										    ?entered(Ti);
 											-+entered(Ti+1);
+											//.print("Response is outside of block",Response);
+											//if(Response\==false)
+											//{
+												+handlingCur(ActRes,ActAtmpt,Exp,Ag);
+											    .send(coordinator,tell,informCoordinatorHandlingRevision(ActRes,ActAtmpt,Exp,Ag));
+											    +to_inform(Ag,ActAtmpt);
+											    .abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
+											    
+	
+	//										    
+											    .print('Action attempted ', ActAtmpt);
+												checkState(ActAtmpt);
+											    
+											   
+											    .wait(1000);
+												.count(request(_,_,_)[source(_)],C); 
+												
+												if (C==1)
+												{
+	//												+checkone;
+													.print("Only 1 request to handle and currently handling");
+												//	-request(ActRes,ActAtmpt,Exp);
+												//	.abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
+												}
+												else
+												{
+												
+													.print("Checking out other requests");
+												}
+											//}
 										    
-										    +handlingCur(ActRes,ActAtmpt,Exp,Ag);
-										    .send(coordinator,tell,informCoordinatorHandlingRevision(ActRes,ActAtmpt,Exp,Ag));
-										    +to_inform(Ag,ActAtmpt);
-										    .abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
 										    
-//										    .perceive;
-//										    
-//										    room_experiment.checkRevisionActive(Bool);
-//										     //.print("Bool is ", Bool);
-//										    if(Bool==0)
-//										    {
-//										    	.print("I have to wait it seems");
-//										    	 room_experiment.addRevisionItem(R,Ag);
-//										    }
-//										    else
-//										    {
-//										    	.concat("request(",ActRes,",",ActAtmpt,",",Exp,")",R)
-//										    	.print("R is ", R);
-//										    	 room_experiment.addRevisionItem(R,Ag);
-////										    	  room_experiment.checkRevisionActive(B);
-////										    	  .print("Bool is ", B);
-//										    }
-										   
-										    
-//										    if(pause)
-//										    {
-//										    	.print("I have to wait because of pause");
-//										    }
-//										    else
-//										    {
-//										    	.print("Tell other agents to wait");
-//										    	.all_names(Names);
-//										    	.my_name(Me);
-//										    	for (.member(N,Names))
-//									  			{
-//									  				//.substring("a","bbacc",0): false. When the third argument is 0, 
-//									  				//.substring works like a java startsWith method.
-//									  				//
-//									  				if(.substring("syn",N,0) & not (Me==N))
-//									  				{
-//									  					.send(N,tell,pause);
-//									  					
-////									  					if(not (my_name(Me)==N))
-////									  					{
-////									  						.send(N,tell,pause);
-////									  					}
-//									  					
-//									  				}
-//									  				
-//									  			}
-//										    	
-//										    }
-//										    
-										    .print('Action attempted ', ActAtmpt);
-											checkState(ActAtmpt);
-										    
-										   
-										    .wait(1000);
-											.count(request(_,_,_)[source(_)],C); 
-											
-											if (C==1)
-											{
-//												+checkone;
-												.print("Only 1 request to handle and currently handling");
-											//	-request(ActRes,ActAtmpt,Exp);
-											//	.abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
-											}
-											else
-											{
-											
-												.print("Checking out other requests");
-											}
 											
 										.
 
@@ -128,85 +112,101 @@ received(0).
 							//-pause[source(Ag)].
 							.
 
-@request_b[atomic]
+@request_c[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : handling <- .print('Queued request for ',Ag);
 					
-										?handlingCur(A1,Act1,E1,Ag1);
-										room_experiment.checkSimilarRequest(ActRes, ActAtmpt,Exp,A1,Act1,E1,R1);
 										
-										//.print("R1 is ", R1);
-										if(R1==1)
-										{
+									/* 	if(ActRest==restrictedAccess)
+									    {
+									    	.send(Ag,askOne,is_vip(me),Response);
+									    	.print("Response is ",Response);
+									    	if(Response==false)
+									    	{
+									    		.send(Ag,tell,restrictedAccess(vip_room));
+									    	}
+									    }
+										.print("Response is outside of block ",Response);
+										if(Response\==false)
+										{*/
+											?handlingCur(A1,Act1,E1,Ag1);
+											room_experiment.checkSimilarRequest(ActRes, ActAtmpt,Exp,A1,Act1,E1,R1);
 											
-										
-											//.perceive;
-											.findall([X,Y,Z,Q],to_handle(X,Y,Z,Q),Lists2);  
-											.length(Lists2,Sze);
-											.count(to_handle(_,_,_,_),C); 
-											.print("Size: ",Sze, ", Count: ", C);	
-											
-											if(Sze>0)
+											//.print("R1 is ", R1);
+											if(R1==1)
 											{
-												.print("Checking if this request is different from the queued request");
 												
-												//currently only checks similarity with the first request in the list
-												//TODO: CHECK THROUGH THE LIST OF REQUESTS
+											
+												//.perceive;
+												.findall([X,Y,Z,Q],to_handle(X,Y,Z,Q),Lists2);  
+												.length(Lists2,Sze);
+												.count(to_handle(_,_,_,_),C); 
+												.print("Size: ",Sze, ", Count: ", C);	
 												
-												for (.member(Z,Lists2))
-									  			{
-									  				room_experiment.getItems(Z,3,I1,I2,I3);
-	
-														room_experiment.checkSimilarRequest(ActRes,ActAtmpt,Exp,I1,I2,I3,R2);
-									  				
-													if(R2==1)
+												if(Sze>0)
+												{
+													.print("Checking if this request is different from the queued request");
+													
+													//currently only checks similarity with the first request in the list
+													//TODO: CHECK THROUGH THE LIST OF REQUESTS
+													
+													for (.member(Z,Lists2))
+										  			{
+										  				room_experiment.getItems(Z,3,I1,I2,I3);
+		
+															room_experiment.checkSimilarRequest(ActRes,ActAtmpt,Exp,I1,I2,I3,R2);
+										  				
+														if(R2==1)
+														{
+															.print("Adding this request to the official queue because it is different to what is there");
+								  							+to_handle(ActRes,ActAtmpt,Exp,Ag);
+								  							+to_inform(Ag,ActAtmpt);
+								  							+different;
+														}
+														else
+														{
+															.print("No need to add the request to the official queue, a similar request is already in the queue");
+	    												//	room_experiment.stripString(I2,S2);
+															+to_inform(Ag,I2);
+															+similar;
+														}
+														
+														//rethink this to work with the list as it adds something to based on all the to handle stuff there 
+														//if similar to anythin in the list then add a new request, otherwise add a to_inform
+										  			}
+													if(similar & different)
 													{
-														.print("Adding this request to the official queue because it is different to what is there");
-							  							+to_handle(ActRes,ActAtmpt,Exp,Ag);
-							  							+to_inform(Ag,ActAtmpt);
-							  							+different;
-													}
-													else
-													{
-														.print("No need to add the request to the official queue, a similar request is already in the queue");
-    												//	room_experiment.stripString(I2,S2);
-														+to_inform(Ag,I2);
-														+similar;
+														.abolish(to_handle(ActRes,ActAtmpt,Exp,Ag));
+								  						.abolish(to_inform(Ag,ActAtmpt));
+								  						-similar;
+								  						-different;
 													}
 													
-													//rethink this to work with the list as it adds something to based on all the to handle stuff there 
-													//if similar to anythin in the list then add a new request, otherwise add a to_inform
-									  			}
-												if(similar & different)
-												{
-													.abolish(to_handle(ActRes,ActAtmpt,Exp,Ag));
-							  						.abolish(to_inform(Ag,ActAtmpt));
-							  						-similar;
-							  						-different;
-												}
+													
+													//.nth(0,Lists2,First);
+													
+	
+	
+												}				
+							  					else
+							  					{
+							  						.print("Adding a request to the official queue");
+							  						+to_handle(ActRes,ActAtmpt,Exp,Ag);
+							  						+to_inform(Ag,ActAtmpt);
+							  					}
 												
 												
-												//.nth(0,Lists2,First);
-												
-
-
-											}				
-						  					else
-						  					{
-						  						.print("Adding a request to the official queue");
-						  						+to_handle(ActRes,ActAtmpt,Exp,Ag);
-						  						+to_inform(Ag,ActAtmpt);
-						  					}
+											}
+											else
+											{
+												.print("Need to inform this agent ", Ag);
+												+to_inform(Ag,Act1);
+											}	
+	
+											.abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
+											.print("Removed request from list");
 											
-											
-										}
-										else
-										{
-											.print("Need to inform this agent ", Ag);
-											+to_inform(Ag,Act1);
-										}	
-
-										.abolish(request(ActRes,ActAtmpt,Exp)[source(Ag)]);
-										.print("Removed request from list");
+										//}	
+										
 	
 										?entered(T);
 										-+entered(T+1);	
@@ -280,7 +280,8 @@ received(0).
 							
 							.*/
 		
-+revisionSuccess: true <- -revisionSuccess;
++revisionSuccess: true <-  .print("The revision was successful, let me begin the discussion");
+							-revisionSuccess;
 							!discussRevision;
 										.	
 										
@@ -346,14 +347,14 @@ received(0).
 																. 
 
 													
-+revisionFailed: true <- 
++revisionFailed: true <- .print("Thre revision task failed");
 						-revisionFailed;
 						!discussFailedRevision;
 						.
 
 +!discussFailedRevision: true <- 	.print("No possible revisions found");
 						//.abolish(revisionFailed);
-						-revisionFailed;
+						//-revisionFailed;
 						?handlingCur(ActRes,ActAtmpt,Exp,Ag);
 						//.findall([W,ActAtmpt],to_inform(W,ActAtmpt),List1); 
 						.findall(W,to_inform(W,ActAtmpt),List1); 
@@ -442,6 +443,7 @@ received(0).
 +instChangeConsensusRequest(Granted)[source(Ag)]: true <- .print("Permission granted");
 										?accept(N);
 										-+accept(N+1);
+										
 										//?received(C);
 										//-+received(C+1);
 										.

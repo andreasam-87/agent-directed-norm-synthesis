@@ -138,8 +138,36 @@
 					//	experiment5.myPrint('I left so I am chillin').
 					
 					
-	
+							
++restrictedAccess(Reas) :  true <- ?role(Nm,R);
+						?current_action(A);
+						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						
+						?overseer(O);
+						?room_entered(Rm);
+						if(Reas==vip_room)
+						{
+							//?is_vip(Me);
+							if(.ground(is_vip(Me)))
+							{
+								.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
+							}
+							else
+							{
+								.send(O,tell,request(restrictedAccess, A, allowedAccess(no_vip)));
+							}
+						}
+						
+						.
+						
+//+restrictedAccess(R): true <- .print("Unfortunately I cannot enter a VIP room as I am not a VIP");
+//				.	
 
++noAccessVIProom(Rm): true <- .print("Unfortunately I cannot enter a VIP room as I am not a VIP");
+								+noEntry(Rm);
+								.	
+				
+				
 +prob(enter) :  true <- ?role(P,R);
 						//.print("I cannot enter, I am role -",R);
 						?current_action(A);

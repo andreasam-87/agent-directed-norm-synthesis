@@ -13,6 +13,7 @@ public class chooseRandomRoom extends DefaultInternalAction {
 	@Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception {
     	 int min = 1;
+         //int max = 3;
          int max = 2;
          	//String room;
          //int random = new Random().nextInt(max-min) + min;//.nextBoolean() ? a : b;

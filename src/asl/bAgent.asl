@@ -135,6 +135,46 @@
 						.
 					//	experiment5.myPrint('I left so I am chillin').
 							
+/* +restrictedAccess :  true <- ?role(Nm,R);
+						?current_action(A);
+						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						
+						?overseer(O);
+						?room_entered(Rm);
+						.send(O,tell,request(restrictedAccess, A, allowedAccess(Rm)));
+						
+						.
+						
++restrictedAccess(R): true <- .print("Unfortunately I cannot enter a VIP room as I am not a VIP");
+						.	*/
+
+
++restrictedAccess(Reas) :  true <- ?role(Nm,R);
+						?current_action(A);
+						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
+						
+						?overseer(O);
+						?room_entered(Rm);
+						if(Reas==vip_room)
+						{
+							//?is_vip(Me);
+							if(.ground(is_vip(Me)))
+							{
+								.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
+							}
+							else
+							{
+								.send(O,tell,request(restrictedAccess, A, allowedAccess(no_vip)));
+							}
+						}
+						
+						
+						.
+						
+						
++noAccessVIProom(Rm): true <- .print("Unfortunately I cannot enter a VIP room as I am not a VIP");
+								+noEntry(Rm);
+								.	
 
 +prob(enter) :  true <- ?role(Nm,R);
 						//.print("I cannot enter, I am role -",R);
@@ -159,6 +199,8 @@
 								//.print("I want to enter");
 								//!check_act.
 								.
+								
+
 
 +prob(wave) :  true <- .print("I cannot leave").
 						//experiment5.myPrint('I cannot leave').

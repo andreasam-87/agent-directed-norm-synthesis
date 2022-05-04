@@ -19,6 +19,7 @@ MAS room_experiment {
 		pAgent[mindinspector="gui(cycle,html,history)"] #2;
 		
 		oracle;
+		vipAgent[mindinspector="gui(cycle,html,history)"];
 		
 	aslSourcePath:
 		"src/asl";
