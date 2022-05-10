@@ -1333,7 +1333,7 @@ public class JsonExtractor {
 	
 	}
 	
-	public ArrayList<Object> getTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify )
+	public ArrayList<Object> getTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify, ArrayList<String> allAgents, ArrayList<String> subsetAgents)
 	{
 		/*Function to access state facts and return a trace file as string 
 		 * This function may need to be modified to allow changes to the fluents and events 
@@ -1349,8 +1349,16 @@ public class JsonExtractor {
 		
 		int traceCount = 0;
 		int count = 0;
+		String forExamplesList="";
 		
-		final String forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
+		int countBrackets = StringUtils.countMatches(toModify, "(");
+		if(countBrackets>1)
+			forExamplesList =StringUtils.substringBeforeLast(toModify, "(").trim();
+		else
+			forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
+		
+			
+		
 		System.out.println("To modify 2 /////////"+ forExamplesList+"/////////// ");
 		
 		// Loop through to identify states to use
@@ -1384,9 +1392,19 @@ public class JsonExtractor {
 						//System.out.print("Contains capacaity exceeded - "+str);
 						if(str.contains(toModify) && find>=stateKey)
 						{
+							System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
 							str = "not "+str;
 							examples.append("#example "+str+".\n");
 							examp.add("#example "+str+".\n");
+							/*Maybe I need to add the occurrence of the good event here 
+							 * Decided to add it for now
+							 * */
+							if(toAdd.contains("occurred"))
+							{
+								examples.append("#example "+toAdd+","+count+").\n");
+								examp.add("#example "+toAdd+", "+count+").\n");
+							}
+							
 						}
 						else {
 							examples.append("#example "+str+".\n");
@@ -1401,7 +1419,25 @@ public class JsonExtractor {
 							{
 								if(str.length()>0)
 								{
-									ret.append(str+".\n");	
+									//Need to filter by the synthesiser//
+									if(factAboutAgent(str,allAgents))
+									{
+										System.out.print("Fact about an agent - "+str+"\n");
+										
+										if(factAboutAgent(str,subsetAgents))
+										{
+											System.out.print("Fact about an specific overseer agent - "+str+"\n");
+												ret.append(str+".\n");
+										}
+										else if(str.contains("occurred") || str.contains("observed"))
+										{
+											ret.append(str+".\n");
+										}
+											
+									}
+									else
+										ret.append(str+".\n");	
+									
 								}
 								
 							}
@@ -1435,8 +1471,18 @@ public class JsonExtractor {
 						}
 						
 					}*/
+					
 					System.out.println("//////"+add);
-					ret.append(add+".\n");
+					/*Decided to not add anything to the trace file for now
+					 * if(toAdd.contains("occurred"))
+					{
+						if(find==stateKey)
+							ret.append(add+".\n");
+					}
+					else
+						ret.append(add+".\n");*/
+					if(!toAdd.contains("occurred"))
+						ret.append(add+".\n");
 				}
 				count++;
 				traceCount++;
@@ -1459,6 +1505,17 @@ public class JsonExtractor {
 		return response;
 	}
 	
+	public boolean factAboutAgent(String fact, ArrayList<String> agents)
+	{
+		
+		for (String agent : agents)
+	      { 		      
+	           if(fact.contains(agent))		
+	        	   return true;
+	      }
+		
+		return false;
+	}
 	public String modifyFact(String fact, String examples, String mod, int find, int stateKey)
 	{
 		String modifiedFact = "";

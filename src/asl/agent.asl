@@ -56,6 +56,8 @@
 					//	.print(request(roomCapacityExceededViol, A, noViol));
 					
 					//TO DO -- include the logic to have them decide to move 
+					//They should leavw, no
+					//!leave_now;	
 						.
 
 

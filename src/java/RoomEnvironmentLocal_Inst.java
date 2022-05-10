@@ -53,7 +53,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	HashMap <String,String> potentialRevision = new HashMap<>(); //collection of states of the inst
 	
 	HashSet <InstMods> instModList = new HashSet<>();
+	HashMap<String, ArrayList<String>> agentsBySynthesizerInMAS = new HashMap<String, ArrayList<String>>();
+	 ArrayList<String> agentsInMAS = new ArrayList<String>();
 
+	
 	HashMap <Long,Boolean> completed_infinites  = new HashMap<>();  //collection of completed infinites for action that can take forever
 
 	String inst_file;// = "rooms.ial"; //which institutional file we will be running
@@ -598,7 +601,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							String trace = new JsonExtractor().getTraceFile(when,numStates,stateList);
 							
-							ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob);
+							ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
 							
 							final String traceX = traceInfo.get(0).toString();
 							//Getting this earlier
@@ -607,6 +610,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									//new JsonExtractor().getTraceCount();
 							final String narUpdate = "final("+narCount+").\n";
 							
+							
+							
 							System.out.println("Trace file created");
 							//writing to the trace file is what is required so that the ILP can access this file
 							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+".txt"), trace.getBytes());
@@ -614,7 +619,27 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							Files.write(Paths.get(t_path), traceX.getBytes());
 							
 							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/trace"+trace_count+"_X.txt"), traceX.getBytes());
+							System.out.println("Printing all agents");
 							
+							//HashMap<String, ArrayList<String>> agentsBySynthesizerInMAS = new HashMap<String, ArrayList<String>>();
+							// ArrayList<String> agentsInMAS = new ArrayList<String>();
+
+							/*
+							 * Checking for all the agents and then the subset of agents 
+							 * It works as expected
+							 * 
+							 * for (int i = 0; i < agentsInMAS.size();i++) 
+						      { 		      
+						          System.out.println(agentsInMAS.get(i)); 
+						      }
+							
+							System.out.println("Printing agents related to "+agName);
+							ArrayList<String> tempAg = agentsBySynthesizerInMAS.get(agName);
+							for (int i = 0; i < tempAg.size();i++) 
+						      { 		      
+						          System.out.println(tempAg.get(i)); 
+						      }
+							*/
 							
 							System.out.println("Retreiving examples definitions from trace data");
 							final String examples = traceInfo.get(2).toString();
@@ -1178,6 +1203,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			 String temp = atmpt.substring(0,i);
 			 problem = atmpt.replace(temp, prob); 
 			 toAdd = atmpt.replace(temp, "occurred(arrive"); 
+			 problem ="occurred("+problem;
 			 //toAdd = toAdd + ")";
 		}
 		
@@ -1609,6 +1635,18 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				//"initially(max(room3,2),rooms)\n" +
 				"initially(vip_room(room2),rooms)\n");
 		
+		ArrayList<String> allAgents = new ArrayList<String>();
+		//agentsBySynthesizerInMAS
+		//agentsInMAS
+		int countSynthesisers =0;
+		for (String ag : getNamesAgents()) {
+			agentsInMAS.add(ag);
+			if(ag.contains("synthesizer"))
+			{
+				agentsBySynthesizerInMAS.put(ag,new ArrayList<String>());
+			}
+				
+		}
 		for (String ag : getNamesAgents()) {
 			config.append(ag + " ");
 			includes.append("person("+ag + ").\n");
@@ -1635,12 +1673,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//addPercept(ag,Literal.parseLiteral("overseer(synthesizer)"));
 			
 			//identifying overseer and assignee at startup so agents can know who to contact
-			if(!(ag.contains("synthesizer")))
+			if(!(ag.contains("synthesizer")) && !(ag.contains("oracle")) && !(ag.contains("coordinator")))
 			{
 				if(count%2==0)
 				{
 				//temporarily setting all agents' overseer to the single synthesizer.
 				addPercept(ag,Literal.parseLiteral("overseer(synthesizer1)"));
+				agentsBySynthesizerInMAS.get("synthesizer1").add(ag);
 				
 				//temporarily assigning all agents to the single synthesizer
 				//addPercept("synthesizer1",Literal.parseLiteral("assignee("+ag+")"));
@@ -1649,7 +1688,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				{
 					//temporarily setting all agents' overseer to the single synthesizer.
 					addPercept(ag,Literal.parseLiteral("overseer(synthesizer2)"));
-					
+					agentsBySynthesizerInMAS.get("synthesizer2").add(ag);
 					//temporarily assigning all agents to the single synthesizer
 					//addPercept("synthesizer2",Literal.parseLiteral("assignee("+ag+")"));
 					
@@ -1666,6 +1705,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 
 		}
+		//agentsInMAS
 		config.append("\nRole: x y\n" +
 				//"Location: room1 room2 room3\n" +
 				"Location: room1 room2\n" +
