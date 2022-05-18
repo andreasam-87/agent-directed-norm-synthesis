@@ -1505,6 +1505,178 @@ public class JsonExtractor {
 		return response;
 	}
 	
+	public ArrayList<Object> getLocalTraceFileXhail(int stateKey, int howMuchStates,HashMap <Integer,State> stateList, String toAdd, String toModify, ArrayList<String> allAgents, ArrayList<String> subsetAgents)
+	{
+		/*Function to access state facts and return a trace file as string 
+		 * This function may need to be modified to allow changes to the fluents and events 
+		 * to properly represent/demonstrate the rule that needs to be learnt
+		 * */
+		
+		StringBuilder examples = new StringBuilder(); //examples.setLength(0);
+		HashSet<String> examp = new HashSet();
+		System.out.print("Retrieving states: ");
+		toModify = toModify.trim();
+		System.out.println("To modify /////////"+ toModify+"/////////// ");
+		StringBuilder ret=new StringBuilder();
+		
+		int traceCount = 0;
+		int count = 0;
+		String forExamplesList="";
+		
+		int countBrackets = StringUtils.countMatches(toModify, "(");
+		if(countBrackets>1)
+			forExamplesList =StringUtils.substringBeforeLast(toModify, "(").trim();
+		else
+			forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
+		
+			
+		
+		System.out.println("To modify 2 /////////"+ forExamplesList+"/////////// ");
+		
+		// Loop through to identify states to use
+		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
+		{
+			if(stateList.containsKey(find))
+			{
+				//System.out.print(find+" ");
+				
+				String facts=getStateFactsandEvents(find,stateList);
+		
+				String [] facts_array = facts.split("\n");
+			//	System.out.println("Size of facts: "+ facts_array.length);
+				ret.append("%Timestep "+count+".\n");
+				for(String str: facts_array)
+				{
+					//StringUtils.
+					str = str.replace("initially","holdsat");
+					str = replaceLast(")",","+count+")",str);
+					
+					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
+					//probably need to remove this to a new structure to retrieve for the example file.
+					
+					//if(str.contains(toModify.substring(, endIndex))) 
+					//substringBefore("This is my string", " "));
+					
+					
+				//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
+					if(str.contains(forExamplesList))
+					{
+						//System.out.print("Contains capacaity exceeded - "+str);
+						if(str.contains(toModify) && find>=stateKey)
+						{
+							System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
+							str = "not "+str;
+							examples.append("#example "+str+".\n");
+							examp.add("#example "+str+".\n");
+							/*Maybe I need to add the occurrence of the good event here 
+							 * Decided to add it for now
+							 * */
+							if(toAdd.contains("occurred"))
+							{
+								examples.append("#example "+toAdd+","+count+").\n");
+								examp.add("#example "+toAdd+", "+count+").\n");
+							}
+							
+						}
+						else {
+							examples.append("#example "+str+".\n");
+							examp.add("#example "+str+".\n");
+						}
+					}
+					else
+					{
+						if(!str.contains("revise"))
+						{
+							if(!str.contains("_create_"))
+							{
+								if(str.length()>0)
+								{
+									//Need to filter by the synthesiser//
+									if(factAboutAgent(str,allAgents))
+									{
+										//System.out.print("Fact about an agent - "+str+"\n");
+										
+										if(factAboutAgent(str,subsetAgents))
+										{
+											//System.out.print("Fact about an specific overseer agent - "+str+"\n");
+												ret.append(str+".\n");
+										}
+										else if(str.contains("occurred") || str.contains("observed"))
+										{
+											ret.append(str+".\n");
+										}
+											
+									}
+									else
+										ret.append(str+".\n");	
+									
+								}
+								
+							}
+							
+						}
+						/*if(!str.contains("revise") || !str.contains("_create_"))
+						{
+							ret.append(str+".\n");	
+						}
+						//ret.append(str+"\n");*/
+					}
+					
+					
+				//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
+					
+					
+				}
+				// add a new fluent if necessary
+				if(find>=stateKey)
+				{
+					String add = toAdd+",rooms,"+count+")";
+				/*	if(toAdd.contains("(")) {
+						int count = StringUtils.countMatches(reason, "(");
+						if(count>1)
+						{
+							reason = StringUtils.substringBetween(reason, "(", "))");
+							toAdd = reason+"("+room+"),rooms,"+when+")";
+						}else {
+							reason = StringUtils.substringBetween(reason, "(", ")");
+							toAdd = reason+",rooms,"+when+")";
+						}
+						
+					}*/
+					
+					System.out.println("//////"+add);
+					/*Decided to not add anything to the trace file for now
+					 * if(toAdd.contains("occurred"))
+					{
+						if(find==stateKey)
+							ret.append(add+".\n");
+					}
+					else
+						ret.append(add+".\n");*/
+					if(!toAdd.contains("occurred"))
+						ret.append(add+".\n");
+				}
+				count++;
+				traceCount++;
+			}
+			ret.append("\n\n");
+			examples.append("\n\n");
+			examp.add("\n");
+		}
+		examples.append("%%%For 1st agent");
+		System.out.println("Finished Retrieval");
+		//System.out.println("Examples are : \n"+examples.toString());
+
+		//System.out.println("Examples from hashset are also : \n"+examp.toString());
+		//return ret.toString();
+	
+		ArrayList<Object> response = new ArrayList<Object>();
+		response.add(ret);
+		response.add(traceCount - 1);
+		response.add(examples);
+		return response;
+	}
+	
 	public boolean factAboutAgent(String fact, ArrayList<String> agents)
 	{
 		
