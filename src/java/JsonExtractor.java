@@ -1419,23 +1419,6 @@ public class JsonExtractor {
 							{
 								if(str.length()>0)
 								{
-									//Need to filter by the synthesiser//
-									if(factAboutAgent(str,allAgents))
-									{
-										//System.out.print("Fact about an agent - "+str+"\n");
-										
-										if(factAboutAgent(str,subsetAgents))
-										{
-											//System.out.print("Fact about an specific overseer agent - "+str+"\n");
-												ret.append(str+".\n");
-										}
-										else if(str.contains("occurred") || str.contains("observed"))
-										{
-											ret.append(str+".\n");
-										}
-											
-									}
-									else
 										ret.append(str+".\n");	
 									
 								}
@@ -1443,44 +1426,18 @@ public class JsonExtractor {
 							}
 							
 						}
-						/*if(!str.contains("revise") || !str.contains("_create_"))
-						{
-							ret.append(str+".\n");	
-						}
-						//ret.append(str+"\n");*/
+						
 					}
 					
-					
-				//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
-					
-					
+				
 				}
 				// add a new fluent if necessary
 				if(find>=stateKey)
 				{
 					String add = toAdd+",rooms,"+count+")";
-				/*	if(toAdd.contains("(")) {
-						int count = StringUtils.countMatches(reason, "(");
-						if(count>1)
-						{
-							reason = StringUtils.substringBetween(reason, "(", "))");
-							toAdd = reason+"("+room+"),rooms,"+when+")";
-						}else {
-							reason = StringUtils.substringBetween(reason, "(", ")");
-							toAdd = reason+",rooms,"+when+")";
-						}
-						
-					}*/
-					
+			
 					System.out.println("//////"+add);
-					/*Decided to not add anything to the trace file for now
-					 * if(toAdd.contains("occurred"))
-					{
-						if(find==stateKey)
-							ret.append(add+".\n");
-					}
-					else
-						ret.append(add+".\n");*/
+					
 					if(!toAdd.contains("occurred"))
 						ret.append(add+".\n");
 				}
