@@ -150,7 +150,7 @@
 						if(Reas==vip_room)
 						{
 							//?is_vip(Me);
-							if(.ground(is_vip(Me)))
+							if(.ground(is_vip(me)))
 							{
 								.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
 							}

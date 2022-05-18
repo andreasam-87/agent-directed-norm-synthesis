@@ -1422,11 +1422,11 @@ public class JsonExtractor {
 									//Need to filter by the synthesiser//
 									if(factAboutAgent(str,allAgents))
 									{
-										System.out.print("Fact about an agent - "+str+"\n");
+										//System.out.print("Fact about an agent - "+str+"\n");
 										
 										if(factAboutAgent(str,subsetAgents))
 										{
-											System.out.print("Fact about an specific overseer agent - "+str+"\n");
+											//System.out.print("Fact about an specific overseer agent - "+str+"\n");
 												ret.append(str+".\n");
 										}
 										else if(str.contains("occurred") || str.contains("observed"))
