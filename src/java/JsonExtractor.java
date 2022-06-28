@@ -1502,123 +1502,144 @@ public class JsonExtractor {
 				String [] facts_array = facts.split("\n");
 			//	System.out.println("Size of facts: "+ facts_array.length);
 				ret.append("%Timestep "+count+".\n");
-				for(String str: facts_array)
+				int size = facts_array.length;
+				
+				if(factAboutAgent(facts_array[size-1],subsetAgents))
 				{
-					//StringUtils.
-					str = str.replace("initially","holdsat");
-					str = replaceLast(")",","+count+")",str);
+					//this state is about the occurrence of an event by one of the agent's oversee-ees
+				
+				
 					
-					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
-					//probably need to remove this to a new structure to retrieve for the example file.
-					
-					//if(str.contains(toModify.substring(, endIndex))) 
-					//substringBefore("This is my string", " "));
-					
-					
-				//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
-					if(str.contains(forExamplesList))
+					for(String str: facts_array)
 					{
-						//System.out.print("Contains capacaity exceeded - "+str);
-						if(str.contains(toModify) && find>=stateKey)
+						//StringUtils.
+						str = str.replace("initially","holdsat");
+						str = replaceLast(")",","+count+")",str);
+						
+						// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
+						//probably need to remove this to a new structure to retrieve for the example file.
+						
+						//if(str.contains(toModify.substring(, endIndex))) 
+						//substringBefore("This is my string", " "));
+						
+						
+					//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
+						if(str.contains(forExamplesList))
 						{
-							System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
-							str = "not "+str;
-							examples.append("#example "+str+".\n");
-							examp.add("#example "+str+".\n");
-							/*Maybe I need to add the occurrence of the good event here 
-							 * Decided to add it for now
-							 * */
-							if(toAdd.contains("occurred"))
+							//System.out.print("Contains capacaity exceeded - "+str);
+							if(str.contains(toModify) && find>=stateKey)
 							{
-								examples.append("#example "+toAdd+","+count+").\n");
-								examp.add("#example "+toAdd+", "+count+").\n");
-							}
-							
-						}
-						else {
-							examples.append("#example "+str+".\n");
-							examp.add("#example "+str+".\n");
-						}
-					}
-					else
-					{
-						if(!str.contains("revise"))
-						{
-							if(!str.contains("_create_"))
-							{
-								if(str.length()>0)
+								System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
+								str = "not "+str;
+								examples.append("#example "+str+".\n");
+								examp.add("#example "+str+".\n");
+								/*Maybe I need to add the occurrence of the good event here 
+								 * Decided to add it for now
+								 * */
+								if(toAdd.contains("occurred"))
 								{
-									//Need to filter by the synthesiser//
-									if(factAboutAgent(str,allAgents))
+									examples.append("#example "+toAdd+","+count+").\n");
+									examp.add("#example "+toAdd+", "+count+").\n");
+								}
+								
+							}
+							else {
+								examples.append("#example "+str+".\n");
+								examp.add("#example "+str+".\n");
+							}
+						}
+						else
+						{
+							if(!str.contains("revise"))
+							{
+								if(!str.contains("_create_"))
+								{
+									if(str.length()>0)
 									{
-										//System.out.print("Fact about an agent - "+str+"\n");
-										
-										if(factAboutAgent(str,subsetAgents))
+										//Need to filter by the synthesiser//
+										if(factAboutAgent(str,allAgents))
 										{
-											//System.out.print("Fact about an specific overseer agent - "+str+"\n");
-												ret.append(str+".\n");
-										}
-										else if(str.contains("occurred") || str.contains("observed"))
-										{
-											ret.append(str+".\n");
-										}
+											//System.out.print("Fact about an agent - "+str+"\n");
 											
+											if(factAboutAgent(str,subsetAgents))
+											{
+												//System.out.print("Fact about an specific overseer agent - "+str+"\n");
+													ret.append(str+".\n");
+											}
+											else if(str.contains("occurred") || str.contains("observed"))
+											{
+												ret.append(str+".\n");
+												
+												/*//Try using null instead
+												if(str.contains("occurred"))
+													ret.append("occurred(null,"+count+").\n");
+												else
+													ret.append("observed(null,"+count+").\n");
+											
+												
+												holdsat(pow(null),rooms,0).
+												occurred(enter(agent3,room2),0).
+												observed(enter(agent3,room2),0).*/
+	
+											}
+												
+										}
+										else
+											ret.append(str+".\n");	
+										
 									}
-									else
-										ret.append(str+".\n");	
 									
 								}
 								
 							}
-							
-						}
-						/*if(!str.contains("revise") || !str.contains("_create_"))
-						{
-							ret.append(str+".\n");	
-						}
-						//ret.append(str+"\n");*/
-					}
-					
-					
-				//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
-					
-					
-				}
-				// add a new fluent if necessary
-				if(find>=stateKey)
-				{
-					String add = toAdd+",rooms,"+count+")";
-				/*	if(toAdd.contains("(")) {
-						int count = StringUtils.countMatches(reason, "(");
-						if(count>1)
-						{
-							reason = StringUtils.substringBetween(reason, "(", "))");
-							toAdd = reason+"("+room+"),rooms,"+when+")";
-						}else {
-							reason = StringUtils.substringBetween(reason, "(", ")");
-							toAdd = reason+",rooms,"+when+")";
+							/*if(!str.contains("revise") || !str.contains("_create_"))
+							{
+								ret.append(str+".\n");	
+							}
+							//ret.append(str+"\n");*/
 						}
 						
-					}*/
-					
-					System.out.println("//////"+add);
-					/*Decided to not add anything to the trace file for now
-					 * if(toAdd.contains("occurred"))
+						
+					//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
+						
+						
+					}
+					// add a new fluent if necessary
+					if(find>=stateKey)
 					{
-						if(find==stateKey)
+						String add = toAdd+",rooms,"+count+")";
+					/*	if(toAdd.contains("(")) {
+							int count = StringUtils.countMatches(reason, "(");
+							if(count>1)
+							{
+								reason = StringUtils.substringBetween(reason, "(", "))");
+								toAdd = reason+"("+room+"),rooms,"+when+")";
+							}else {
+								reason = StringUtils.substringBetween(reason, "(", ")");
+								toAdd = reason+",rooms,"+when+")";
+							}
+							
+						}*/
+						
+						System.out.println("//////"+add);
+						/*Decided to not add anything to the trace file for now
+						 * if(toAdd.contains("occurred"))
+						{
+							if(find==stateKey)
+								ret.append(add+".\n");
+						}
+						else
+							ret.append(add+".\n");*/
+						if(!toAdd.contains("occurred"))
 							ret.append(add+".\n");
 					}
-					else
-						ret.append(add+".\n");*/
-					if(!toAdd.contains("occurred"))
-						ret.append(add+".\n");
+					count++;
+					traceCount++;
 				}
-				count++;
-				traceCount++;
+				ret.append("\n\n");
+				examples.append("\n\n");
+				examp.add("\n");
 			}
-			ret.append("\n\n");
-			examples.append("\n\n");
-			examp.add("\n");
 		}
 		examples.append("%%%For 1st agent");
 		System.out.println("Finished Retrieval");

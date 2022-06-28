@@ -347,7 +347,7 @@ received(0).
 																. 
 
 													
-+revisionFailed: true <- .print("Thre revision task failed");
++revisionFailed: true <- .print("The revision task failed");
 						-revisionFailed;
 						!discussFailedRevision;
 						.
@@ -518,6 +518,7 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 +instChangeConsensusNotGranted: true <- .print("Permission not granted");
  							//need to do something else so rework the workflow/pipeline
 							//+updateEnv;
+							!discussFailedRevision;
  							.		
 
 +oraclePermissionGranted(NewInst): true <- .print("Finally, the institution can be revised");
@@ -538,6 +539,8 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 											.abolish(to_inform(_,ActAtmpt));	
 											
 											+updateInEnv(NewInst);*/
+											
+											!discussFailedRevision;
 											.send(coordinator,tell,informCoordinatorComplete);
 											
 											!handle;

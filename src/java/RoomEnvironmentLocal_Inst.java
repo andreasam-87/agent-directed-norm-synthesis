@@ -601,7 +601,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							String trace = new JsonExtractor().getTraceFile(when,numStates,stateList);
 							
-							ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							ArrayList<Object> traceInfo  = new JsonExtractor().getLocalTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
 							
 							final String traceX = traceInfo.get(0).toString();
 							//Getting this earlier
