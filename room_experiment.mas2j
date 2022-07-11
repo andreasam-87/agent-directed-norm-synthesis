@@ -6,6 +6,7 @@ MAS room_experiment {
 	//environment: RoomEnvironmentTimeStep
 
 	agents:
+		base_agent;
 		vipAgent;
 		oracle;
 		syn_test;

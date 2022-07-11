@@ -32,6 +32,9 @@ import jason.asSyntax.Structure;
 
 import org.apache.commons.io.FileUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
@@ -75,6 +78,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	HashMap <Integer,String> instChangePoint = new HashMap<>(); //collection of states of the inst
 
 	JSONObject domainConf; //object to keep track of domain configuration information
+	String logFilePath;
 	
 	public void init(String[] args) {
 		// super.init(args);
@@ -107,6 +111,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/rules.txt"), str.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		LocalDateTime date = LocalDateTime.now();
+		
+		logFilePath = files_directory+"MAS_Run_"+date.toString()+".csv";
+		
+		try {
+			Files.createFile(Paths.get(logFilePath));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,7 +224,18 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		} catch (Exception ex){ }
 		return composites;
 	}
-
+	
+	private void logToFile(String ag, String act,String msg,String status,int st, int step)
+	{
+		String concat = ag+","+act+","+msg+","+status+","+st+","+step+"\n";
+		try {
+			Files.write(Paths.get(logFilePath), concat.getBytes(),StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	@Override
 	public boolean executeAction(String agName, Structure action) {
@@ -254,6 +280,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			updateAgsPercept();
 			
 			inst_state++;
+			
+			logToFile(agName,current_action,"","start-action",inst_state,super.getStep());
 //
 //			if(agName.equals("bob"))
 //				System.out.println("Bob leaving enter block " );
@@ -263,7 +291,18 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			current_action = ex.replace("\"","");
 			current_action = "observed("+current_action+")";
 			//String ex = act.toString();
-
+			String is = "";
+			
+			if(action.getTermsSize()>2)
+			{
+				System.out.println("More than 2 terms");
+				is = action.getTerm(2).toString();
+				is = is.replace("\"","");
+				String toRep = ",\""+is+"\"";
+				current_action = ex.replace(toRep,"");
+				System.out.println("Action "+current_action);
+				
+			}
 			clearPercepts(agName); //remove old percepts and add new percepts
 
 			//	public static final Literal check  = Literal.parseLiteral("check");
@@ -279,6 +318,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				}
 			}
 			inst_state++;
+			logToFile(agName,current_action,is,"end-action",inst_state,super.getStep());
 
 		}
 		else if (action.getFunctor().equals("sense")) {
@@ -379,6 +419,34 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//action = true;
 			//inst_state++;
 			//stateList.put(inst_state, new State(occurred,holdsat));
+		}
+		else if (action.getFunctor().equals("getLocations")) {
+
+			try {
+				//String lookingFor = (action.getTerm(0)).toString();
+				
+				String locations = domainConf.get("location").toString();
+				
+				locations = locations.replace("\"","");
+				//System.out.println("Checking state for vip rooms "+lookingFor);
+				
+				String [] locate = locations.split(" ");
+				
+				for(String item : locate)
+				{
+					addPercept(agName, Literal.parseLiteral("location("+item+")"));
+				}
+				
+				addPercept(agName, Literal.parseLiteral("locations_found"));
+			
+				//inst_state--;
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Error here ");
+			}
+			
 		}
 		else if (action.getFunctor().equals("checkVipRoom")) {
 
@@ -601,7 +669,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							String trace = new JsonExtractor().getTraceFile(when,numStates,stateList);
 							
-							ArrayList<Object> traceInfo  = new JsonExtractor().getLocalTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							//ArrayList<Object> traceInfo  = new JsonExtractor().getLocalTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							
 							
 							final String traceX = traceInfo.get(0).toString();
 							//Getting this earlier
@@ -1626,14 +1696,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		//includes.append("\nlocation(room1).\nlocation(room2).\nlocation(room3).\n"+
 		includes.append("\nlocation(room1).\nlocation(room2).\n"+
 				"holdsat(max(room1,2),rooms,0).\n" +
-				"holdsat(max(room2,1),rooms,0).\n" +
+				"holdsat(max(room2,1),rooms,0).\n" );//+
 				//"holdsat(max(room3,2),rooms,0).\n" +
-				"holdsat(vip_room(room2),rooms,0).\n");
+				//"holdsat(vip_room(room2),rooms,0).\n");
 		
 		strRet.append("initially(max(room1,2),rooms)\n" +
-				"initially(max(room2,1),rooms)\n" +
+				"initially(max(room2,1),rooms)\n");// +
 				//"initially(max(room3,2),rooms)\n" +
-				"initially(vip_room(room2),rooms)\n");
+				//"initially(vip_room(room2),rooms)\n");
 		
 		ArrayList<String> allAgents = new ArrayList<String>();
 		//agentsBySynthesizerInMAS
