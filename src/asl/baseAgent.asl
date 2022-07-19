@@ -19,7 +19,7 @@ cancelled_plans(0).
 					!explore.
 					
 +!explore: true <- .print("find out which rooms are available");
-					getLocations(0);
+					getLocations;
 					.
 					
 +locations_found: true <- .print("rooms found, time to explore");
@@ -86,7 +86,7 @@ cancelled_plans(0).
 					enter(N,Rm);
 		
 					-+current_action(enter(N,Rm)); //same action so probably not necessary. 
-					enter(N,Rm);
+					//enter(N,Rm);
 					
 					 .
 		
@@ -109,10 +109,20 @@ cancelled_plans(0).
 					
 					?room_entered(Rm); //fix to work with in_room belief instead.
 					
-					.print("I am in ",Rm," and my role is ", R, "  I will exit when ready"); 
 					
 					?toenter(Rm,N);
-					skip_steps(N);
+					
+					.print("I am in ",Rm," and my role is ", R, ",  I will leave after ", N, " timesteps"); 
+					
+					//skip_steps(N);
+					for ( .range(I,1,N) ) 
+					{
+						.print("Repeating ",I);
+				          explore; 
+				    }
+					
+					//explore;
+					
 					.abolish(toenter(Rm,N));
 					.print("Finished exploring this room");
 					!leave_now("Finished, leaving now","complete","idle");	
@@ -323,13 +333,33 @@ cancelled_plans(0).
 									 !enter_room;
 									 .
 
++revisionSucceeded[source(Ag)]: true <- .print("My problem has a solution, message reveived from ", Ag);
+								-revisionSucceeded;
+								!retry_enterroom;
+								.
 
-+instRev[source(Ag)]: waiting <- .print("The institution has changed, message reveived from ", Ag);
+
++instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
+								-instRev;
+			
+								.
+
+								
+/* +instRev[source(Ag)]: waiting <- .print("The institution has changed, message reveived from ", Ag);
 								-instRev;
 								// .abolish(instRev);
-								-waiting;
+								?overseer(O);
+								if(O==Ag)
+								{
+									-waiting;
 								
-								!retry_enterroom;
+								    !retry_enterroom;
+									
+								}
+								else{
+									.print("There is a change but it may not have fixed my problem, I will keep wait");
+									
+								}
 								
 								.
 								
@@ -337,5 +367,5 @@ cancelled_plans(0).
 +instRev[source(Ag)]: not waiting <- .print("The institution has changed, message reveived from ", Ag);
 								-instRev;
 			
-								.
+								. */
 					 

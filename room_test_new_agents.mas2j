@@ -12,11 +12,12 @@ MAS room_experiment {
 		
 		agent [mindinspector="gui(cycle,html,history)"]#3; 
 
-		base_agent[mindinspector="gui(cycle,html,history)"];
+		//base_agent[mindinspector="gui(cycle,html,history)"]#2;
+		baseAgent[mindinspector="gui(cycle,html,history)"];
 		sample sample_agent;
 		
 		bAgent[mindinspector="gui(cycle,html,history)"]#2;
-		//pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		pAgent[mindinspector="gui(cycle,html,history)"] #2;
 		
 		oracle;
 		//vipAgent[mindinspector="gui(cycle,html,history)"];

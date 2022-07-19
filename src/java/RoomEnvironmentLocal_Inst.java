@@ -122,6 +122,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		try {
 			Files.createFile(Paths.get(logFilePath));
+			
+			String header ="agent,action,message,when,inStnum,timestep\n";// ag+","+act+","+msg+","+status+","+st+","+step+"\n";
+
+			Files.write(Paths.get(logFilePath), header.getBytes(),StandardOpenOption.APPEND);
+				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -227,7 +232,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	private void logToFile(String ag, String act,String msg,String status,int st, int step)
 	{
-		String concat = ag+","+act+","+msg+","+status+","+st+","+step+"\n";
+		String concat = ag+",\""+act+"\","+msg+","+status+","+st+","+step+"\n";
 		try {
 			Files.write(Paths.get(logFilePath), concat.getBytes(),StandardOpenOption.APPEND);
 		} catch (IOException e) {
@@ -257,6 +262,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			if(agName.equals("bob"))
 				System.out.println("Bob in enter block " );
 
+			if(agName.equals("baseAgent"))
+			{
+				System.out.println("baseAgent is entering "+current_action );
+			}
+				
 			clearPercepts(agName); //remove old percepts and add new percepts
 
 			for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitutionLocal(agName).entrySet())
@@ -289,7 +299,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		else if (action.getFunctor().equals("leave")) {
 			current_action = ex.replace("\"","");
-			current_action = "observed("+current_action+")";
+			//current_action = "observed("+current_action+")";
 			//String ex = act.toString();
 			String is = "";
 			
@@ -303,8 +313,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				System.out.println("Action "+current_action);
 				
 			}
+			
+			
+			current_action = "observed("+current_action+")";
+			
 			clearPercepts(agName); //remove old percepts and add new percepts
-
+			
+			//System.out.println(agName+"Testing 1 ");
+				
 			//	public static final Literal check  = Literal.parseLiteral("check");
 			//for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitution().entrySet())
 			for (Map.Entry<String, Literal[]> entry : this.perceptsFromInstitutionLocal(agName).entrySet())
@@ -316,9 +332,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					//addPercept(entry.getValue()[i]);
 					//System.out.println("Percept 2: "+ entry.getValue()[i]);
 				}
+				//System.out.println(agName+"Testing 1 2 ");
 			}
 			inst_state++;
 			logToFile(agName,current_action,is,"end-action",inst_state,super.getStep());
+			//System.out.println(agName+"Testing 1 2 3");
 
 		}
 		else if (action.getFunctor().equals("sense")) {
@@ -918,7 +936,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//inst_state--;
 		}
 		else if (action.getFunctor().equals("skip_steps")) {
-			System.out.println("Skipping a step or 2");
+			try {
+				int len = (int)((NumberTerm) action.getTerm(0)).solve();
+				System.out.println("Skipping "+len+" step(s)");
+			} catch (NoValueException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//inst_state--;skip-
+			return true;
+		}
+		else if (action.getFunctor().equals("explore")) {
+			System.out.println("Exploring...");
 			//inst_state--;
 			return true;
 		}
@@ -1454,6 +1484,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		try {
 			//how to call local instal without files or how to get files from these variables and placed in the appropriate place
 			//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+			System.out.println("#######"+current_action+"########");
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"), current_action.getBytes());
 
 //	    	System.out.println("Query file: ");
@@ -1478,6 +1509,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //	    	for (String line2 : lines) {
 //	    	System.out.println("line read: " + line2);
 //	    	}
+			
+			if(current_action.contains("leave(baseAgent"))
+			{
+				String test = Files.readString(Paths.get(files_directory+"out.json"), Charset.defaultCharset());
+				
+				Files.write(Paths.get(files_directory+"test1"), test.toString().getBytes());
+				
+			}
 			
 			
 			
@@ -1547,6 +1586,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			ArrayList<Literal> inst_sense = new ArrayList<Literal>();
 			
 			String roomCap="";
+			ArrayList<String> issueRooms = new ArrayList<String>();
 			String inroom="";
 			boolean entered = false;
 			for (String var : percepts)
@@ -1556,6 +1596,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				{
 					viol=true; //indicates a violation of the
 					roomCap=var; //stores the entire percept, maybe just store the name by putting the line from below
+					issueRooms.add(var);
 				}
 				if (var.contains(ag) && !var.matches("(.*)"+ag+"[0-9]+(.*)"))
 				{
@@ -1588,15 +1629,49 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//check if agent is in the room first
 			if (viol)
 			{
+				//need to iterate all rooms with capacity problem if there is a violation to see if 
+				// the current agent needs the capacityExceeded percept to be added
+				
+				for(String str : issueRooms)
+				{
+					roomCap=StringUtils.substringBetween(str, "(", ")"); //find the name of the room which has exceeded capacity
+					
+					
+					if(inroom.contains(roomCap)) //check if this agent is in the room
+					{
+						inst_sensors[c] = Literal.parseLiteral("roomCapacityExceeded");
+						inst_sense.add(Literal.parseLiteral("roomCapacityExceeded"));
+					}
+					else
+					{
+						inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+						//inst_sensors[c] = Literal.parseLiteral(roomCap);
+						//inst_sense.add(Literal.parseLiteral(roomCap));
+						//if(ag.equals("baseAgent"))
+						//inst_sense.add(Literal.parseLiteral("capacityExceededFor("+roomCap+")"));
+						//inst_sense.add(Literal.parseLiteral("houstonWeHaveAProblem"));
+					}
+				}
+				
 				//System.out.println("true");
-				roomCap=StringUtils.substringBetween(roomCap, "(", ")"); //find the name of the room which has exceeded capacity
+				/*roomCap=StringUtils.substringBetween(roomCap, "(", ")"); //find the name of the room which has exceeded capacity
+				
+				
 				if(inroom.contains(roomCap)) //check if this agent is in the room
 				{
 					inst_sensors[c] = Literal.parseLiteral("roomCapacityExceeded");
 					inst_sense.add(Literal.parseLiteral("roomCapacityExceeded"));
 				}
 				else
+				{
 					inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
+					//inst_sensors[c] = Literal.parseLiteral(roomCap);
+					inst_sense.add(Literal.parseLiteral(roomCap));
+					//if(ag.equals("baseAgent"))
+					inst_sense.add(Literal.parseLiteral("capacityExceededFor("+roomCap+")"));
+					inst_sense.add(Literal.parseLiteral("houstonWeHaveAProblem"));
+				}*/
+					
 			}else
 			{
 				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");

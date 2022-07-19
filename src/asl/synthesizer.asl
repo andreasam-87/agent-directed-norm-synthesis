@@ -553,8 +553,14 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
  								
  								.broadcast(tell,instRev);
 											
-								.print("Removing relevant to_inform percepts");
+								.print("Informing relevant agents that a solution was found");
 								?handlingCur(ActRes,ActAtmpt,Exp,Ag);
+								
+								.findall(W,to_inform(W,ActAtmpt),List); 
+				  				
+				  				.send(List,tell,revisionSucceeded);
+								
+								.print("Removing relevant to_inform percepts");
 								.abolish(to_inform(_,ActAtmpt));	
  								
  								changeInst(NewInst,ActAtmpt);
