@@ -387,6 +387,8 @@ received(0).
 						
 						-handling;
 						-+entered(0);	
+						
+						//July 20, 2022 -is this where it is going wrong, can I possibly be doing this too early
 						.abolish(handlingCur(_,_,_,_));
 						
 						//trying something
@@ -400,7 +402,13 @@ received(0).
   						.print("Preparing to handle the first item in the list");
   						.nth(0,Reqs,Z);
   						room_experiment.getItems(Z,4,I1,I2,I3,I4);
-  						-+handlingCur(I1,I2,I3,I4);
+  						
+  						.abolish(handlingCur(_,_,_,_));
+  						+handlingCur(I1,I2,I3,I4);
+  						
+  						
+  						//-+handlingCur(I1,I2,I3,I4);
+  						
   						.abolish(to_handle(I1,I2,I3,I4));
   						!handle_reqs(I1,I2,I3,I4);
 

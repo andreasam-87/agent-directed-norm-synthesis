@@ -3,6 +3,11 @@
 /* Initial beliefs and rules */
 toenter(room1,3).
 toenter(room2,2).
+toexplore(2).
+
+cancelled_plans(0).
+failed_plans(0).
+
 //is_vip(me).
 
 /* Initial goals */
@@ -39,7 +44,12 @@ toenter(room2,2).
 					//may need to rethink using a loop, just check the first item, or check any item using the question mark
 					if(Size\==0)
 					{
-						.nth(0,Plans,Item);
+						//.nth(0,Plans,Item);
+						
+						//randomly select rather than always choosing the first one. 
+						room_experiment.chooseRoom(Plans,C);
+						.nth(C,Plans,Item);
+						
 						room_experiment.getItems(Item,2,Rm,Tm);
 		
 		  				+room_entered(Rm);
@@ -56,24 +66,31 @@ toenter(room2,2).
 					}
 					
 					
-//					for (.member(P,Plans))
-//	  				{
-//						room_experiment.getItems(P,2,Rm,Tm);
-//	//					.substring(Rm,P,1,6); //: true and R unifies with "20".
-//	  				//	.print("The room I should be entering is  ",Rm);
-//	  					
-//	  					 +room_entered(Rm);
-//						 enter(N,Rm);
-//	
-//						 -+current_action(enter(N,Rm));
-//	  					
-//						//.substring(Tm,P,6,7); //: true and R unifies with "20".
-//	  					.print("I will be in ", Rm, " for ",Tm, " timesteps.");
-//					}
-					
 			 .
+			 
++!retry_enterroom: true <- .print("I am about to try to enter the room again");
+					.my_name(N);
+					?room_entered(Rm);
+					
+					
+					.findall(Room,toenter(Rm,Time),Plans); 
+					.length(Plans,Size);
+					
+					
+					if(Size\==0)
+					{
+						enter(N,Rm);
+						
+						-+current_action(enter(N,Rm));
+					}
+					else
+					{
+						!enter_room;
+					}
+					 .
 		
 +perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
+						.my_name(N);
 						?room_entered(Rm);
 						
 						?current_action(A);
@@ -88,16 +105,34 @@ toenter(room2,2).
 						
 						.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));	
 						
-						//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
+						?failed_plans(C);
+						-+failed_plans(C+1);
+						+failedTo(enter,N,Rm,A);
+							
 						+conflict;
 						!leave_now;		
 					}
 					else
 					{
 						.print("I am not happy about this, but I am staying in the room");
-						?toenter(Rm,N);
-						skip_steps(N);
-						.abolish(toenter(Rm,N));
+						?toenter(Rm,Num);
+						//skip_steps(N);
+						
+						for ( .range(I,1,Num) ) 
+						{
+							//.print("Repeating ",I);
+					          explore; 
+					    }
+					    
+					   // .abolish(toenter(Rm,N));
+						.print("Finished exploring this room");
+						//!leave_now;	
+						
+						?toexplore(Co);
+						-+toexplore(Co-1);
+						
+						
+						.abolish(toenter(Rm,Num));
 						!leave_now;	
 					}
 						
@@ -114,29 +149,22 @@ toenter(room2,2).
 					.print("I am in ",Rm," and my role is ", R, "  I will exit when ready"); 
 					
 					?toenter(Rm,N);
-					skip_steps(N);
+					//skip_steps(N);
+					
+					for ( .range(I,1,N) ) 
+					{
+						//.print("Repeating ",I);
+				          explore; 
+				    }
+					
+					.print("Finished exploring this room");
 					.abolish(toenter(Rm,N));
+					
+					?toexplore(C);
+					-+toexplore(C-1);
 					!leave_now;	
 					
-//					.print("I am in ",Rm," and my role is ', R, '  I will exit when ready"); 
-//					.my_name(N);
-//					
-//					.random(Rd);
-//					//.print('random: ',Rd);
-//					
-//					if (Rd>0.5)
-//					{
-//					 	!leave_now;				
-//					}
-//					else
-//					{
-//						!idle_now;
-//					}								
-						
-						
-											
-					//leave(N,Rm); 
-				//	 -+current_action(leave(N,RM));
+
 					.
 
 /* +!leave_now: true <- .print("Decided to leave, leaving now");
@@ -167,7 +195,9 @@ toenter(room2,2).
 					-conflict;
 					leave(N,Rm,"problem"); 
 					-+current_action(leave(N,Rm));
-					+perm(idle);
+					
+					!checkIdle;
+					//+perm(idle);
 					//.print("I will wait for word before acting again");
 					.	
 	
@@ -190,7 +220,69 @@ toenter(room2,2).
 //					.	
 					
 +!idle_now: true <- .print("Decided to remain in room for now");
-					.						
+.
+
++!enterNext(Rm): true <- .print("I am about to try to enter another room");
+					.my_name(N);
+					
+					-+room_entered(Rm); 
+					enter(N,Rm);
+		
+					-+current_action(enter(N,Rm)); 
+				
+					 .					
+
++!checkIdle: true <- .print("Need to decide if to wait or try to explore another room");
+					
+					?failed_plans(FpC);
+					?toexplore(TEx);
+					
+					if(FpC<TEx)
+					{
+						//navigate the each room to be entered
+						
+						.findall(Rom,toenter(Rom,Time),Plans); 
+						.length(Plans,Size);
+						
+						if(Size\==0)
+						{
+							for(.member(Room,Plans))
+							{
+								//navigate the rooms failed to explore
+								
+								.findall(Rm,failedTo(X,Y,Rm,A),F_Plans);
+								.length(F_Plans,Size1);
+								
+								//navigate them
+								for ( .range(I,0,(Size1-1)) )
+								{        
+							          .nth(I,F_Plans,Item);
+							          if(Item==Room)
+							          {	
+							          	+found;
+							          }    
+							          
+							    }
+							    if (not found)
+							    {
+							    	-+next(Room);	
+							    	
+							    }
+							    -found;
+							}
+							?next(R);
+							!enterNext(R);
+						}
+						
+					
+					
+					}
+					else
+					{
+						+waiting;
+						.print("I will wait for word before acting again");
+					}
+					.					
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);
@@ -264,23 +356,7 @@ toenter(room2,2).
 						?current_action(A);
 						//experiment5.myPrint('I cannot enter, I am role - ',R, ' I was trying to ',A);
 						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
-						//.send(supervisor,tell,deniedEntry);
-						
-						//an appropriate send template
-					//	.send(synthesizer,tell,request(prob(enter), A, perm(leave)));
-						
-						
-						//request(ActRes,ActAtmpt,Exp)
-						//.send(supervisor,tell,request(prob(enter),enter(R) --> A, perm(enter)))
-						//1-unhappy with, 2- justification - what I was doing , 3- norm or expectation(maybe part of 3) 
-						//3 cont'd - probably in_room expected
-						
-				//		.print("Awaiting directive");
-				
-						//experiment5.myPrint(' Awaiting directive').
-								//setpermenter;
-								//.print("I want to enter");
-								//!check_act.
+	
 								.
 
 +prob(wave) :  true <- .print("I cannot leave").
@@ -292,12 +368,40 @@ toenter(room2,2).
 
 +overseer(O): true <- +overseer(O). 
 
-+revisionActive: true <- .print("The solution to my problem is currently active, I should retry my action").
-
-+revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.").
+//+revisionActive: true <- .print("The solution to my problem is currently active, I should retry my action").
 
 
-+instRev[source(Ag)]: not conflict <- .print("The institution has changed, message reveived from ", Ag);
+
++revisionActive[source(Ag)]: not acting <- .print("The solution to my problem is currently active,");
+									+acting;
+									-revisionActive;
+									!retry_enterroom;
+									. 
+
++revisionActive[source(Ag)]: acting <- .print("The solution to my problem is currently active but I am already exploring again so no need to do anything else");
+									-revisionActive;
+									. 
+
+//+revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.").
+
+
++revisionFailed[source(Ag)]: not acting <- .print("Unfortunately, there is no solution to my problem.");
+									+acting;
+									
+									 -revisionFailed;
+									
+									 !enter_room;
+									 .
+									 
++revisionFailed[source(Ag)]: acting <- .print("Unfortunately, there is no solution to my problem but I am already exploring again so no need to do anything else");
+									 -revisionFailed;
+									 .
+
++instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
+									-instRev;
+										.
+
+/* +instRev[source(Ag)]: not conflict <- .print("The institution has changed, message reveived from ", Ag);
 									-instRev;
 										.
 
@@ -306,5 +410,30 @@ toenter(room2,2).
 									skip_steps(2);
 									-conflict;
 									!enter_room;
-									.
+									. */
+									
++revisionSucceeded[source(Ag)]: not acting <- .print("My problem has a solution, message reveived from ", Ag);
+								-revisionSucceeded;
+								+acting;
+								skip_steps(2);
+								
+								?failed_plans(FpC);
+								//?toexplore(TEx);
+								
+								if(FpC>1)
+								{
+									!enter_room;
+								}
+								else
+								{
+									!retry_enterroom;
+								}
+								
+								.
+
++revisionSucceeded[source(Ag)]: acting <- .print("My problem has a solution, message reveived from ", Ag,"\nI am already exploring again so no need to do anything else");
+							
+								-revisionSucceeded;
+								
+								.
 

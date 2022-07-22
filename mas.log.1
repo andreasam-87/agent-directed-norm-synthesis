@@ -1,2 +1,103 @@
 [oracle] I am the Oracle....
 [sample] hello world. I am the basic agent
+[sample] Room chosen - room1
+[coordinator] hello world. I am the coordinator
+[synthesizer1] hello world.
+[synthesizer2] hello world.
+[baseAgent2] My overseer is synthesizer1
+[baseAgent1] My boldness is 4
+[agent] hello world.
+[pAgent2] hello world.
+[boldAgent] hello world.
+[bAgent1] hello world.
+[bAgent2] hello world.
+[baseAgent2] My boldness is 5
+[pAgent1] hello world.
+[baseAgent1] My overseer is synthesizer2
+[baseAgent2] hello world.
+[baseAgent1] hello world.
+[baseAgent2] My overseer is synthesizer1
+[agent] you can enter
+[bAgent2] you can enter
+[boldAgent] find out which rooms are available
+[bAgent1] you can enter
+[pAgent1] you can enter
+[baseAgent1] My overseer is synthesizer2
+[pAgent2] you can enter
+[agent] I tried to enter
+[bAgent2] I tried to enter
+[bAgent1] I tried to enter
+[baseAgent1] find out which rooms are available
+[pAgent2] I tried to enter
+[baseAgent2] find out which rooms are available
+[pAgent1] I tried to enter
+[boldAgent] rooms found, time to explore
+[baseAgent1] rooms found, time to explore
+[baseAgent2] rooms found, time to explore
+[pAgent2] I still need to enter 2 rooms
+[pAgent1] I still need to enter 2 rooms
+[baseAgent1] I found 2 rooms to explore
+[boldAgent] There are 2 rooms to explore
+[baseAgent2] I found 2 rooms to explore
+[boldAgent] I choose to enter room1
+[boldAgent] I am about to enter a room
+[baseAgent2] you can enter
+[baseAgent1] you can enter
+[pAgent2] I will be in room1 for 3 timesteps.
+[pAgent1] I will be in room1 for 3 timesteps.
+[pAgent2] I am in room1 and my role is y  I will exit when ready
+[bAgent1] I am in room2 and my role is ', R, '  I will exit when ready
+[agent] I am in room1 and my role is y  I will exit when ready
+[baseAgent1] I am about to enter one room
+[baseAgent2] I am about to enter one room
+[bAgent2] I am in Room room2 and my role is x but it is full, I may need to leave the room
+[pAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
+[baseAgent1] I still need to enter 2 rooms
+[agent] Decided to remain in room for now
+[baseAgent2] I still need to enter 2 rooms
+[baseAgent1] Error in internal action 'room_experiment.chooseRoom(Plans,C)' (baseAgent.asl:66): Index 2 out of bounds for length 2
+java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+	at room_experiment.chooseRoom.execute(chooseRoom.java:30)
+	at jason.asSemantics.TransitionSystem.applyExecInt(TransitionSystem.java:737)
+	at jason.asSemantics.TransitionSystem.applySemanticRuleAct(TransitionSystem.java:230)
+	at jason.asSemantics.TransitionSystem.act(TransitionSystem.java:1534)
+	at jason.infra.centralised.CentralisedAgArch.act(CentralisedAgArch.java:206)
+	at jason.infra.centralised.CentralisedAgArch.reasoningCycle(CentralisedAgArch.java:215)
+	at jason.infra.centralised.CentralisedAgArch.run(CentralisedAgArch.java:234)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+
+[baseAgent1] No failure event was generated for +!enter_room[code(room_experiment.chooseRoom([[room2,2],[room1,1]],_344)),code_line(66),code_src("baseAgent.asl"),error(unknown),error_msg(""),source(self)]
+intention 33: 
+    +!enter_room[source(self)] <- ... room_experiment.chooseRoom(Plans,C); .nth(C,Plans,Item); room_experiment.getItems(Item,2,Rm,Tm); -+room_entered(Rm); enter(N,Rm); -+current_action(enter(N,Rm)) / {Plans=[[room2,2],[room1,1]], Size=2, N=baseAgent1}
+    +!check_act[source(self)] <- ... !enter_room / {}
+    +locations_found[source(percept)] <- ... !check_act / {Size=2, Locations=[room1,room2]}
+
+[bAgent1] Decided to leave, leaving now
+[pAgent1] I am not happy about this, complaining to synthesiser
+[bAgent2] I am not happy about this, complaining to synthesiser
+[baseAgent2] Error in internal action 'room_experiment.chooseRoom(Plans,C)' (baseAgent.asl:66): Index 2 out of bounds for length 2
+java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+	at room_experiment.chooseRoom.execute(chooseRoom.java:30)
+	at jason.asSemantics.TransitionSystem.applyExecInt(TransitionSystem.java:737)
+	at jason.asSemantics.TransitionSystem.applySemanticRuleAct(TransitionSystem.java:230)
+	at jason.asSemantics.TransitionSystem.act(TransitionSystem.java:1534)
+	at jason.infra.centralised.CentralisedAgArch.act(CentralisedAgArch.java:206)
+	at jason.infra.centralised.CentralisedAgArch.reasoningCycle(CentralisedAgArch.java:215)
+	at jason.infra.centralised.CentralisedAgArch.run(CentralisedAgArch.java:234)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+
+[baseAgent2] No failure event was generated for +!enter_room[code(room_experiment.chooseRoom([[room2,2],[room1,1]],_345)),code_line(66),code_src("baseAgent.asl"),error(unknown),error_msg(""),source(self)]
+intention 34: 
+    +!enter_room[source(self)] <- ... room_experiment.chooseRoom(Plans,C); .nth(C,Plans,Item); room_experiment.getItems(Item,2,Rm,Tm); -+room_entered(Rm); enter(N,Rm); -+current_action(enter(N,Rm)) / {Plans=[[room2,2],[room1,1]], Size=2, N=baseAgent2}
+    +!check_act[source(self)] <- ... !enter_room / {}
+    +locations_found[source(percept)] <- ... !check_act / {Size=2, Locations=[room1,room2]}
+
+[synthesizer2] Request received from bAgent2 will handle
+[boldAgent] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[bAgent2] Decided to leave, leaving now
+[pAgent1] Decided to leave, leaving now
+[boldAgent] I am not happy about this, but I will leave after 2 timesteps
+[coordinator] synthesizer2 has commenced handling a revision task
+[bAgent1] I left so I am chillin
+[boldAgent] Repeating 1
+[synthesizer2] Action attempted enter(bAgent2,"room2")

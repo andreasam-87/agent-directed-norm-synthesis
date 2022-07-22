@@ -2,6 +2,7 @@
 
 /* Initial beliefs and rules */
 cancelled_plans(0).
+failed_plans(0).
 
 /* Initial goals */
 
@@ -28,7 +29,7 @@ cancelled_plans(0).
 							.length(Locations,Size);
 							
 							.print("I found ", Size, " rooms to explore");
-							
+							+toexplore(Size);
 							if(Size\==0)
 							{
 								
@@ -60,7 +61,14 @@ cancelled_plans(0).
 					
 					if(Size\==0)
 					{
-						.nth(0,Plans,Item);
+						//.nth(0,Plans,Item);
+						
+						//randomly select rather than always choosing the first one. 
+						room_experiment.chooseRoom(Plans,C);
+						.nth(C,Plans,Item);
+						//.print("I choose to enter ",Room);
+						
+						
 						room_experiment.getItems(Item,2,Rm,Tm);
 		
 		  				-+room_entered(Rm);
@@ -75,31 +83,50 @@ cancelled_plans(0).
 						.print("I am finished, I can leave the building now");
 					}
 						
-
 					 .
 					 
 +!retry_enterroom: true <- .print("I am about to try to enter the room again");
 					.my_name(N);
 					?room_entered(Rm);
 					
+					
+					.findall(Room,toenter(Rm,Time),Plans); 
+					.length(Plans,Size);
+					
+					// .print("I still need to enter ", Size, " rooms");
+					
+					if(Size\==0)
+					{
+						enter(N,Rm);
+						
+						-+current_action(enter(N,Rm));
+					}
+					else
+					{
+						!enter_room;
+					}
 					//-+room_entered(Rm); //entering same room so not necessary. 
-					enter(N,Rm);
-		
-					-+current_action(enter(N,Rm)); //same action so probably not necessary. 
+					
+		 //same action so probably not necessary. 
 					//enter(N,Rm);
 					
 					 .
 		
 +perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
+						.my_name(N);
 						?room_entered(Rm);
 						
 						?current_action(A);
 					.print("I am in Room ", Rm, " and my role is ",R," but it is full, I need to leave the room");
 					?overseer(O);
 					
-					.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));			
+					.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));	
+					?failed_plans(C);
+					-+failed_plans(C+1);
+					+failedTo(enter,N,Rm,A);	
 
-					!leave_now("Must Leave now, leaving room","problem","noidle");	
+					
+					!leave_now("Must leave now, leaving room","problem","noidle");	
 						.
 
 
@@ -122,7 +149,8 @@ cancelled_plans(0).
 				    }
 					
 					//explore;
-					
+					?toexplore(C);
+					-+toexplore(C-1);
 					.abolish(toenter(Rm,N));
 					.print("Finished exploring this room");
 					!leave_now("Finished, leaving now","complete","idle");	
@@ -142,8 +170,9 @@ cancelled_plans(0).
 					}
 					else
 					{
-						.print("I will wait for word before acting again");
-						+waiting;
+						//.print("I will wait for word before acting again");
+						//+waiting;
+						!checkIdle;
 					}		
 					.
 
@@ -152,7 +181,110 @@ cancelled_plans(0).
 	
 +!idle_now: true <- .print("Decided to remain in room for now");
 					.						
-							
+
+
+					 
++!enterNext(Rm): true <- .print("I am about to try to enter another room");
+					.my_name(N);
+					
+					-+room_entered(Rm); 
+					enter(N,Rm);
+		
+					-+current_action(enter(N,Rm)); 
+				
+					 .					
+
++!checkIdle: true <- .print("Need to decide if to wait or try to explore another room");
+					
+					?failed_plans(FpC);
+					?toexplore(TEx);
+					
+					if(FpC<TEx)
+					{
+						//+failedTo(enter,N,Rm,A);	
+						
+						
+						//navigate the each room to be entered
+						
+						.findall(Rom,toenter(Rom,Time),Plans); 
+						.length(Plans,Size);
+						
+						if(Size\==0)
+						{
+							for(.member(Room,Plans))
+							{
+								//navigate the rooms failed to explore
+								
+								.findall(Rm,failedTo(X,Y,Rm,A),F_Plans);
+								.length(F_Plans,Size1);
+								
+								//navigate them
+								for ( .range(I,0,(Size1-1)) )
+								{        
+							          .nth(I,F_Plans,Item);
+							          if(Item==Room)
+							          {	
+							          	+found;
+							          }    
+							          
+							    }
+							    if (not found)
+							    {
+							    	-+next(Room);	
+							    	
+							    }
+							    -found;
+							}
+							?next(R);
+							!enterNext(R);
+						}
+						
+						/* 
+						//get all failed plans
+						.findall(Rm,failedTo(X,Y,Rm,A),F_Plans);
+						.length(F_Plans,Size1);
+						//navigate them
+						for ( .range(I,1,Size1) ) 
+						{        
+					          .nth(I,F_Plans,Item);
+					          
+					          .findall(Rom,toenter(Rom,Time),Plans); 
+							  .length(Plans,Size);
+					    }
+						
+							.findall(Rom,toenter(Rom,Time),Plans); 
+								.length(Plans,Size);
+								
+								if(Size\==0)
+								{
+									for(.member(Room,Plans))
+									{
+										room_experiment.sameRoom(Rm,Room,Ret);
+										if(Ret==0)
+										{
+											//remove the plan to enter this room
+											-toenter(Room,_);
+											
+											?cancelled_plans(C);
+								  			+cancelled_plans(C+1);
+								  			+noEntry(Room);
+								
+										}
+									}
+								}
+								* 
+								*/
+					
+					}
+					else
+					{
+						+waiting;
+						.print("I will wait for word before acting again");
+					}
+					
+				
+					.	
+
 		
 +perm(idle)	: true <- .print("I left so I am chillin");
 				//.wait(2000);
@@ -297,10 +429,18 @@ cancelled_plans(0).
 
 +overseer(O). 
 
-+revisionActive[source(Ag)]: true <- .print("The solution to my problem is currently active,");
++revisionActive[source(Ag)]: not acting <- .print("The solution to my problem is currently active,");
+									+acting;
 									-revisionActive;
 									// .abolish(revisionActive);
 									!retry_enterroom;
+									. 
+
++revisionActive[source(Ag)]: acting <- .print("The solution to my problem is currently active but I am already exploring again so no need to do anything else");
+									//+acting;
+									-revisionActive;
+									// .abolish(revisionActive);
+									//!retry_enterroom;
 									. 
 
 /*+revisionActive[source(Ag)]: waiting <- .print("The solution to my problem is currently active, I should retry my action");
@@ -316,9 +456,9 @@ cancelled_plans(0).
 									//!retry_enterroom;
 									. */
 
-+revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.");
++revisionFailed[source(Ag)]: not acting <- .print("Unfortunately, there is no solution to my problem.");
 									//attempt to enter another room OR remove plan to enter this room. 
-									
+									+acting;
 									/* //Temp action to remove plan to enter room  
 									 	?room_entered(Rm);
 									  ?cancelled_plans(C);
@@ -332,10 +472,52 @@ cancelled_plans(0).
 									 
 									 !enter_room;
 									 .
+									 
++revisionFailed[source(Ag)]: acting <- .print("Unfortunately, there is no solution to my problem but I am already exploring again so no need to do anything else");
+										  
+									 -revisionFailed;
+									 
+									// !enter_room;
+									 .
 
-+revisionSucceeded[source(Ag)]: true <- .print("My problem has a solution, message reveived from ", Ag);
++revisionSucceeded[source(Ag)]: not acting <- .print("My problem has a solution, message reveived from ", Ag);
 								-revisionSucceeded;
-								!retry_enterroom;
+								+acting;
+								skip_steps(2);
+								
+								?failed_plans(FpC);
+								//?toexplore(TEx);
+								
+								if(FpC>1)
+								{
+									!enter_room;
+								}
+								else
+								{
+									!retry_enterroom;
+								}
+								
+								
+								.
+
++revisionSucceeded[source(Ag)]: acting <- .print("My problem has a solution, message reveived from ", Ag,"\nI am already exploring again so no need to do anything else");
+							
+								-revisionSucceeded;
+								//skip_steps(2);
+								
+								//?failed_plans(FpC);
+								//?toexplore(TEx);
+								
+								/*if(FpC>1)
+								{
+									!enter_room;
+								}
+								else
+								{
+									!retry_enterroom;
+								}*/
+								
+								
 								.
 
 

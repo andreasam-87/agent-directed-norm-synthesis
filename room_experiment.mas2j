@@ -6,6 +6,7 @@ MAS room_experiment {
 	//environment: RoomEnvironmentTimeStep
 
 	agents:
+		planAgent;
 		boldAgent;
 		baseAgent;
 		base_agent;

@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
@@ -71,6 +72,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	String ruleSet2Mod="";
 	String instFile2Mod="";
 	String instRevLog="";
+	
+	LocalDateTime date;
+	//LocalTime time;
 	//Boolean decision = true;
 	
 	int count_inst =0; //keep track of the institutional file
@@ -78,7 +82,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	HashMap <Integer,String> instChangePoint = new HashMap<>(); //collection of states of the inst
 
 	JSONObject domainConf; //object to keep track of domain configuration information
-	String logFilePath;
+	String logFilePath,instChangeFilePath,revisionsFilePath;
 	
 	public void init(String[] args) {
 		// super.init(args);
@@ -116,17 +120,37 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			e.printStackTrace();
 		}
 		
-		LocalDateTime date = LocalDateTime.now();
+		date = LocalDateTime.now();
+		//time = LocalTime.now();
 		
 		logFilePath = files_directory+"MAS_Run_"+date.toString()+".csv";
+		instChangeFilePath = files_directory+"MAS_Inst_Change_"+date.toString()+".csv";
+		revisionsFilePath = files_directory+"MAS_Revision_Attempts_"+date.toString()+".csv";
+		//logFilePath,instChangeFilePath
 		
 		try {
+			
+			//create file for participants activity logging
 			Files.createFile(Paths.get(logFilePath));
 			
-			String header ="agent,action,message,when,inStnum,timestep\n";// ag+","+act+","+msg+","+status+","+st+","+step+"\n";
+			String header ="agent,action,message,when,insState,timestep\n";// ag+","+act+","+msg+","+status+","+st+","+step+"\n";
 
 			Files.write(Paths.get(logFilePath), header.getBytes(),StandardOpenOption.APPEND);
+			
+			//create file for logging when the institution has changed
+			Files.createFile(Paths.get(instChangeFilePath));
+			
+			header ="synthesiser,filepath,instState,timestep\n";
+
+			Files.write(Paths.get(instChangeFilePath), header.getBytes(),StandardOpenOption.APPEND);
 				
+			//create file for logging revision activity attempts
+			Files.createFile(Paths.get(revisionsFilePath));
+			
+			header ="synthesiser,action,problem,status,time,instState,timestep\n";
+
+			Files.write(Paths.get(revisionsFilePath), header.getBytes(),StandardOpenOption.APPEND);
+	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -550,6 +574,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		else if (action.getFunctor().equals("revise")) {
 
 			/*Agent ID in the file names */
+			//RoomEnvironmentLocal_Inst.super.
+			//final RoomEnvironmentLocal_Inst sup = this.super;
 			
 			Runnable r = new Runnable() {
 				@Override
@@ -565,7 +591,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						//Will probably need to make this more robust but currently works for holdsat. meeting
 						String reason = (action.getTerm(4)).toString();
 						
-						
+						String status="";
 						
 						//0-problem,1-toAdd, 3-modetoadd 
 						ArrayList<String> tempArr = decodeString(problem,atmpt,reason); 
@@ -596,6 +622,19 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						String prob = problem+"("+room+")";*/
 						
 						//holdsat(pow(leave(bAgent6,room1)),rooms,3) FORMAT
+						
+						
+						//LOGGING  revision start
+						//	header ="synthesiser,action,status,insState,timestep\n";
+						//Files.write(Paths.get(revisionsFilePath), header.getBytes(),StandardOpenOption.APPEND);
+						
+						String concat = agName+",\""+atmpt+"\",\""+problem+"\",start,"+LocalTime.now()+","+inst_state+","+RoomEnvironmentLocal_Inst.super.getStep()+"\n";
+						try {
+							Files.write(Paths.get(revisionsFilePath), concat.getBytes(),StandardOpenOption.APPEND);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 
 						System.out.println("Reason for complaint "+reason+ " what to add "+toAdd);
@@ -799,6 +838,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									System.out.println("No solution available currently, empty file from XHAIL output analysis.");
 									
 									addPercept(agName, Literal.parseLiteral("revisionFailed"));
+									status="end_fail";
 								}
 								else
 								{
@@ -806,6 +846,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 									{
 										System.out.println("Files are the same, no revision necessary");
 										addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
+										status="end_active";
 									}
 									else {
 										System.out.println("Files are different, revision successful");
@@ -823,6 +864,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 										
 										
 										potentialRevision.put(revised_file_path, instRevLog);
+										
+										status="end_success";
 										
 										//temporarily doing this
 										//instModList.add(new InstMods(atmpt,revised_file_path,problem));
@@ -855,7 +898,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							else {
 								//Revision is unsuccessful, no solution
 								System.out.println("No solution available currently, no output file created from XHAIL.");
-								
+								status="end_fail";
 								addPercept(agName, Literal.parseLiteral("revisionFailed"));
 							}
 							
@@ -881,11 +924,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 								{
 									System.out.println("Solution is active");
 									addPercept(agName, Literal.parseLiteral("revisionSuccessful(active)"));
+									status="end_active";
 								}
 								else {
 									System.out.println("Changing to the existing solution");
 									instFile2Mod = solutionFile;
 									addPercept(agName, Literal.parseLiteral("revisionSuccess"));
+									status="end_exists";
 								}
 							}
 							else
@@ -897,6 +942,20 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 						
 						RoomEnvironmentLocal_Inst.this.markAsCompleted(action);
+						
+						
+						
+						//LOGGING  revision end
+						//	header ="synthesiser,action,status,insState,timestep\n";
+						//Files.write(Paths.get(revisionsFilePath), header.getBytes(),StandardOpenOption.APPEND);
+						
+						concat = agName+",\""+atmpt+"\",\""+problem+"\",end,"+LocalTime.now()+","+inst_state+","+RoomEnvironmentLocal_Inst.super.getStep()+"\n";
+						try {
+							Files.write(Paths.get(revisionsFilePath), concat.getBytes(),StandardOpenOption.APPEND);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -949,6 +1008,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		}
 		else if (action.getFunctor().equals("explore")) {
 			System.out.println("Exploring...");
+			//inst_state--;
+			return true;
+		}
+		else if (action.getFunctor().equals("wait")) {
+			System.out.println("Waiting...");
 			//inst_state--;
 			return true;
 		}
@@ -1032,6 +1096,15 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						//instChangePoint.put(inst_state, curInstRuleSet);
 						instChangePoint.put(inst_state, file);
 						
+						//logging the institutional change
+						//"synthesiser,filepath,insState,timestep\n";
+						String concat = agName+","+(files_directory+file)+","+inst_state+","+super.getStep()+"\n";
+						try {
+							Files.write(Paths.get(instChangeFilePath), concat.getBytes(),StandardOpenOption.APPEND);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 						System.out.println("New institution enabled");
 						
@@ -1510,11 +1583,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //	    	System.out.println("line read: " + line2);
 //	    	}
 			
-			if(current_action.contains("leave(baseAgent"))
+			if(current_action.contains("leave(baseAgent") || current_action.contains("leave(boldAgent"))
 			{
 				String test = Files.readString(Paths.get(files_directory+"out.json"), Charset.defaultCharset());
 				
-				Files.write(Paths.get(files_directory+"test1"), test.toString().getBytes());
+				Files.write(Paths.get(files_directory+"test_"+inst_state), test.toString().getBytes());
 				
 			}
 			

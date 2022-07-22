@@ -21,6 +21,8 @@ public class getRoom extends DefaultInternalAction {
     	//String action = st.getString();
     	String action = args[0].toString();
     	
+    	//String action = (String)((StringTerm)args[0]).getString();
+    	
     	//String action = args[0].toString();
 
 		String sub1 = StringUtils.substringBetween(action, "(", ")");

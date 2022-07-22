@@ -27,7 +27,12 @@ public class chooseRoom extends DefaultInternalAction {
          
          String room =  listOfRooms.get(rand-1).toString();
          
-         System.out.println("Random number is "+rand +". Room selected is  :- " + room);
+        // String room2 = (String)((StringTerm)args[2]).getString();
+         //System.out.println("############################");
+         //System.out.println("############################"+room2);
+         
+         //int min = (int)((NumberTerm) args[0]).solve();
+        // System.out.println("Random number is "+rand +". Room selected is  :- " + room);
      	
      	// just like an ArrayList, we can use the enhanced for loop here
      	// all elements in a ListTerm are of type Term

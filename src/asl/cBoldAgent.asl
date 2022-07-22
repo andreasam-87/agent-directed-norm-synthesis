@@ -1,4 +1,4 @@
-// Agent agent in project room_experiment
+// Callous Bold Agent agent in project room_experiment
 
 /* Initial beliefs and rules */
 
@@ -134,7 +134,24 @@
 						?toenter(Rm,N);
 						
 						?current_action(A);
-						.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
+						.print("I am in Room ", Rm, " and my role is ",R," but it is full.");
+						
+						.print("I am not happy about this, but I will leave after ", N, " timesteps");
+							//.print("I am in ",Rm," and my role is ", R, ",  I will leave after ", N, " timesteps"); 
+						
+							
+						for ( .range(I,1,N) ) 
+						{
+							//.print("Repeating ",I);
+					          explore; 
+					    }
+					    
+					    .abolish(toenter(Rm,N));
+						.print("Finished exploring this room");
+						!leave_now;	
+						
+						/* 
+						
 						?boldness(B);
 						if((B mod 2)==0)
 						{
@@ -162,33 +179,10 @@
 							.print("Finished exploring this room");
 							!leave_now;	
 						}
+						* */
 							
 						.
 
-/* 
-+perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(P,R);
-
-					?room_entered(Rm); //fix to work with in_room belief instead.
-					
-					.print("I am in ",Rm," and my role is ', R, '  I will exit when ready"); 
-					.my_name(N);
-					
-					.random(Rd);
-					//.print('random: ',Rd);
-					
-					if (Rd>0.5)
-					{
-					 	!leave_now;				
-					}
-					else
-					{
-						!idle_now;
-					}								
-											
-					//leave(N,Rm); 
-				//	 -+current_action(leave(N,RM));
-					.
-	*/
 	
 +perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(P,R);
 					

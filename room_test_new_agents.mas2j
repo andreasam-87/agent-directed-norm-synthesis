@@ -10,14 +10,19 @@ MAS room_experiment {
 		//coordinator agentArchClass  SomewhatTransparentAgents.JASON.STAgArch;
 		synthesizer [mindinspector="gui(cycle,html,history)"]#2;
 		
-		agent [mindinspector="gui(cycle,html,history)"]#3; 
+		//agent [mindinspector="gui(cycle,html,history)"]#8; 
 
 		//base_agent[mindinspector="gui(cycle,html,history)"]#2;
-		baseAgent[mindinspector="gui(cycle,html,history)"];
+		//baseAgent[mindinspector="gui(cycle,html,history)"]#8;
+		//baseAgent#10;
 		sample sample_agent;
 		
-		bAgent[mindinspector="gui(cycle,html,history)"]#2;
-		pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		//bAgent[mindinspector="gui(cycle,html,history)"]#2;
+		
+		boldAgent[mindinspector="gui(cycle,html,history)"]#8;
+		//cBoldAgent#8;
+		//pAgent[mindinspector="gui(cycle,html,history)"] #2;
+		//planAgent[mindinspector="gui(cycle,html,history)"] #1;
 		
 		oracle;
 		//vipAgent[mindinspector="gui(cycle,html,history)"];

@@ -97,7 +97,7 @@
 +!leave_now: not conflict <- .print("Decided to leave, leaving now");
 					?room_entered(Rm);
 					.my_name(N);
-					leave(N,Rm); 
+					leave(N,Rm,"complete"); 
 					-+current_action(leave(N,Rm));
 					+perm(idle);
 					.	
@@ -107,7 +107,7 @@
 +!leave_now: conflict <- .print("Decided to leave, leaving now");
 					?room_entered(Rm);
 					.my_name(N);
-					leave(N,Rm); 
+					leave(N,Rm,"problem"); 
 					-+current_action(leave(N,Rm));
 					//+perm(idle);
 					.	

@@ -1,406 +1,171 @@
 [sample] hello world. I am the basic agent
 [oracle] I am the Oracle....
 [sample] Room chosen - room1
-[synthesizer1] hello world.
 [coordinator] hello world. I am the coordinator
+[synthesizer1] hello world.
 [synthesizer2] hello world.
-[baseAgent] My overseer is synthesizer2
-[agent3] hello world.
-[bAgent2] hello world.
-[agent2] hello world.
-[bAgent1] hello world.
-[agent1] hello world.
-[pAgent1] hello world.
-[baseAgent] My boldness is 6
-[pAgent2] hello world.
-[baseAgent] hello world.
-[agent3] you can enter
-[baseAgent] My overseer is synthesizer2
-[agent1] you can enter
-[agent2] you can enter
-[bAgent2] you can enter
-[bAgent1] you can enter
-[agent3] I tried to enter
-[pAgent2] you can enter
-[pAgent1] you can enter
-[agent1] I tried to enter
-[agent2] I tried to enter
-[bAgent1] I tried to enter
-[bAgent2] I tried to enter
-[pAgent2] I tried to enter
-[baseAgent] find out which rooms are available
-[pAgent1] I tried to enter
-[pAgent2] I still need to enter 2 rooms
-[pAgent1] I still need to enter 2 rooms
-[baseAgent] rooms found, time to explore
-[baseAgent] I found 2 rooms to explore
-[pAgent1] I will be in room1 for 3 timesteps.
-[pAgent2] I will be in room1 for 3 timesteps.
-[pAgent1] I am in room1 and my role is x  I will exit when ready
-[pAgent2] I am in room1 and my role is y  I will exit when ready
-[bAgent2] I am in room2 and my role is ', R, '  I will exit when ready
-[agent1] I am in Room room2 and my role is y but it is full, I may need to leave the room
-[agent2] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[agent3] I am in Room room1 and my role is y but it is full, I may need to leave the room
-[bAgent1] I am in Room room1 and my role is x but it is full, I may need to leave the room
-[synthesizer1] Request received from agent1 will handle
-[synthesizer2] Request received from agent2 will handle
-[bAgent2] Decided to remain in room for now
-[bAgent1] I am not happy about this, complaining to synthesiser
-[baseAgent] you can enter
-[baseAgent] I am about to enter one room
-[coordinator] synthesizer1 has commenced handling a revision task
-[bAgent1] Decided to leave, leaving now
+[boldAgent8] hello world.
+[boldAgent5] hello world.
+[boldAgent1] hello world.
+[boldAgent2] hello world.
+[boldAgent7] hello world.
+[boldAgent3] hello world.
+[boldAgent4] hello world.
+[boldAgent6] hello world.
+[boldAgent1] find out which rooms are available
+[boldAgent6] find out which rooms are available
+[boldAgent2] find out which rooms are available
+[boldAgent8] find out which rooms are available
+[boldAgent3] find out which rooms are available
+[boldAgent7] find out which rooms are available
+[boldAgent4] find out which rooms are available
+[boldAgent5] find out which rooms are available
+[boldAgent6] rooms found, time to explore
+[boldAgent5] rooms found, time to explore
+[boldAgent8] rooms found, time to explore
+[boldAgent1] rooms found, time to explore
+[boldAgent2] rooms found, time to explore
+[boldAgent7] rooms found, time to explore
+[boldAgent4] rooms found, time to explore
+[boldAgent3] rooms found, time to explore
+[boldAgent6] There are 2 rooms to explore
+[boldAgent5] There are 2 rooms to explore
+[boldAgent7] There are 2 rooms to explore
+[boldAgent3] There are 2 rooms to explore
+[boldAgent2] There are 2 rooms to explore
+[boldAgent1] There are 2 rooms to explore
+[boldAgent8] There are 2 rooms to explore
+[boldAgent4] There are 2 rooms to explore
+[boldAgent6] I choose to enter room1
+[boldAgent5] I choose to enter room1
+[boldAgent7] I choose to enter room1
+[boldAgent1] I choose to enter room2
+[boldAgent2] I choose to enter room1
+[boldAgent3] I choose to enter room2
+[boldAgent4] I choose to enter room1
+[boldAgent8] I choose to enter room2
+[boldAgent6] I am about to enter a room
+[boldAgent7] I am about to enter a room
+[boldAgent5] I am about to enter a room
+[boldAgent1] I am about to enter a room
+[boldAgent2] I am about to enter a room
+[boldAgent3] I am about to enter a room
+[boldAgent8] I am about to enter a room
+[boldAgent4] I am about to enter a room
+[boldAgent8] I am in room2 and my role is y,  I will leave after 1 timesteps
+[boldAgent4] I am in room1 and my role is y,  I will leave after 1 timesteps
+[boldAgent5] I am in room1 and my role is x,  I will leave after 1 timesteps
+[boldAgent3] I am in Room room2 and my role is x but it is full, I may need to leave the room
+[boldAgent2] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[boldAgent7] I am in Room room1 and my role is x but it is full, I may need to leave the room
+[boldAgent6] I am in Room room1 and my role is y but it is full, I may need to leave the room
+[boldAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
+[boldAgent8] Repeating 1
+[boldAgent5] Repeating 1
+[boldAgent4] Repeating 1
+[boldAgent2] I am not happy about this, but I will leave after 2 timesteps
+[boldAgent6] I am not happy about this, but I will leave after 1 timesteps
+[boldAgent3] I am not happy about this, complaining to synthesiser
+[boldAgent7] I am not happy about this, complaining to synthesiser
+[boldAgent1] I am not happy about this, complaining to synthesiser
+[synthesizer2] Request received from boldAgent3 will handle
+[boldAgent4] Finished exploring this room
+[boldAgent8] Finished exploring this room
+[boldAgent5] Finished exploring this room
+[boldAgent3] Must leave now, leaving room
+[boldAgent7] Must leave now, leaving room
+[boldAgent1] Must leave now, leaving room
+[boldAgent8] Finished, leaving now
+[boldAgent4] Finished, leaving now
+[boldAgent5] Finished, leaving now
 [coordinator] synthesizer2 has commenced handling a revision task
-[baseAgent] I still need to enter 2 rooms
-[synthesizer1] Action attempted enter(agent1,"room2")
-[synthesizer2] Action attempted enter(agent2,"room2")
-[pAgent1] Decided to leave, leaving now
-[pAgent2] Decided to leave, leaving now
-[synthesizer1] Only 1 request to handle and currently handling
-[synthesizer2] Only 1 request to handle and currently handling
-[synthesizer2] Queued request for bAgent1
-[synthesizer1] Queued request for agent3
-[baseAgent] I am in Room room2 and my role is x but it is full, I need to leave the room
-[baseAgent] Must Leave now, leaving room
-[synthesizer1] Size: 0, Count: 0
+[boldAgent6] Finished exploring this room
+[synthesizer2] Action attempted enter(boldAgent3,room2)
+[boldAgent6] Finished, leaving now
+[boldAgent1] I will wait for word before acting again
+[boldAgent7] I will wait for word before acting again
+[boldAgent3] I will wait for word before acting again
+[boldAgent8] I have accomplished my goal
+[boldAgent5] I have accomplished my goal
+[boldAgent4] I have accomplished my goal
+[boldAgent2] Finished exploring this room
+[boldAgent2] Finished, leaving now
+[boldAgent6] I have accomplished my goal
+[synthesizer2] Checking out other requests
+[synthesizer2] Queued request for boldAgent7
 [synthesizer2] Size: 0, Count: 0
-[pAgent1] I left so I am chillin
-[pAgent2] I left so I am chillin
 [synthesizer2] Adding a request to the official queue
-[synthesizer1] Adding a request to the official queue
-[synthesizer1] Removed request from list
 [synthesizer2] Removed request from list
-[synthesizer1] Attempting to revise norms
+[boldAgent2] I have accomplished my goal
+[synthesizer2] Queued request for boldAgent1
+[synthesizer2] Need to inform this agent boldAgent1
+[synthesizer2] Removed request from list
 [synthesizer2] Attempting to revise norms
-[baseAgent] I will wait for word before acting again
-[synthesizer2] Queued request for baseAgent
-[synthesizer1] What is happening - 0
-[synthesizer2] Size: 1, Count: 1
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
 [synthesizer2] What is happening - 0
-[pAgent1] I tried to enter
-[pAgent2] I tried to enter
-[pAgent2] I still need to enter 1 rooms
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent2] I will be in room2 for 2 timesteps.
-[pAgent2] I am in Room room2 and my role is y but it is full, I may need to leave the room
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent2] I am not happy about this, but I am staying in the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[pAgent1] I left so I am chillin
-[pAgent2] Decided to leave, leaving now
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent2] I left so I am chillin
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent2] I tried to enter
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent2] I still need to enter 0 rooms
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent2] I am finished, I can leave the building now
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
 [synthesizer2] The revision was successful, let me begin the discussion
 [synthesizer2] Log file received
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
 [synthesizer2] A possble revision found, inform agents of change
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
 [coordinator] Received a coordinator permission request for revision consensus
 [synthesizer2] Received permission from coordinator to begin discussion
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[pAgent1] I left so I am chillin
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
 [synthesizer1] synthesizer2 is seeking consensus to change the institution
 [synthesizer1] Using sense to see if this is an acceptable change
 [synthesizer1] about to try to sense the institution
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[synthesizer1] Why am I stuck here ---> enter(sample,"room2")
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[pAgent1] I left so I am chillin
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Size: 2, Count: 2
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
-[pAgent1] I tried to enter
-[pAgent1] I still need to enter 1 rooms
-[synthesizer1] Log file received
-[synthesizer1] The revision was successful, let me begin the discussion
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
+[synthesizer1] Why am I stuck here ---> enter(sample,room2)
 [synthesizer1] I can accept the revision
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[synthesizer1] A possble revision found, inform agents of change
-[coordinator] Received a coordinator permission request for revision consensus
-[synthesizer2] Size: 2, Count: 2
-[coordinator] Added to queue
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I left so I am chillin
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[synthesizer2] Removed request from list
 [synthesizer2] Permission granted
-[pAgent1] I tried to enter
 [oracle] synthesizer2 has asked me to decide on a revision
-[oracle] The file to be checked rooms_revised_synthesizer2_14.ial
-[oracle] The revision log file rooms_revised_synthesizer2_14revLog
-[pAgent1] I still need to enter 1 rooms
+[oracle] The file to be checked rooms_revised_synthesizer2_16.ial
+[oracle] The revision log file rooms_revised_synthesizer2_16revLog
 [oracle] Revision acceptable, can be implemented
 [oracle] Must inform ------> synthesizer2
 [synthesizer2] Finally, the institution can be revised
-[pAgent1] I will be in room2 for 2 timesteps.
 [synthesizer2] I'm about to update the institution
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[bAgent2] The institution has changed, message reveived from synthesizer2
-[pAgent2] The institution has changed, message reveived from synthesizer2
-[bAgent1] The institution has changed, message reveived from synthesizer2
-[agent2] The institution has changed, message reveived from synthesizer2
-[agent1] The institution has changed, message reveived from synthesizer2
-[agent3] The institution has changed, message reveived from synthesizer2
-[baseAgent] The institution has changed, message reveived from synthesizer2
-[pAgent1] The institution has changed, message reveived from synthesizer2
+[boldAgent8] The institution has changed, message reveived from synthesizer2
+[boldAgent2] The institution has changed, message reveived from synthesizer2
+[boldAgent6] The institution has changed, message reveived from synthesizer2
+[boldAgent7] The institution has changed, message reveived from synthesizer2
+[boldAgent1] The institution has changed, message reveived from synthesizer2
+[boldAgent5] The institution has changed, message reveived from synthesizer2
+[boldAgent3] The institution has changed, message reveived from synthesizer2
+[boldAgent4] The institution has changed, message reveived from synthesizer2
 [synthesizer2] Informing relevant agents that a solution was found
-[pAgent1] I am not happy about this, complaining to synthesiser
-[synthesizer2] Queued request for pAgent1
-[pAgent1] Decided to leave, leaving now
-[bAgent1] I tried to enter
-[synthesizer2] Size: 2, Count: 2
-[pAgent1] I tried to enter
-[synthesizer2] Checking if this request is different from the queued request
-[pAgent1] I still need to enter 1 rooms
-[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
-[synthesizer2] No need to add the request to the official queue, a similar request is already in the queue
-[pAgent1] I left so I am chillin
-[bAgent1] Decided to leave, leaving now
-[pAgent1] I will be in room2 for 2 timesteps.
-[synthesizer2] Adding this request to the official queue because it is different to what is there
-[bAgent1] I left so I am chillin
-[pAgent1] I am in Room room2 and my role is x but it is full, I may need to leave the room
-[pAgent1] I am not happy about this, complaining to synthesiser
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Removed request from list
+[boldAgent1] My problem has a solution, message reveived from synthesizer2
+[boldAgent3] My problem has a solution, message reveived from synthesizer2
 [synthesizer2] Removing relevant to_inform percepts
-[pAgent1] I tried to enter
 [synthesizer2] Handling the others
-[pAgent1] I still need to enter 1 rooms
-[synthesizer2] Number of to_handle beliefs found 2
-[synthesizer2] Count: 2
-[bAgent1] I tried to enter
+[synthesizer2] Number of to_handle beliefs found 1
+[synthesizer2] Count: 1
 [synthesizer2] Preparing to handle the first item in the list
-[pAgent1] I left so I am chillin
+[boldAgent1] I am about to try to enter the room again
+[boldAgent3] I am about to try to enter the room again
 [synthesizer2] handling next request
-[bAgent1] I am in room1 and my role is ', R, '  I will exit when ready
-[pAgent1] I will be in room2 for 2 timesteps.
-[pAgent1] I am in room2 and my role is x  I will exit when ready
-[bAgent1] Decided to remain in room for now
 [coordinator] synthesizer2 has completed the revision task
 [synthesizer2] Attempting to revise norms
-[coordinator] Checking next permission
+[coordinator] No more permission requests to handle
+[boldAgent1] I am in room2 and my role is x,  I will leave after 2 timesteps
+[boldAgent3] I am in room2 and my role is x,  I will leave after 1 timesteps
 [synthesizer2] What is happening - 1
-[coordinator] Found: synthesizer2 capacityExceededViol enter(agent2,"room2") noViol(holdsat(meeting)) agent2
-[coordinator] Found1: synthesizer1 capacityExceededViol enter(agent1,"room2") noViol(holdsat(meeting)) agent1
-[coordinator] Requests are similar, let's check the solutions'
-[coordinator] Solutions are same, inform next synthesizer solution is active
+[boldAgent3] Repeating 1
+[boldAgent1] Repeating 1
+[boldAgent1] Repeating 2
+[boldAgent3] Finished exploring this room
+[boldAgent1] Finished exploring this room
+[boldAgent3] Finished, leaving now
+[boldAgent1] Finished, leaving now
 [synthesizer2] Revision successful 
-[synthesizer1] Revision successful 
-[synthesizer1] A solution exists for your problem but it is currently active so no change required
 [synthesizer2] A solution exists for your problem but it is currently active so no change required
-[synthesizer1] Action under review: enter(agent1,"room2")
-[synthesizer1] I have to inform 1 agents that the revision solution is currently active
-[synthesizer2] Action under review: enter(baseAgent,room2)
-[agent1] The solution to my problem is currently active, I should retry my action
-[synthesizer2] I have to inform 2 agents that the revision solution is currently active
-[pAgent1] I tried to enter
-[baseAgent] The solution to my problem is currently active,
-[pAgent1] The solution to my problem is currently active, I should retry my action
-[baseAgent] I am about to try to enter the room again
-[pAgent1] I still need to enter 1 rooms
-[synthesizer1] Handling the others
-[synthesizer2] Handling the others
-[synthesizer1] Number of to_handle beliefs found 1
-[baseAgent] I am in room2 and my role is x,  I will leave after 1 timesteps
-[synthesizer2] Number of to_handle beliefs found 1
-[synthesizer1] Count: 1
-[baseAgent] Repeating 1
-[synthesizer1] Preparing to handle the first item in the list
-[synthesizer2] Count: 1
-[pAgent1] Decided to leave, leaving now
-[synthesizer2] Preparing to handle the first item in the list
-[pAgent1] I will be in room2 for 2 timesteps.
-[baseAgent] Finished exploring this room
-[synthesizer1] handling next request
-[baseAgent] Finished, leaving now
-[pAgent1] I left so I am chillin
-[synthesizer2] handling next request
-[synthesizer1] Attempting to revise norms
-[synthesizer2] Attempting to revise norms
-[baseAgent] I left so I am chillin
-[synthesizer1] What is happening - 1
-[synthesizer2] Revision successful 
-[synthesizer2] What is happening - 2
-[synthesizer2] A solution exists for your problem but it is currently active so no change required
-[synthesizer1] Revision successful 
-[pAgent1] I tried to enter
-[synthesizer2] Action under review: enter(bAgent1,"room1")
-[pAgent1] I still need to enter 0 rooms
-[synthesizer1] A solution exists for your problem but it is currently active so no change required
-[pAgent1] I am finished, I can leave the building now
+[synthesizer2] Action under review: enter(boldAgent7,room1)
+[boldAgent1] I have accomplished my goal
+[boldAgent3] I have accomplished my goal
 [synthesizer2] I have to inform 1 agents that the revision solution is currently active
-[synthesizer1] Action under review: enter(agent3,"room1")
-[bAgent1] The solution to my problem is currently active, I should retry my action
-[synthesizer1] I have to inform 1 agents that the revision solution is currently active
-[agent3] The solution to my problem is currently active, I should retry my action
+[boldAgent7] The solution to my problem is currently active,
+[boldAgent7] I am about to try to enter the room again
 [synthesizer2] Handling the others
-[baseAgent] I am about to enter one room
-[baseAgent] I still need to enter 1 rooms
 [synthesizer2] Number of to_handle beliefs found 0
+[boldAgent7] I am in room1 and my role is x,  I will leave after 1 timesteps
 [synthesizer2] Count: 0
-[synthesizer1] Handling the others
+[boldAgent7] Repeating 1
 [synthesizer2] No events to handle
-[baseAgent] I am in room1 and my role is x,  I will leave after 1 timesteps
-[baseAgent] Repeating 1
-[synthesizer1] Number of to_handle beliefs found 0
-[synthesizer1] Count: 0
-[synthesizer1] No events to handle
-[baseAgent] Finished exploring this room
-[baseAgent] Finished, leaving now
-[baseAgent] I left so I am chillin
-[baseAgent] I am about to enter one room
-[baseAgent] I still need to enter 0 rooms
-[baseAgent] I am finished, I can leave the building now
+[boldAgent7] Finished exploring this room
+[boldAgent7] Finished, leaving now
+[boldAgent7] I have accomplished my goal
