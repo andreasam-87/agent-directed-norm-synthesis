@@ -166,7 +166,8 @@ failed_plans(0).
 					-+current_action(leave(N,Rm));
 					if(Todo=="idle")
 					{
-						+perm(idle);
+						//+perm(idle);
+						!idle_now;
 					}
 					else
 					{
@@ -179,8 +180,23 @@ failed_plans(0).
 						
 					
 	
-+!idle_now: true <- .print("Decided to remain in room for now");
-					.						
++!idle_now: true <- .print("I left so I am chillin");
+				.random(Rnd);
+				if (Rnd>0.5)
+				{
+				 	delay(2000);				
+				}
+				else
+				{
+					delay(3000);
+				}
+				
+				!enter_room;
+				.	
+				
+-!idle_now: true <- .print("Error likely with the delay function, continuing my plan");
+					!enter_room;
+					.		
 
 
 					 
@@ -280,6 +296,10 @@ failed_plans(0).
 					{
 						+waiting;
 						.print("I will wait for word before acting again");
+						if(acting)
+						{
+							-acting;
+						}
 					}
 					
 				
@@ -433,6 +453,7 @@ failed_plans(0).
 									+acting;
 									-revisionActive;
 									// .abolish(revisionActive);
+									skip_steps(1);
 									!retry_enterroom;
 									. 
 

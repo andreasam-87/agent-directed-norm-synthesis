@@ -1377,7 +1377,17 @@ public class JsonExtractor {
 				{
 					//StringUtils.
 					str = str.replace("initially","holdsat");
-					str = replaceLast(")",","+count+")",str);
+					//str = replaceLast(")",","+count+")",str);
+					
+					if(str.contains("occurred"))
+					{
+						str = replaceLast(")",","+inst+","+count+")",str);
+					}
+					else
+					{
+
+						str = replaceLast(")",","+count+")",str);
+					}
 					
 					// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
 					//probably need to remove this to a new structure to retrieve for the example file.
@@ -1514,7 +1524,18 @@ public class JsonExtractor {
 					{
 						//StringUtils.
 						str = str.replace("initially","holdsat");
-						str = replaceLast(")",","+count+")",str);
+						//str = replaceLast(")",","+count+")",str);
+						
+						if(str.contains("occurred"))
+						{
+							str = replaceLast(")",","+inst+","+count+")",str);
+						}
+						else
+						{
+
+							str = replaceLast(")",","+count+")",str);
+						}
+						
 						
 						// an if statement that looks for a particular fluent, it can change holdsat to not holdsat at the simplest case	
 						//probably need to remove this to a new structure to retrieve for the example file.

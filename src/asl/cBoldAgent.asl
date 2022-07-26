@@ -234,9 +234,25 @@
 
 +goal_completed: true <- .print("I have accomplished my goal");
 					.	
-					
-+!idle_now: true <- .print("Decided to remain in room for now");
-					.						
+						
+						
++!idle_now: true <- .print("I left so I am chillin");
+				.random(Rnd);
+				if (Rnd>0.5)
+				{
+				 	delay(2000);				
+				}
+				else
+				{
+					delay(3000);
+				}
+				
+				!enter_room;
+				.	
+				
+-!idle_now: true <- .print("Error likely with the delay function, continuing my plan");
+					!enter_room;
+					.					
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);

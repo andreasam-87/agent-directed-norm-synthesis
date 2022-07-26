@@ -551,7 +551,7 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 											!discussFailedRevision;
 											.send(coordinator,tell,informCoordinatorComplete);
 											
-											!handle;
+											//!handle;
 											.
  
 				

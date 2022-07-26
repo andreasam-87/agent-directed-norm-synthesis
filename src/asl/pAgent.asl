@@ -42,7 +42,7 @@ toenter(room2,2).
 						.nth(0,Plans,Item);
 						room_experiment.getItems(Item,2,Rm,Tm);
 		
-		  				+room_entered(Rm);
+		  				-+room_entered(Rm);
 						enter(N,Rm);
 		
 						-+current_action(enter(N,Rm));
@@ -153,7 +153,8 @@ toenter(room2,2).
 					.my_name(N);
 					leave(N,Rm,"complete"); 
 					-+current_action(leave(N,Rm));
-					+perm(idle);
+					!idle_now;
+					//+perm(idle);
 					//+goal_completed;
 					.	
 					
@@ -167,7 +168,8 @@ toenter(room2,2).
 					-conflict;
 					leave(N,Rm,"problem"); 
 					-+current_action(leave(N,Rm));
-					+perm(idle);
+					!idle_now;
+					//+perm(idle);
 					//.print("I will wait for word before acting again");
 					.	
 	
@@ -188,9 +190,25 @@ toenter(room2,2).
 //					-+current_action(leave(N,Rm));
 //					//+perm(idle);
 //					.	
+							
 					
-+!idle_now: true <- .print("Decided to remain in room for now");
-					.						
++!idle_now: true <- .print("I left so I am chillin");
+			.random(Rnd);
+			if (Rnd>0.5)
+			{
+			 	delay(2000);				
+			}
+			else
+			{
+				delay(3000);
+			}
+			
+			!enter_room;
+			.	
+				
+-!idle_now: true <- .print("Error likely with the delay function, continuing my plan");
+					!enter_room;
+					.					
 							
 +perm(idle)	: true <- .print("I left so I am chillin");
 						//.wait(2000);

@@ -52,13 +52,13 @@ failed_plans(0).
 						
 						room_experiment.getItems(Item,2,Rm,Tm);
 		
-		  				+room_entered(Rm);
+		  				-+room_entered(Rm);
 						enter(N,Rm);
 		
 						-+current_action(enter(N,Rm));
 		  					
 							//.substring(Tm,P,6,7); //: true and R unifies with "20".
-		  				.print("I will be in ", Rm, " for ",Tm, " timesteps.");
+		  				//.print("I will be in ", Rm, " for ",Tm, " timesteps.");
 					}
 					else
 					{
@@ -181,7 +181,8 @@ failed_plans(0).
 					.my_name(N);
 					leave(N,Rm,"complete"); 
 					-+current_action(leave(N,Rm));
-					+perm(idle);
+					!idle_now;
+					//+perm(idle);
 					//+goal_completed;
 					.	
 					
@@ -219,8 +220,23 @@ failed_plans(0).
 //					//+perm(idle);
 //					.	
 					
-+!idle_now: true <- .print("Decided to remain in room for now");
-.
++!idle_now: true <- .print("I left so I am chillin");
+				.random(Rnd);
+				if (Rnd>0.5)
+				{
+				 	delay(2000);				
+				}
+				else
+				{
+					delay(3000);
+				}
+				
+				!enter_room;
+				.	
+				
+-!idle_now: true <- .print("Error likely with the delay function, continuing my plan");
+					!enter_room;
+					.	
 
 +!enterNext(Rm): true <- .print("I am about to try to enter another room");
 					.my_name(N);
@@ -229,7 +245,6 @@ failed_plans(0).
 					enter(N,Rm);
 		
 					-+current_action(enter(N,Rm)); 
-				
 					 .					
 
 +!checkIdle: true <- .print("Need to decide if to wait or try to explore another room");
@@ -303,6 +318,8 @@ failed_plans(0).
 						!enter_room;
 						.
 					//	experiment5.myPrint('I left so I am chillin').
+
+
 
 							
 /* +restrictedAccess :  true <- ?role(Nm,R);

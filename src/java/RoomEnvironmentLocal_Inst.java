@@ -1726,6 +1726,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					}
 				}
 				
+				inst_sense.add(Literal.parseLiteral("capacityExceededFor("+roomCap+")"));
+				
 				//System.out.println("true");
 				/*roomCap=StringUtils.substringBetween(roomCap, "(", ")"); //find the name of the room which has exceeded capacity
 				
