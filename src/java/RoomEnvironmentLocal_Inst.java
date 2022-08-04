@@ -424,6 +424,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//String eventOccurred =(String)(StringTerm) act.getTerm(0)).getString();
 			//int x=0;
 			//System.out.println("reached here");
+			
+			clearPercepts(agName); //remove old percepts and add new percepts
+			
 			try {
 				//x = (int) ((NumberTerm) act.getTerm(0)).solve();
 				String eventOccurred = (action.getTerm(0)).toString();
@@ -572,7 +575,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 		}
 		else if (action.getFunctor().equals("revise")) {
-
+			
+			clearPercepts(agName); //remove old percepts and add new percepts
 			/*Agent ID in the file names */
 			//RoomEnvironmentLocal_Inst.super.
 			//final RoomEnvironmentLocal_Inst sup = this.super;
@@ -726,8 +730,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							String trace = new JsonExtractor().getTraceFile(when,numStates,stateList);
 							
-							//ArrayList<Object> traceInfo  = new JsonExtractor().getLocalTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
-							ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							ArrayList<Object> traceInfo  = new JsonExtractor().getLocalTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
+							//ArrayList<Object> traceInfo  = new JsonExtractor().getTraceFileXhail(when,numStates,stateList,toAdd,prob,agentsInMAS,agentsBySynthesizerInMAS.get(agName));
 							
 							
 							final String traceX = traceInfo.get(0).toString();
@@ -1929,7 +1933,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		config.append("\nRole: x y\n" +
 				//"Location: room1 room2 room3\n" +
 				"Location: room1 room2\n" +
-				"Number: 0 1 2 3 4 5 6 7 8 9 ");
+				"Number: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20");
 		
 
 

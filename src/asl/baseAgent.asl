@@ -451,15 +451,15 @@ failed_plans(0).
 
 +revisionActive[source(Ag)]: not acting <- .print("The solution to my problem is currently active,");
 									+acting;
-									-revisionActive;
+									-revisionActive[source(Ag)];
 									// .abolish(revisionActive);
-									skip_steps(1);
+									skip_steps(2);
 									!retry_enterroom;
 									. 
 
 +revisionActive[source(Ag)]: acting <- .print("The solution to my problem is currently active but I am already exploring again so no need to do anything else");
 									//+acting;
-									-revisionActive;
+									-revisionActive[source(Ag)];
 									// .abolish(revisionActive);
 									//!retry_enterroom;
 									. 
@@ -488,7 +488,7 @@ failed_plans(0).
 									  *
 									  */
 									  
-									 -revisionFailed;
+									 -revisionFailed[source(Ag)];
 									// .abolish(revisionFailed);
 									 
 									 !enter_room;
@@ -496,13 +496,13 @@ failed_plans(0).
 									 
 +revisionFailed[source(Ag)]: acting <- .print("Unfortunately, there is no solution to my problem but I am already exploring again so no need to do anything else");
 										  
-									 -revisionFailed;
+									 -revisionFailed[source(Ag)];
 									 
 									// !enter_room;
 									 .
 
 +revisionSucceeded[source(Ag)]: not acting <- .print("My problem has a solution, message reveived from ", Ag);
-								-revisionSucceeded;
+								-revisionSucceeded[source(Ag)];
 								+acting;
 								skip_steps(2);
 								
@@ -523,7 +523,7 @@ failed_plans(0).
 
 +revisionSucceeded[source(Ag)]: acting <- .print("My problem has a solution, message reveived from ", Ag,"\nI am already exploring again so no need to do anything else");
 							
-								-revisionSucceeded;
+								-revisionSucceeded[source(Ag)];
 								//skip_steps(2);
 								
 								//?failed_plans(FpC);
@@ -543,7 +543,7 @@ failed_plans(0).
 
 
 +instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
-								-instRev;
+								-instRev[source(Ag)];
 			
 								.
 

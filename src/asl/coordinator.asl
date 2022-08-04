@@ -59,7 +59,7 @@
 							  				//check if the item is already solved
 										 		
 											//?revisionInProgress(Ag,A_R,A_A,E,Aa);
-											.print('Found: ',Ag, ' ',A_R, ' ', A_A, ' ', E, ' ', Aa);
+											//.print('Found: ',Ag, ' ',A_R, ' ', A_A, ' ', E, ' ', Aa);
 											
 											//?revisionInProgress(Agn,A_R1,A_A1,E1,Aa1);
 											
@@ -138,10 +138,15 @@
 									}
 
 									.
+									
+
+@informCoordinatorComplete[atomic]									
 +informCoordinatorComplete[source(Ag)]: true <- //.print(Ag," has received consensus and institution updated");
 											.print(Ag," has completed the revision task");
 											.findall([A,Act,Inst],queue(A,Act,Inst),List); 
 											
+											//checking the current revision
+											?revisionInProgress(Ag,A_R,A_A,E,Aa);
 										
 												//.length(Queue,L);
 												.length(List,L);
@@ -155,7 +160,7 @@
 													
 													/*check if the item is already solved*/
 													
-													?revisionInProgress(Ag,A_R,A_A,E,Aa);
+													//?revisionInProgress(Ag,A_R,A_A,E,Aa);
 													.print('Found: ',Ag, ' ',A_R, ' ', A_A, ' ', E, ' ', Aa);
 													
 													?revisionInProgress(Agn,A_R1,A_A1,E1,Aa1);
@@ -215,22 +220,32 @@
 													{
 														-perm_requested;
 													}*/
+													
+													
 												}
 												else
 												{
 													.print("No more permission requests to handle");
 													-perm_requested;
-													?revisionInProgress(Ag,A_R,A_A,E,Aa);
+													//?revisionInProgress(Ag,A_R,A_A,E,Aa);
 													//?active(Ag,Action2,Inste2);
 													
 //													-active(Ag,Action2,Inste2);
 //													+revisionCompleted(Ag,A_R,A_A,E,Aa);
 //													-revisionInProgress(Ag,A_R,A_A,E,Aa);
 												}
-												//adding new beliefs for completed activities
-												?active(Ag,Action2,Inste2);
-												-active(Ag,Action2,Inste2);
-												+completed(Ag,Action2,Inste2);
+												
+												//?revisionInProgress(Ag,A_R,A_A,E,Aa);
+												
+												
+												if(.ground(active(Ag,Y,Z)))
+												{
+													//adding new beliefs for completed activities
+													?active(Ag,Action2,Inste2);
+													-active(Ag,Action2,Inste2);
+													+completed(Ag,Action2,Inste2);
+												}
+												
 												//+completed(Agn,Action,Inste);
 												+revisionCompleted(Ag,A_R,A_A,E,Aa);
 												//+revisionCompleted(Agn,A_R1,A_A1,E1,A1);
@@ -256,4 +271,4 @@
 																			  .abolish(informCoordinatorHandlingRevision(_,_,_,_));
 																			  .
 																			  
-																			  
+

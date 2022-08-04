@@ -180,6 +180,19 @@ received(0).
 								  						-similar;
 								  						-different;
 													}
+													else
+													{
+														if(similar)
+														{
+															-similar;
+														}
+														if(different)
+														{
+															-different;
+														}
+								  						
+														
+													}
 													
 													
 													//.nth(0,Lists2,First);
@@ -231,7 +244,7 @@ received(0).
 
 
 
-+revisionSuccessful(T): true <- .print("Revision successful ");
++revisionSuccessful(T)[source(S)]: true <- .print("Revision successful ");
 							?count(C);
 							-+count(C+1);
 							if(T==active)
@@ -245,21 +258,16 @@ received(0).
 						
 								.length(List1,Sizer)
 								.print("I have to inform ", Sizer, " agents that the revision solution is currently active");	
-//								
-//						
-//								room_experiment.getRoom(ActAtmpt,R1);	
-//		
-//								for (.member(Zn,List1))
-//				  				{
-//				  					room_experiment.getItems(Zn,2,Agn,Act);
-//		
-//									.send(Agn,tell,revisionActive);
-//				  					.print("Inform ",Agn,", revision solution currently active");
-//		
-//				  				}
-//				  				.abolish(to_inform(_,ActAtmpt));	
-//				  				
+
+								if(S==percept)
+								{
+									.send(coordinator,tell,informCoordinatorComplete);
+								}
+				  				
+				  				//inform all agents who need to be informed.
 				  				.send(List1,tell,revisionActive);
+								.abolish(to_inform(_,ActAtmpt));
+				  				
 							}
 							else
 							{
@@ -324,7 +332,7 @@ received(0).
 													  				
 											}
 							
-											
+											-coor_permissiongranted[source(Agn)];
 											
 											. 
 
@@ -365,7 +373,11 @@ received(0).
 
 		  				
 		  				.send(List1,tell,revisionFailed);
-		  				.abolish(to_inform(_,ActAtmpt));							
+		  				.abolish(to_inform(_,ActAtmpt));	
+		  				
+		  				
+						.send(coordinator,tell,informCoordinatorComplete);
+												
 						!handle;
 						.
 
@@ -406,7 +418,8 @@ received(0).
   						.abolish(handlingCur(_,_,_,_));
   						+handlingCur(I1,I2,I3,I4);
   						
-  						
+  						.send(coordinator,tell,informCoordinatorHandlingRevision(I1,I2,I3,I4));
+						
   						//-+handlingCur(I1,I2,I3,I4);
   						
   						.abolish(to_handle(I1,I2,I3,I4));
@@ -432,6 +445,7 @@ received(0).
 +revisionAcceptable: true <- .print("I can accept the revision");
 							 ?giveResponseTo(Ag);
 							 .send(Ag,tell,instChangeConsensusGranted);
+							 -giveResponseTo(Ag);
 							 // .send(Ag,tell,instChangeConsensusRequest(Granted));
 							//resume;
 							 .
@@ -440,6 +454,7 @@ received(0).
 					?giveResponseTo(Ag);
 					.send(Ag,tell,instChangeConsensusNotGranted);
 					//.send(Ag,tell,instChangeConsensusRequest(NotGranted));
+					 -giveResponseTo(Ag);
 					.
 					
 +deniedEntry[source(Ag)] : true <-  .print("Message received from ",Ag,", will handle").
@@ -526,13 +541,18 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 +instChangeConsensusNotGranted: true <- .print("Permission not granted");
  							//need to do something else so rework the workflow/pipeline
 							//+updateEnv;
+							
 							!discussFailedRevision;
  							.		
 
 +oraclePermissionGranted(NewInst): true <- .print("Finally, the institution can be revised");
 											
-											+updateInEnv(NewInst);
+											-fileFromRevision(_);
+											-logForOracle(_);
+											
 											.send(coordinator,tell,informCoordinatorComplete);
+											
+											+updateInEnv(NewInst);
 											
 											.
 											
@@ -548,8 +568,13 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 											
 											+updateInEnv(NewInst);*/
 											
+											-fileFromRevision(_);
+											-logForOracle(_);
+											
+											//.send(coordinator,tell,informCoordinatorComplete);
+											
 											!discussFailedRevision;
-											.send(coordinator,tell,informCoordinatorComplete);
+											
 											
 											//!handle;
 											.

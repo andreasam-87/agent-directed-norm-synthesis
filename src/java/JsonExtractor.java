@@ -1591,9 +1591,9 @@ public class JsonExtractor {
 											{
 												ret.append(str+".\n");
 												
-												/*//Try using null instead
-												if(str.contains("occurred"))
-													ret.append("occurred(null,"+count+").\n");
+												//For using null instead
+												/*if(str.contains("occurred"))
+													ret.append("occurred(null,"+inst+","+count+").\n");
 												else
 													ret.append("observed(null,"+count+").\n");
 											
@@ -1656,6 +1656,8 @@ public class JsonExtractor {
 					}
 					count++;
 					traceCount++;
+				
+				//using all the traces available
 				}
 				ret.append("\n\n");
 				examples.append("\n\n");
