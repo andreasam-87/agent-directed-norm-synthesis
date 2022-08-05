@@ -1626,7 +1626,7 @@ public class JsonExtractor {
 						
 					}
 					// add a new fluent if necessary
-					if(find>=stateKey)
+					if(find>=stateKey && !toAdd.isBlank())
 					{
 						String add = toAdd+",rooms,"+count+")";
 					/*	if(toAdd.contains("(")) {

@@ -323,7 +323,7 @@ received(0).
 												
 												if(.substring("syn",N,0) & not (Me==N))
 												{
-													.send(N,tell,seekInstChangeConsensus(ActAtmpt,F,ActRest,Exp));
+													.send(N,tell,seekInstChangeConsensus(ActAtmpt,F,ActRes,Exp));
 				
 													//.send(N,tell,seekInstChangeConsensus(ActAtmpt,"roomsInst.lp"));
 				
@@ -344,6 +344,7 @@ received(0).
 																//+sense_time(Action,NewInst);
 																+giveResponseTo(Ag);
 																.print("about to try to sense the institution");
+																.print("Values####### ",Avoid, " - ",Prefer, " ########");
 																room_experiment.getRoom(Action,R1);
 																//.print("Which room --> ",R1); 
 																 .concat("enter(sample,",R1,")",Act);
@@ -596,7 +597,7 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 								.print("Removing relevant to_inform percepts");
 								.abolish(to_inform(_,ActAtmpt));	
  								
- 								changeInst(NewInst,ActAtmpt);
+ 								changeInst(NewInst,ActAtmpt,ActRes);
  								!handle;
  								.
  

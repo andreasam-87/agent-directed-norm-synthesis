@@ -132,7 +132,7 @@ failed_plans(0).
 
 
 
-+perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(P,R);
++perm(leave(_,_)) :   not roomCapacityExceeded & not earlyBirdViol <- ?role(P,R);
 					
 					?room_entered(Rm); //fix to work with in_room belief instead.
 					
@@ -156,6 +156,32 @@ failed_plans(0).
 					!leave_now("Finished, leaving now","complete","idle");	
 
 					.
+
+//+earlyBirdViol: true <- .print("I am the first agent in the room, there is an earlybird violation");
+//					.
+					
+//+typeConflictInRoom: true <- .print("There is a type conflict in the room I am in").
+					
+
+
++perm(leave(_,_)) : earlyBirdViol <- ?role(P,R);
+						.my_name(N);
+						?room_entered(Rm);
+						
+						?current_action(A);
+					.print("I am in Room ", Rm, " and my role is ",R," but there is an earlybird violation");
+					//.print("I am the first agent in the room, there is an earlybird violation");
+					
+					 ?overseer(O);
+					
+					.send(O,tell,request(earlyBirdViol, A, noViol(none)));	
+					?failed_plans(C);
+					-+failed_plans(C+1);
+					+failedTo(enter,N,Rm,A);	
+
+					
+					!leave_now("Must leave now, leaving room","problem","noidle");	
+						.
 	
 	
 +!leave_now(Msg,St,Todo): true <- //.print("Decided to leave, leaving now");

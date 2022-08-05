@@ -1,6 +1,6 @@
 #modeh exception($int4,occurred(arrive(+person,+location),$inst,+instant))=1.
 int4(4).
-clause4(1..4).
+clause4(1..3).
 #modeh del($int4,$clause4)=3.
 #modeh exception($int11,initiated(in_room(+person,+location),$inst,arrive(+person2,+location2),+instant))=1.
 int11(11).

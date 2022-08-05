@@ -2,7 +2,8 @@
 
 /* Initial beliefs and rules */
 toenter(vip_room).
-
+cancelled_plans(0).
+failed_plans(0).
 
 /* Initial goals */
 
@@ -18,7 +19,7 @@ toenter(vip_room).
 										!start.
 
 +!start : true <-  .print("hello world. I am a VIP agent");
-					skip_steps(2);
+					skip_steps(2);  //NEED TO WAIT LONGER or check something else in the environment
 					//delay(2000);	
 					.print("Finished skipping steps");
 					!check_vip_room.
@@ -34,17 +35,68 @@ toenter(vip_room).
 							//!enter_room.
 							. 								
 
-
+/* 
 +vipRoomFound(R): true <- .print("Entering VIP room");
 						!enter_vip_room(R);
-						.
+						.*/
 
 
++vipRoomsFound: true <- .print("rooms found, time to explore");
+
+							.findall(Rooms,viproom(Rooms),Locations); 
+							.length(Locations,Size);
+							
+							.print("There are ", Size, " rooms to explore");
+							
+							
+							if(Size\==0)
+							{
+								room_experiment.chooseRoom(Locations,C);
+								.nth(C,Locations,Room);
+								.print("I choose to enter ",Room);
+								
+								 room_experiment.getRandomNum(1,2,Rnd);
+						
+								 +toenter(Room,Rnd);
+								 +toexplore(1);
+								 !enter_vip_room;
+								 
+								
+
+							}
+							else
+							{
+								.print("There are no rooms to explore, leaving...");
+							}
+
+							//!check_act;
+							.
+
++!enter_vip_room: true <- .print("I am trying to enter the VIP now");
+					
+					.my_name(N);
+					
+					?toenter(Room,Time);
+					
+					-+room_entered(Room);
+									
+					enter(N,Room);
+					
+					-+current_action(enter(N,Room));
+
+				 .
+				 
+/* 				 
 +!enter_vip_room(Rm): true <- .print("I am trying to enter the VIP now");
 					
 					.my_name(N);
 					
+					room_experiment.getRandomNum(1,2,Rnd);
+					
+					+toenter(Rm,Rnd);
 					+room_entered(Rm);
+					+toexplore(1);
+					
 					enter(N,Rm);
 					
 					-+current_action(enter(N,Rm));
@@ -78,8 +130,8 @@ toenter(vip_room).
 						.print("I am finished, I can leave the building now");
 					}
 					
-			 .
-			 
+			 .*/
+		/* 	 
 
 +in_room(_,_) : true <- ?role(P,R);
 						?room_entered(Rm);
@@ -88,8 +140,8 @@ toenter(vip_room).
 						.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
 					
 						?boldness(B);
+						.
 						
-						/* 
 						if((B mod 2)==0)
 						{
 							?overseer(O);
@@ -110,8 +162,10 @@ toenter(vip_room).
 							.abolish(toenter(Rm,N));
 							!leave_now;	
 						}
+						 .
 						*/
-						.
+						
+						
 		
 /* +restrictedAccess :  true <- ?role(Nm,R);
 						?current_action(A);
@@ -121,9 +175,52 @@ toenter(vip_room).
 						.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
 						
 						.*/
-								
 
++perm(leave(_,_)) :   not roomCapacityExceeded & not typeConflictInRoom <- ?role(P,R);
+					
+					?room_entered(Rm); //fix to work with in_room belief instead.
+					
+					
+					?toenter(Rm,N);
+					
+					.print("I am in ",Rm," and my role is ", R, ",  I will leave after ", N, " timesteps"); 
+					
+					//skip_steps(N);
+					for ( .range(I,1,N) ) 
+					{
+						.print("Repeating ",I);
+				          explore; 
+				    }
+					
+					//explore;
+					?toexplore(C);
+					-+toexplore(C-1);
+					.abolish(toenter(Rm,N));
+					.print("Finished exploring this room");
+					!leave_now("Finished, leaving now","complete","idle");	
 
+					.								
+
++perm(leave(_,_)) : typeConflictInRoom <- ?role(P,R);
+						.my_name(N);
+						?room_entered(Rm);
+						
+						?current_action(A);
+					
+					.print("I am in Room ", Rm, " and my role is ",R," but there is type conflict violation");
+					.print("I will leave the room and re-enter when it is resolved")
+					//.print("I am the first agent in the room, there is an earlybird violation");
+					
+					 ?overseer(O);
+					//typeConflict
+					.send(O,tell,request(roomTypeConflictViol, A, noViol(vip)));	
+					?failed_plans(C);
+					-+failed_plans(C+1);
+					+failedTo(enter,N,Rm,A);	
+			
+					
+					!leave_now("Must leave now, leaving room","problem","noidle");	
+						.
 							
 +restrictedAccess(Reas) :  true <- ?role(Nm,R);
 						?current_action(A);
@@ -132,7 +229,8 @@ toenter(vip_room).
 						?overseer(O);
 						
 						.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
-						.		
+						.	
+							
 								
 /* +perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
 						?room_entered(Rm);
@@ -183,14 +281,33 @@ toenter(vip_room).
 					* */
 					
 
-+!leave_now: true <- .print("Decided to leave, leaving now");
+/* +!leave_now: true <- .print("Decided to leave, leaving now");
 					?room_entered(Rm);
 					.my_name(N);
 					leave(N,Rm); 
 					-+current_action(leave(N,Rm));
 					+perm(idle);
+					.	*/
+
+
++!leave_now(Msg,St,Todo): true <- //.print("Decided to leave, leaving now");
+					.print(Msg);
+					?room_entered(Rm);
+					.my_name(N);
+					leave(N,Rm,St); 
+					-+current_action(leave(N,Rm));
+					if(Todo=="idle")
+					{
+						//+perm(idle);
+						!idle_now;
+					}
+					else
+					{
+						.print("I will wait for word before acting again");
+						+waiting;
+						//!checkIdle;
+					}		
 					.	
-	
 //+!leave_now: not conflict <- .print("Decided to leave, leaving now");
 //					?room_entered(Rm);
 //					.my_name(N);
@@ -209,28 +326,28 @@ toenter(vip_room).
 //					//+perm(idle);
 //					.	
 					
-+!idle_now: true <- .print("Decided to remain in room for now");
-					.						
+	
+					
++!idle_now: true <- .print("I left so I am chillin");
+				.random(Rnd);
+				if (Rnd>0.5)
+				{
+				 	delay(2000);				
+				}
+				else
+				{
+					delay(3000);
+				}
+				+goal_completed;
+				//!enter_room;
+				.	
+				
+-!idle_now: true <- .print("Error likely with the delay function, continuing my plan");
+					+goal_completed;
+					//!enter_room;
+					.				
 							
-+perm(idle)	: true <- .print("I left so I am chillin");
-						//.wait(2000);
-						.random(Rnd);
-					//.print('random: ',Rd);
-						if (Rnd>0.5)
-						{
-						 	delay(2000);				
-						}
-						else
-						{
-							delay(3000);
-						}
-						//t=Rnd*1000;		
-						
-						//skip_steps(2);
-						-perm(idle);
-						!enter_room;
-						.
-					//	experiment5.myPrint('I left so I am chillin').
+
 							
 
 +prob(enter) :  true <- ?role(Nm,R);
@@ -266,18 +383,50 @@ toenter(vip_room).
 
 +overseer(O): true <- +overseer(O). 
 
-+revisionActive: true <- .print("The solution to my problem is currently active, I should retry my action").
++revisionActive: true <- .print("The solution to my problem is currently active, I should retry my action");
+							skip_steps(2);
+							!enter_vip_room;
+							.
 
-+revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.").
+//+revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.").
+
++revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.");
+									//attempt to enter another room OR remove plan to enter this room. 
+									
+									//Temp action to remove plan to enter room  
+									 ?room_entered(Rm);
+									  ?cancelled_plans(C);
+									  -+cancelled_plans(C+1);
+									  -toenter(Rm,_);
+									 
+									  
+									 -revisionFailed[source(Ag)];
+									// .abolish(revisionFailed);
+									 
+									// !enter_room;
+									 .
+
++revisionSucceeded[source(Ag)]: true <- .print("My problem has a solution, message reveived from ", Ag);
+								-revisionSucceeded;
+								//may need to include a delay
+								skip_steps(2);
+								!enter_vip_room;
+								.
 
 
-+instRev[source(Ag)]: not conflict <- .print("The institution has changed, message reveived from ", Ag);
++instRev[source(Ag)]: true <- .print("The institution has changed, message reveived from ", Ag);
+								-instRev;
+			
+								.
+
+/* 
++instRev[source(Ag)]: not waiting <- .print("The institution has changed, message reveived from ", Ag);
 									-instRev;
 										.
 
-+instRev[source(Ag)]: conflict <- .print("The institution has changed, message reveived from ", Ag);
++instRev[source(Ag)]: waiting <- .print("The institution has changed, message reveived from ", Ag);
 									-instRev;
 									skip_steps(2);
-									-conflict;
-									!enter_room;
-									.
+									-waiting;
+									!enter_vip_room;
+									.*/
