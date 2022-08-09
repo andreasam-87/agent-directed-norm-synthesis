@@ -14,7 +14,7 @@ MAS room_experiment {
 
 		//base_agent[mindinspector="gui(cycle,html,history)"]#2;
 		//baseAgent[mindinspector="gui(cycle,html,history)"]#4;
-	    baseAgent[mindinspector="gui(cycle,html,history)"]#2;
+	    baseAgent[mindinspector="gui(cycle,html,history)"]#8;
 		sample sample_agent;
 		
 		//bAgent[mindinspector="gui(cycle,html,history)"]#2;
@@ -25,7 +25,7 @@ MAS room_experiment {
 		//planAgent[mindinspector="gui(cycle,html,history)"] #2;
 		
 		oracle;
-		vipAgent[mindinspector="gui(cycle,html,history)"]#2;
+		//vipAgent[mindinspector="gui(cycle,html,history)"]#2;
 		
 	aslSourcePath:
 		"src/asl";

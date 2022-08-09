@@ -132,7 +132,7 @@ failed_plans(0).
 
 
 
-+perm(leave(_,_)) :   not roomCapacityExceeded & not earlyBirdViol <- ?role(P,R);
++perm(leave(_,_)) :   not roomCapacityExceeded & not earlyBirdViol & in_room(Ag,Rom) <- ?role(P,R);
 					
 					?room_entered(Rm); //fix to work with in_room belief instead.
 					
@@ -161,7 +161,24 @@ failed_plans(0).
 //					.
 					
 //+typeConflictInRoom: true <- .print("There is a type conflict in the room I am in").
++perm(leave(_,_)) : not in_room(Ag,Rom) <- ?role(P,R);
+						.my_name(N);
+						?room_entered(Rm);
+						
+						?current_action(A);
+					.print("I have permission to leave the Room ", Rm, " and my role is ",R," but I do not believe I am in the room which is odd. I must report this");
+					//.print("I am the first agent in the room, there is an earlybird violation");
 					
+					 ?overseer(O);
+					
+					.send(O,tell,request(missing_inroom, A, in_room(N,Rm)));	
+					?failed_plans(C);
+					-+failed_plans(C+1);
+					+failedTo(enter,N,Rm,A);	
+
+					
+					!leave_now("Must leave now, leaving room","problem","noidle");	
+						.				
 
 
 +perm(leave(_,_)) : earlyBirdViol <- ?role(P,R);
@@ -451,9 +468,9 @@ failed_plans(0).
 								//-+current_action(enter(N,Rm));
 				  				  
 									  
-								.	
+								.	*/
 				
-		*/		
+		/*	
 +prob(enter) :  true <- ?role(P,R);
 						//.print("I cannot enter, I am role -",R);
 						?current_action(A);
@@ -462,8 +479,7 @@ failed_plans(0).
 						?overseer(O);
 						.send(O,tell,request(prohibitedEntry, A, allowedEntry));	
 
-
-								.
+								. */
 
 +prob(wave) :  true <- .print("I cannot leave").
 						//experiment5.myPrint('I cannot leave').

@@ -1496,7 +1496,10 @@ public class JsonExtractor {
 		else
 			forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
 		
-			
+		if(forExamplesList.equals("perm"))
+		{
+			forExamplesList= toModify;
+		}
 		
 		System.out.println("To modify 2 /////////"+ forExamplesList+"/////////// ");
 		
@@ -1547,13 +1550,48 @@ public class JsonExtractor {
 					//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
 						if(str.contains(forExamplesList))
 						{
+							
 							//System.out.print("Contains capacaity exceeded - "+str);
 							if(str.contains(toModify) && find>=stateKey)
 							{
 								System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
-								str = "not "+str;
-								examples.append("#example "+str+".\n");
-								examp.add("#example "+str+".\n");
+								//str = "not "+str;
+								//examples.append("#example "+str+".\n");
+								//examp.add("#example "+str+".\n");
+								
+								//Looking for the missing percept
+								if(str.contains("perm(leave") && factAboutAgent(str,subsetAgents))
+								{
+									int i = str.indexOf("perm(leave");
+									int l = "perm(leave".length();
+									String sub = StringUtils.substringBetween(str,"perm(leave", ")");
+									System.out.println("Substring to enter into examples "+sub);
+									
+									examples.append("#example holdsat(in_room"+sub+"),"+count+").\n");
+									examp.add("#example holdsat(in_room"+sub+"),"+count+").\n");
+									
+									//still add the percept
+									ret.append(str+".\n");
+									toAdd="";
+									
+									/*
+									 * substringBetween(String str, String open, String close)
+										Gets the String that is nested in between two Strings.
+									 */
+									
+								}else if(str.contains("perm(leave") && !factAboutAgent(str,subsetAgents))
+								{
+									//ret.append(str+".\n");
+									toAdd="";
+									
+								}else
+								{
+									str = "not "+str;
+									//what to do normally
+									examples.append("#example "+str+".\n");
+									examp.add("#example "+str+".\n");
+								}
+								
 								/*Maybe I need to add the occurrence of the good event here 
 								 * Decided to add it for now
 								 * */
@@ -1565,8 +1603,16 @@ public class JsonExtractor {
 								
 							}
 							else {
-								examples.append("#example "+str+".\n");
-								examp.add("#example "+str+".\n");
+								if(str.contains("perm(leave"))
+								{
+									ret.append(str+".\n");
+									toAdd="";
+								}else
+								{
+									examples.append("#example "+str+".\n");
+									examp.add("#example "+str+".\n");
+								}
+								
 							}
 						}
 						else
@@ -1628,6 +1674,7 @@ public class JsonExtractor {
 					// add a new fluent if necessary
 					if(find>=stateKey && !toAdd.isBlank())
 					{
+						System.out.println("I am adding - "+toAdd);
 						String add = toAdd+",rooms,"+count+")";
 					/*	if(toAdd.contains("(")) {
 							int count = StringUtils.countMatches(reason, "(");

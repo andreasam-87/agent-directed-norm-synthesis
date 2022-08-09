@@ -1116,6 +1116,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							instModList.add(new InstMods(act,file,"roomTypeConflictViol"));
 						}
+						else if(issue.contains("missing_inroom"))
+						{
+							//String person=StringUtils.substringBetween(act, "(", ",");
+							//person = person.replace("\"","");
+							
+							//add = "initially(is_vip("+person+"),rooms)\n";
+							
+							
+							instModList.add(new InstMods(act,file,"missing_inroom"));
+						}
 						
 						
 						
@@ -1462,7 +1472,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			 
 			 problem = prob;
 		}
-		if(prob.contains("TypeConflict"))
+		else if(prob.contains("TypeConflict"))
 		{
 			problem = prob+"("+room+")";
 			
@@ -1475,7 +1485,15 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			toAdd = "holdsat(is_vip("+person+")";			
 			
 		}
-		
+		else if(prob.contains("missing"))
+		{
+			problem = "perm(leave";
+			
+			modeToAdd = "\n\n#modeh initiated(in_room(+person,+location),$inst, +instant).\n"; 
+			
+			toAdd = "holdsat(in_room("+person+","+room+")";			
+			
+		}
 		
 		
 		response.add(problem);
