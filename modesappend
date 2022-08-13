@@ -2,12 +2,24 @@
 int4(4).
 clause4(1..3).
 #modeh del($int4,$clause4)=3.
-#modeh exception($int21,holdsat(roomTypeConflictViol(+location),$inst,+instant))=1.
+#modeh exception($int11,initiated(in_room(+person,+location),$inst,arrive(+person2,+location2),+instant))=1.
+int11(11).
+clause11(1..3).
+#modeh del($int11,$clause11)=3.
+#modeh exception($int18,terminated(perm(enter(+person,+location)),$inst,arrive(+person2,+location2),+instant))=1.
+int18(18).
+clause18(1..4).
+#modeh del($int18,$clause18)=3.
+#modeh exception($int21,holdsat(capacityExceededViol(+location),$inst,+instant))=1.
 int21(21).
-clause21(1..2).
+clause21(1..3).
 #modeh del($int21,$clause21)=3.
-#modeh exception($int22,holdsat(capacityExceededViol(+location),$inst,+instant))=1.
-int22(22).
-clause22(1..3).
-#modeh del($int22,$clause22)=3.
+#modeh exception($int26,holdsat(restrictAccess(+person,+location),$inst,+instant))=1.
+int26(26).
+clause26(1..1).
+#modeh del($int26,$clause26)=3.
+#modeh exception($int30,holdsat(earlyBirdViol(+person,+location),$inst,+instant))=1.
+int30(30).
+clause30(1..3).
+#modeh del($int30,$clause30)=3.
 

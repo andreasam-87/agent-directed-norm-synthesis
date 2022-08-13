@@ -34,7 +34,7 @@ received(0).
 +stateOccurred(Ev,WhenEv) : true <- .print("Event: ",Ev, " occurred at state: ",WhenEv);
 									. 
 
-
+/* 
 @request[atomic]
 +request(restrictedAccess, ActAtmpt,allowedAccess(no_vip))[source(Ag)] : true <- 
 													.print("This is a restricted access request");
@@ -49,7 +49,21 @@ received(0).
 											    //	}
 											    .abolish(request(restrictedAccess,ActAtmpt,allowedAccess(no_vip))[source(Ag)]);
 																.
- 
+*/
+@request[atomic]
++request(deniedEntry, ActAtmpt,allowedAccess(no_vip))[source(Ag)] : true <- 
+													.print("This is a restricted access request");
+											    	
+											    	room_experiment.getRoom(ActAtmpt,Room);
+											    	room_experiment.stripString(Room,Room2);
+											    		.send(Ag,tell,noAccessVIProom(Room2));
+											    		//-handling;
+											    //	}
+											    .abolish(request(restrictedAccess,ActAtmpt,allowedAccess(no_vip))[source(Ag)]);
+																.																
+																
+																
+																
 @request_b[atomic]
 +request(ActRes, ActAtmpt,Exp)[source(Ag)] : not handling <- 
 										   
@@ -261,7 +275,7 @@ received(0).
 
 								if(S==percept)
 								{
-									.send(coordinator,tell,informCoordinatorComplete);
+									.send(coordinator,tell,informCoordinatorComplete(success));
 								}
 				  				
 				  				//inform all agents who need to be informed.
@@ -351,14 +365,26 @@ received(0).
 																 //.print("After Concat --> ",Msg); 
 																 room_experiment.stripString(Act,Act1);
 																 .print("Why am I stuck here ---> ",Act);
+																 
+																 -seekInstChangeConsensus(Action,NewInst,Avoid,Prefer)[source(Ag)];
 																sense(Act1,NewInst,Avoid,Prefer);
 																
 																. 
 
 													
-+revisionFailed: true <- .print("The revision task failed");
-						-revisionFailed;
++revisionFailed[source(S)]: true <- .print("The revision task failed");
+						
+						if(S==percept)
+						{
+							.print(S, " told me that the revision task failed");
+							+tell_coordinator;
+						}
+						
+						
+						-revisionFailed[source(S)];
 						!discussFailedRevision;
+						
+						
 						.
 
 +!discussFailedRevision: true <- 	.print("No possible revisions found");
@@ -376,8 +402,13 @@ received(0).
 		  				.send(List1,tell,revisionFailed);
 		  				.abolish(to_inform(_,ActAtmpt));	
 		  				
+		  				if(tell_coordinator)
+		  				{
+		  					.send(coordinator,tell,informCoordinatorComplete(failed));
+		  					-tell_coordinator;
+		  				}
 		  				
-						.send(coordinator,tell,informCoordinatorComplete);
+						//.send(coordinator,tell,informCoordinatorComplete(failed));
 												
 						!handle;
 						.
@@ -464,7 +495,7 @@ received(0).
 
 //need to count and ensure all the permission is received, or max required permission given	
 
-+instChangeConsensusRequest(Granted)[source(Ag)]: true <- .print("Permission granted");
+/* +instChangeConsensusRequest(Granted)[source(Ag)]: true <- .print("Permission granted");
 										?accept(N);
 										-+accept(N+1);
 										
@@ -487,7 +518,7 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 +consensusMet  : enoughVotes &  accept(A) & consensus(C) & A >= C <- !completeRevision.	
 
 +consensusNotMet  : enoughVotes &  accept(A) & consensus(C) & A < C <- !completeRevision.	
-       
+ */      
 
 //countVotes(C)
   //  :- refuse(R) & accept(A) & min_vote(MV) &
@@ -506,28 +537,20 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 
 +completeRevision: consensusMet <- .print("TESTING::: Permission granted");
 							
-							/* .print("Permission granted");
-							 * .broadcast(tell,instRev);
-							.print("Removing relevant to_inform percepts");
-							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
-							//.print("Action under review: ", ActAtmpt);
-							.abolish(to_inform(_,ActAtmpt));	
-							
-							+updateEnv;
-							.send(coordinator,tell,informCoordinatorComplete);*/
  							.
 
 
 +completeRevision: consensusNotMet <- .print("TESTING::: Permission not granted");
  							.
 
-+instChangeConsensusGranted: true <- .print("Permission granted");
++instChangeConsensusGranted[source(Ag)]: true <- .print("Permission granted");
 							?fileFromRevision(F);
 							?logForOracle(RF);
 							
 							.send(oracle,tell,decideRevision(F,RF));
 							//decideRevision();
 							
+							-instChangeConsensusGranted[source(Ag)];
 							/* .broadcast(tell,instRev);
 							.print("Removing relevant to_inform percepts");
 							?handlingCur(ActRes,ActAtmpt,Exp,Ag);
@@ -539,21 +562,25 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
  							.
 
 
-+instChangeConsensusNotGranted: true <- .print("Permission not granted");
++instChangeConsensusNotGranted[source(Ag)]: true <- .print("Permission not granted");
  							//need to do something else so rework the workflow/pipeline
 							//+updateEnv;
-							
+							-instChangeConsensusNotGranted[source(Ag)];
+							+tell_coordinator;
 							!discussFailedRevision;
  							.		
 
-+oraclePermissionGranted(NewInst): true <- .print("Finally, the institution can be revised");
++oraclePermissionGranted(NewInst)[source(Ag)]: true <- .print("Finally, the institution can be revised");
 											
 											-fileFromRevision(_);
 											-logForOracle(_);
 											
-											.send(coordinator,tell,informCoordinatorComplete);
+											.send(coordinator,tell,informCoordinatorComplete(success));
+											
+											-oraclePermissionGranted(NewInst)[source(Ag)];
 											
 											+updateInEnv(NewInst);
+											
 											
 											.
 											
@@ -573,6 +600,12 @@ enoughVotes  :- countVotes(CO) &  min_vote(MV) & CO >=MV.
 											-logForOracle(_);
 											
 											//.send(coordinator,tell,informCoordinatorComplete);
+											
+											-oraclePermissionNotGranted(NewInst)[source(Ag)];
+											
+											//.send(coordinator,tell,informCoordinatorComplete(failed));
+											
+											+tell_coordinator;
 											
 											!discussFailedRevision;
 											

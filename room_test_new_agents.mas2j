@@ -15,7 +15,15 @@ MAS room_experiment {
 		//base_agent[mindinspector="gui(cycle,html,history)"]#2;
 		//baseAgent[mindinspector="gui(cycle,html,history)"]#4;
 	    baseAgent[mindinspector="gui(cycle,html,history)"]#8;
+	    
+	    
 		sample sample_agent;
+		
+		//Setup for the final set of experiments
+		/*basePlanner[mindinspector="gui(cycle,html,history)"]#3;
+		basePlannerVIP[mindinspector="gui(cycle,html,history)"];
+		vip[mindinspector="gui(cycle,html,history)"]#2;
+		planner[mindinspector="gui(cycle,html,history)"] #2;*/
 		
 		//bAgent[mindinspector="gui(cycle,html,history)"]#2;
 		
@@ -25,7 +33,7 @@ MAS room_experiment {
 		//planAgent[mindinspector="gui(cycle,html,history)"] #2;
 		
 		oracle;
-		//vipAgent[mindinspector="gui(cycle,html,history)"]#2;
+		//vipAgent[mindinspector="gui(cycle,html,history)"]#8;
 		
 	aslSourcePath:
 		"src/asl";

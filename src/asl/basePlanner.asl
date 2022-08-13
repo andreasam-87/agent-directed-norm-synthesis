@@ -3,6 +3,8 @@
 /* Initial beliefs and rules */
 cancelled_plans(0).
 failed_plans(0).
+toenter(room1,3).
+toexplore(1).
 
 /* Initial goals */
 
@@ -12,38 +14,22 @@ failed_plans(0).
 
 /* Plans */
 
-+!initialise_logger_and_start : true  <- //jason_logger.initialise; 
++!initialise_logger_and_start : true  <- 
 										!start.
 
-+!start : true <-  .print("hello world.");
-					//experiment5.myPrint('hello world');
-					!explore.
+
 					
-+!explore: true <- .print("find out which rooms are available");
-					getLocations;
++!start : true <-  .print("hello world. I am hungry, will have some food before entering the exhibition");
+					//!check_act.
 					.
 					
-+locations_found: true <- .print("rooms found, time to explore");
 
-							.findall(Room,location(Room),Locations); 
-							.length(Locations,Size);
-							
-							.print("I found ", Size, " rooms to explore");
-							+toexplore(Size);
-							if(Size\==0)
-							{
-								
-								for (.member(L,Locations))
-				  				{
-				  					 room_experiment.getRandomNum(1,2,Rnd);
++waiting_on_you[source(Ag)]: true  <- .print(Ag," is waiting on us, let us go now'");
+						+inform(Ag);
+						!check_act.
 						
-									 +toenter(L,Rnd);
-				  				}
-								
-							}
+						
 
-							!check_act;
-							.
 
 +!check_act: true <-  .print("you can enter");
 					
@@ -81,6 +67,8 @@ failed_plans(0).
 					else
 					{
 						.print("I am finished, I can leave the building now");
+						?inform(I);
+						.send(I,tell,ready);
 					}
 						
 					 .
@@ -180,24 +168,6 @@ failed_plans(0).
 					!leave_now("Must leave now, leaving room","problem:missing","noidle");	
 						.				
 
-+perm(leave(_,_)) : earlyBirdViol & perm(enter(Ag,Rom))  <- ?role(P,R);
-						.my_name(N);
-						?room_entered(Rm);
-						
-						?current_action(A);
-					.print("I am in Room ", Rm, " and my role is ",R," but there is an earlybird violation and extra permissions present");
-					
-					 ?overseer(O);
-					
-					.send(O,tell,request("earlyBirdViol|additional_perm", A, noViol(none)));	
-					?failed_plans(C);
-					-+failed_plans(C+1);
-					+failedTo(enter,N,Rm,A);	
-
-					
-					!leave_now("Must leave now, leaving room","problem","noidle");	
-						.
-						
 
 +perm(leave(_,_)) : earlyBirdViol <- ?role(P,R);
 						.my_name(N);
@@ -228,6 +198,7 @@ failed_plans(0).
 					if(Todo=="idle")
 					{
 						//+perm(idle);
+						//.broadcast(tell,baton_handover);
 						!idle_now;
 					}
 					else

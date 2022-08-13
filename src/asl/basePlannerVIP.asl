@@ -3,6 +3,10 @@
 /* Initial beliefs and rules */
 cancelled_plans(0).
 failed_plans(0).
+toenter(room1,3).
+is_vip(me).
+toexplore(1).
+finished(0).
 
 /* Initial goals */
 
@@ -12,44 +16,25 @@ failed_plans(0).
 
 /* Plans */
 
-+!initialise_logger_and_start : true  <- //jason_logger.initialise; 
++!initialise_logger_and_start : true  <- 
 										!start.
 
+					
 +!start : true <-  .print("hello world.");
-					//experiment5.myPrint('hello world');
-					!explore.
+					!check_act.
 					
-+!explore: true <- .print("find out which rooms are available");
-					getLocations;
-					.
-					
-+locations_found: true <- .print("rooms found, time to explore");
-
-							.findall(Room,location(Room),Locations); 
-							.length(Locations,Size);
-							
-							.print("I found ", Size, " rooms to explore");
-							+toexplore(Size);
-							if(Size\==0)
-							{
-								
-								for (.member(L,Locations))
-				  				{
-				  					 room_experiment.getRandomNum(1,2,Rnd);
-						
-									 +toenter(L,Rnd);
-				  				}
-								
-							}
-
-							!check_act;
-							.
 
 +!check_act: true <-  .print("you can enter");
 					
 							!enter_room;
 							. 
-								
+
++ready[source(Ag)]: true <- .print(Ag, "has finished");
+								?finished(C);
+								-+finished(C+1);
+								!leave_building;
+								.		
+					
 							
 +!enter_room: true <- .print("I am about to enter one room");
 					.my_name(N);
@@ -81,9 +66,37 @@ failed_plans(0).
 					else
 					{
 						.print("I am finished, I can leave the building now");
+						!leave_building;
 					}
 						
 					 .
+					 
+					 
++!leave_building: true <- .print("I am trying to find my friend to leave together");
+						?finished(C);
+						if (C==3)
+						{
+							.all_names(Names);
+							.my_name(Me);
+							for (.member(N,Names))
+							{	
+								if(not .substring("base",N,0))
+								{
+									.send(N,tell,baton_handover);
+									//baton_handover
+				
+								}
+									  				
+							}
+							.print("I have left the building now");
+								
+						}
+						/*else
+						{
+							.wait(10000);
+							!leave_building;
+						}*/
+						.
 					 
 +!retry_enterroom: true <- .print("I am about to try to enter the room again");
 					.my_name(N);
@@ -104,6 +117,7 @@ failed_plans(0).
 					else
 					{
 						!enter_room;
+					
 					}
 					//-+room_entered(Rm); //entering same room so not necessary. 
 					
@@ -180,26 +194,8 @@ failed_plans(0).
 					!leave_now("Must leave now, leaving room","problem:missing","noidle");	
 						.				
 
-+perm(leave(_,_)) : earlyBirdViol & perm(enter(Ag,Rom))  <- ?role(P,R);
-						.my_name(N);
-						?room_entered(Rm);
-						
-						?current_action(A);
-					.print("I am in Room ", Rm, " and my role is ",R," but there is an earlybird violation and extra permissions present");
-					
-					 ?overseer(O);
-					
-					.send(O,tell,request("earlyBirdViol|additional_perm", A, noViol(none)));	
-					?failed_plans(C);
-					-+failed_plans(C+1);
-					+failedTo(enter,N,Rm,A);	
 
-					
-					!leave_now("Must leave now, leaving room","problem","noidle");	
-						.
-						
-
-+perm(leave(_,_)) : earlyBirdViol <- ?role(P,R);
++perm(leave(_,_)) : earlyBirdViol & in_room(Ag,Rom) <- ?role(P,R);
 						.my_name(N);
 						?room_entered(Rm);
 						
@@ -217,7 +213,25 @@ failed_plans(0).
 					
 					!leave_now("Must leave now, leaving room","problem","noidle");	
 						.
-	
+
++perm(leave(_,_)) : earlyBirdViol & not in_room(Ag,Rom)  <- ?role(P,R);
+						.my_name(N);
+						?room_entered(Rm);
+						
+						?current_action(A);
+					.print("I am in Room ", Rm, " and my role is ",R," but there is an earlybird violation and the in_room percept is missing");
+					
+					 ?overseer(O);
+					
+					.send(O,tell,request("earlyBirdViol|missing_inroom", A, noViol(none)));	
+					?failed_plans(C);
+					-+failed_plans(C+1);
+					+failedTo(enter,N,Rm,A);	
+
+					
+					!leave_now("Must leave now, leaving room","problem","noidle");	
+						.
+
 	
 +!leave_now(Msg,St,Todo): true <- //.print("Decided to leave, leaving now");
 					.print(Msg);
@@ -228,6 +242,7 @@ failed_plans(0).
 					if(Todo=="idle")
 					{
 						//+perm(idle);
+						//.broadcast(baton_handover);
 						!idle_now;
 					}
 					else
@@ -595,6 +610,18 @@ failed_plans(0).
 								
 								?failed_plans(FpC);
 								//?toexplore(TEx);
+								
+								.all_names(Names);
+								.my_name(Me);
+								for (.member(N,Names))
+								{	
+									if(.substring("base",N,0) & not (Me==N))
+									{
+										.send(N,tell,waiting_on_you);
+					
+									}
+										  				
+								}
 								
 								if(FpC>1)
 								{

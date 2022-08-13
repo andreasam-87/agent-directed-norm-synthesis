@@ -333,8 +333,29 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				is = action.getTerm(2).toString();
 				is = is.replace("\"","");
 				String toRep = ",\""+is+"\"";
+				
 				current_action = ex.replace(toRep,"");
 				System.out.println("Action "+current_action);
+				
+				
+				if(is.contains(":"))
+				{
+					is = StringUtils.substringBefore(is,":");//is.split(":")[0];
+					//leave(N,Rm,St);
+					String temp = StringUtils.substringBetween(current_action, "(", ")");
+					//temp = temp.replace(",", ", ");
+					String toAdd = "initially(permExit("+temp+"),rooms)\ninitially(in_room(" +temp+"),rooms)\n";
+					//String toRem = "permEntry("+temp+")";
+					String toRem = "permEntry("+agName;
+					
+					Updatefile(files_directory+"roomsFacts.iaf", "",toAdd, toRem);
+					//System.out.println("I have updated the facts file with "+toAdd + " and removed "+toRem);
+					//Updatefile(String file, String update, String add, String remove)
+					
+					//"initially(meeting("+room+"),rooms)\n"
+				}
+				//current_action = ex.replace(toRep,"");
+				//System.out.println("Action "+current_action);
 				
 			}
 			
@@ -415,6 +436,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 			inst_file = tempInst;
 			//inst_state--;
+			System.out.println(agName+ " has completed a sense");
 			return true; 
 			
 
@@ -572,7 +594,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 		}
 		else if (action.getFunctor().equals("verifyRevisionAcceptable")) {
-	
+			clearPercepts(agName);
 			try {
 				String revFile = (action.getTerm(0)).toString();
 				String logFile = (action.getTerm(1)).toString();
@@ -1102,6 +1124,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//update institutional modifications with new solution
 							instModList.add(new InstMods(act,file,"capacityExceededViol"));
 						}
+						else if(issue.contains("|"))
+						{
+							instModList.add(new InstMods(act,file,"earlyBirdViol|additional_perm"));
+						}
 						else if(issue.contains("earlyBirdViol"))
 						{
 							instModList.add(new InstMods(act,file,"earlyBirdViol"));
@@ -1126,7 +1152,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							instModList.add(new InstMods(act,file,"missing_inroom"));
 						}
-						
+						else if(issue.contains("deniedEntry"))
+						{
+							String person=StringUtils.substringBetween(act, "(", ",");
+							person = person.replace("\"","");
+							
+							add = "initially(is_vip("+person+"),rooms)\n";
+							
+							
+							instModList.add(new InstMods(act,file,"deniedEntry"));
+						}
 						
 						
 						/*System.out.println("The file to be updated is :"+instFile2Mod);
@@ -1462,6 +1497,45 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			 toAdd = atmpt.replace(temp, "occurred(arrive"); 
 			 problem ="occurred("+problem;
 			 //toAdd = toAdd + ")";
+			 
+			if(reason.contains("vip"))
+			{
+				modeToAdd = "\n\n#modeb holdsat(is_vip(+person),$inst, +instant).\n" + 
+						"#modeb not holdsat(is_vip(+person), $inst, +instant).\n";
+			}
+		}
+		else if(prob.contains("denied"))
+		{
+			 int i = atmpt.indexOf("(");
+			 String temp = atmpt.substring(0,i);
+			 problem = atmpt.replace(temp, prob); 
+			 //toAdd = atmpt.replace(temp, "occurred(arrive"); 
+			 
+			 //example occurred(arrive(vipAgent4,room2),rooms,1).
+			 toAdd ="holdsat(restrictAccess(";
+			 //problem ="occurred("+problem;
+			
+			 //problem ="occurred("+prob+"(vipAgent";
+			 problem ="occurred("+prob;
+			 
+			 //toAdd = toAdd + ")";
+			 
+			if(reason.contains("vip"))
+			{
+				modeToAdd = "\n\n#modeb holdsat(is_vip(+person),$inst, +instant).\n" + 
+						"#modeb not holdsat(is_vip(+person), $inst, +instant).\n";
+			}
+		}
+		else if(prob.contains("earlyBird") & prob.contains("additional"))
+		{		
+			 //perm(enter(Ag,Rom)) 
+			problem = prob;//StringUtils.substringBefore(prob,"|")+  "|perm(enter";
+			 
+			//problem = "perm(leave";
+				
+			modeToAdd = "\n\n#modeb holdsat(permExit(+person,+location),$inst,+instant).\n";
+			
+			//toAdd = "holdsat(in_room("+person+","+room+")";	
 		}
 		else if(prob.contains("earlyBird"))
 		{		
@@ -1489,7 +1563,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		{
 			problem = "perm(leave";
 			
-			modeToAdd = "\n\n#modeh initiated(in_room(+person,+location),$inst, +instant).\n"; 
+			modeToAdd = "\n\n#modeh initiated(in_room(+person,+location),+inst,arrive(+person2,+location2),+instant).\n"; 
+			//#modeh initiated(in_room(+person,+location),+inst,arrive(+person2,+location2),+instant).
+
 			
 			toAdd = "holdsat(in_room("+person+","+room+")";			
 			
@@ -1505,6 +1581,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	private void Updatefile(String file, String update, String add, String remove)
 	{
+		//System.out.println("I have trying to update "+file +" by adding "+add + " and removing "+remove);
+		
 		String line = "";
 		try {
 			
@@ -1514,25 +1592,21 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 	    		if(!remove.contentEquals("") && !(line2.contains(remove)))
 	    			line+=line2+"\n";
+	    		//else
+	    		//	System.out.println("I am removing "+line2);
 	    	}
-	    	if(!add.contentEquals(""))
+	    	if(!add.contentEquals("")) {
+	    		//System.out.println("I am adding "+add);
 	    		line+=add;
-
-			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
-			Files.write(Paths.get(file), line.toString().getBytes());
+	    	}
+	    		
+	    	
+	    	//Files.write(Paths.get(files_directory+"log"+LocalTime.now()), line.toString().getBytes());
+			
+	    	//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
+			
+	    	Files.write(Paths.get(file), line.toString().getBytes());
 		
-	
-			// updating the config file
-		//	file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc";
-//			lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
-//			line="";
-//	    	for (String line2 : lines) {
-//	    		if(line2.contains("Person"))
-//	    			line+=line2+names+" \n";
-//	    		else
-//	    			line+=line2+"\n";
-//
-//	    	}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -1547,22 +1621,58 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		System.out.println("Inst file being used is: "+inst_file);
 		System.out.println("I am trying to avoid: "+avoid);
 		
+		boolean viol = false;
 		String room = "";
+		String temp ="";
+		String action = StringUtils.substringBetween(act, "observed(", ")");
+		action = action+")";
+		System.out.println("I should use action to get room and person: "+action);
 		if(avoid.contains("capacity"))
 		{
-			room=StringUtils.substringBetween(act, ",", ")");
+			room=StringUtils.substringBetween(action, ",", ")");
 			avoid = avoid + "("+room+ ")";
+			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
+
 		}
 		else if(avoid.contains("early"))
 		{
-			room=StringUtils.substringBetween(act, ",", ")");
-			String person = StringUtils.substringBetween(act, "(", ",");
+			room=StringUtils.substringBetween(action, ",", ")");
+			String person = StringUtils.substringBetween(action, "(", ",");
 			avoid = avoid + "("+person+","+room+ ")";
+			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+
+		}
+		else if(avoid.contains("roomType"))
+		{
+			room=StringUtils.substringBetween(action, ",", ")");
+			String person = StringUtils.substringBetween(action, "(", ",");
+			avoid = avoid + "("+room+ ")";
+			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "roomTypeConflictViol");
+			
+		}
+		else if(avoid.contains("denied"))
+		{
+			room=StringUtils.substringBetween(action, ",", ")");
+			String person = StringUtils.substringBetween(action, "(", ",");
+			//System.out.println("person is "+person);
+			avoid = "occurred("+avoid + "("+person+","+room+ "))";
+			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "restrictAccess("+person+","+room+")");
+			
+		}
+		else if(avoid.contains("|"))
+		{
+			//avoid = "";	
+			room=StringUtils.substringBetween(action, ",", ")");
+			String person = StringUtils.substringBetween(action, "(", ",");
+			avoid = "earlyBirdViol("+person+","+room+ ")";
+			temp = "perm(enter("+person+","+room+ ")";
+			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+
 		}
 		
 		System.out.println("I am trying to avoid after change: "+avoid);
 		//Need to be generic with these updates, using information passed rather than fixed
-		if(avoid.contains("capacityExceededViol"))
+	/*	if(avoid.contains("capacityExceededViol"))
 		{
 			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
 
@@ -1582,7 +1692,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 		}
 		
-		
+		*/
 		try {
 			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"),act.getBytes());
 
@@ -1601,13 +1711,23 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		//	String observed = strRet.toString();
 
 			System.out.println("Sense - what occurred: "+occurred);
+			
+			
 			//returning what occurred
 			for(String s : occurred.split("\n"))
 			{
 				inst_sense.add(Literal.parseLiteral(s));
 				System.out.println("occurred: "+s);
+				if(avoid.contains("occurred") && s.contentEquals(avoid))
+				{
+					viol = true;
+				}
 			}
 			
+			if(avoid.contains("occurred"))
+			{
+				avoid = "Cannotfind";
+			}
 			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
 
 	
@@ -1616,7 +1736,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			int count = StringUtils.countMatches(strRet.toString(), ag);
 			//System.out.println("Count "+count);
 			int c=0;
-			boolean viol = false;
+			
+			//boolean entered = false;
 			
 			String roomCap="";
 			String inroom="";
@@ -1640,6 +1761,11 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				{
 					System.out.println("Found it");
 					inst_sense.add(Literal.parseLiteral(var));
+					entered=true;
+				}
+				if(!temp.isBlank() & var.contains(temp))
+				{
+					viol = true;
 				}
 //				else
 //					System.out.println("Matches didn't work");
@@ -1649,12 +1775,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 
 			//check if agent is in the room first
-			if (viol)
+			if (viol && entered)
 			{
 				inst_sense.add(Literal.parseLiteral("revisionUnacceptable"));
 				
 			}
-			else
+			else if (!viol && !entered)
+			{
+				inst_sense.add(Literal.parseLiteral("revisionUnacceptable"));
+				
+			}
+			else if (!viol && entered)
 			{
 				inst_sense.add(Literal.parseLiteral("revisionAcceptable"));
 			}
@@ -1950,23 +2081,32 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 //			if (!(var.contains("in_room")) && current_action.contains("enter"))
 //				inst_sensors[c] = Literal.parseLiteral("roomCapacityOkay");
 			//System.out.println("What is happening /// "+entered);
-			if (!entered && current_action.contains("enter") && !occurred.contains("restrictedAccess"))
+			//
+			//if (!entered && current_action.contains("enter") && !occurred.contains("restrictedAccess"))
+			if (!entered && current_action.contains("enter") && !occurred.contains("deniedEntry"))
 			{
+				//deniedEntry(P,L)
 				inst_sense.add(Literal.parseLiteral("prob(enter)"));
 				
 			}
 			
 			
-			//check if agent was denied entry because of restricted access
-			if (!entered && occurred.contains("restrictedAccess") && current_action.contains("enter"))
-			//if (!entered && current_action.contains("enter"))
+			//check if agent was denied entry because of vip room, I know this is the only reason for now
+			if (!entered && occurred.contains("deniedEntry") && current_action.contains("enter"))
+			{
+				inst_sense.add(Literal.parseLiteral("deniedEntry(vip_room)"));
+				
+			}
+			
+			/*if (!entered && occurred.contains("restrictedAccess") && current_action.contains("enter"))
 			{
 				inst_sense.add(Literal.parseLiteral("restrictedAccess(vip_room)"));
 				
 			}
+			*/
 			
+			//inst_sense.add(Literal.parseLiteral("extraPercept"));
 			
-			inst_sense.add(Literal.parseLiteral("extraPercept"));
 //	    	//System.out.println(inst_sensors.length);
 	    	int s = inst_sense.size();
 	    	
@@ -2038,16 +2178,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		//includes.append("\nlocation(room1).\nlocation(room2).\nlocation(room3).\n"+
 		includes.append("\nlocation(room1).\nlocation(room2).\n"+
 				"holdsat(max(room1,8),rooms,0).\n" +
-				"holdsat(max(room2,8),rooms,0).\n" +
+				"holdsat(max(room2,8),rooms,0).\n");   // +
 				//"holdsat(max(room3,2),rooms,0).\n" +
 				//"holdsat(vip_room(room1),rooms,0).\n" +
-				"holdsat(vip_room(room2),rooms,0).\n");
+				//"holdsat(vip_room(room2),rooms,0).\n");
 		
 		strRet.append("initially(max(room1,8),rooms)\n" +
-				"initially(max(room2,8),rooms)\n" +
+				"initially(max(room2,8),rooms)\n");   //+
 				//"initially(max(room3,2),rooms)\n" +
 				//"initially(vip_room(room1),rooms)\n" +
-				"initially(vip_room(room2),rooms)\n");
+				//"initially(vip_room(room2),rooms)\n");
 		
 		ArrayList<String> allAgents = new ArrayList<String>();
 		//agentsBySynthesizerInMAS
@@ -2211,6 +2351,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	
 	private String checkExistingModsLive(String act, String prob)
 	{
+		prob=prob.replace("\"", "");
 		String ret="none";
 		for(InstMods ins: instModList)
 		{

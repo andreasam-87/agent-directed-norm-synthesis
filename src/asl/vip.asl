@@ -4,6 +4,7 @@
 toenter(vip_room).
 cancelled_plans(0).
 failed_plans(0).
+entry_problems(0).
 
 /* Initial goals */
 
@@ -19,9 +20,8 @@ failed_plans(0).
 										!start.
 
 +!start : true <-  .print("hello world. I am a VIP agent");
-					skip_steps(2);  //NEED TO WAIT LONGER or check something else in the environment
-					//delay(2000);	
-					.print("Finished skipping steps");
+					//skip_steps(2);  //NEED TO WAIT LONGER or check something else in the environment
+				
 					!check_vip_room.
 
 //+!check_act: true <-  .print("you can enter");
@@ -53,15 +53,15 @@ failed_plans(0).
 							{
 								room_experiment.chooseRoom(Locations,C);
 								.nth(C,Locations,Room);
-								.print("I choose to enter ",Room);
+								//.print("I choose to enter ",Room);
 								
 								 room_experiment.getRandomNum(1,2,Rnd);
 						
 								 +toenter(Room,Rnd);
 								 +toexplore(1);
-								 !enter_vip_room;
+								// !enter_vip_room;
 								 
-								
+								.print("I have rooms to explore but the place is crowded so I will wait a bit");
 
 							}
 							else
@@ -72,6 +72,12 @@ failed_plans(0).
 							//!check_act;
 							.
 
++baton_handover: true <-  .print("People have left, let me explore");
+					.abolish(baton_handover);
+					!enter_vip_room;
+					.
+					
+					
 +!enter_vip_room: true <- .print("I am trying to enter the VIP now");
 					
 					.my_name(N);
@@ -86,95 +92,7 @@ failed_plans(0).
 
 				 .
 				 
-/* 				 
-+!enter_vip_room(Rm): true <- .print("I am trying to enter the VIP now");
-					
-					.my_name(N);
-					
-					room_experiment.getRandomNum(1,2,Rnd);
-					
-					+toenter(Rm,Rnd);
-					+room_entered(Rm);
-					+toexplore(1);
-					
-					enter(N,Rm);
-					
-					-+current_action(enter(N,Rm));
-				 .
-			 			
-													
-+!enter_room: true <- .print("I tried to enter");
-					//experiment5.myPrint('I tried to enter');
-					.my_name(N);
-					
-					.findall([Room,Time],toenter(Room,Time),Plans); 
-					.length(Plans,Size);
-					
-					 .print("I still need to enter ", Size, " rooms");
-					//may need to rethink using a loop, just check the first item, or check any item using the question mark
-					if(Size\==0)
-					{
-						.nth(0,Plans,Item);
-						room_experiment.getItems(Item,2,Rm,Tm);
-		
-		  				+room_entered(Rm);
-						enter(N,Rm);
-		
-						-+current_action(enter(N,Rm));
-		  					
-							//.substring(Tm,P,6,7); //: true and R unifies with "20".
-		  				.print("I will be in ", Rm, " for ",Tm, " timesteps.");
-					}
-					else
-					{
-						.print("I am finished, I can leave the building now");
-					}
-					
-			 .*/
-		/* 	 
 
-+in_room(_,_) : true <- ?role(P,R);
-						?room_entered(Rm);
-						
-						?current_action(A);
-						.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
-					
-						?boldness(B);
-						.
-						
-						if((B mod 2)==0)
-						{
-							?overseer(O);
-							.print("I am not happy about this, complaining to synthesiser");
-							//.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));	
-							
-							.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));	
-							
-							//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
-							+conflict;
-							!leave_now;		
-						}
-						else
-						{
-							.print("I am not happy about this, but I am staying in the room");
-							?toenter(Rm,N);
-							skip_steps(N);
-							.abolish(toenter(Rm,N));
-							!leave_now;	
-						}
-						 .
-						*/
-						
-						
-		
-/* +restrictedAccess :  true <- ?role(Nm,R);
-						?current_action(A);
-						.print('I cannot enter, I am role - ',R, ' I was trying to ',A);
-						
-						?overseer(O);
-						.send(O,tell,request(restrictedAccess, A, allowedAccess(vip)));
-						
-						.*/
 
 +perm(leave(_,_)) :   not roomCapacityExceeded & not typeConflictInRoom <- ?role(P,R);
 					
@@ -238,64 +156,10 @@ failed_plans(0).
 						?overseer(O);
 						
 						.send(O,tell,request(deniedEntry, A, allowedAccess(vip)));
+						-deniedEntry(Reas)[source(percept)]; 
 						.	
 								
-/* +perm(leave(_,_)) : roomCapacityExceeded <- ?role(P,R);
-						?room_entered(Rm);
-						
-						?current_action(A);
-					.print("I am in Room ", Rm, " and my role is ",R," but it is full, I may need to leave the room");
-					
-					?boldness(B);
-					if((B mod 2)==0)
-					{
-						?overseer(O);
-						.print("I am not happy about this, complaining to synthesiser");
-						//.send(O,tell,request(roomCapacityExceededViol, A, noViol(holdsat(meeting))));	
-						
-						.send(O,tell,request(capacityExceededViol, A, noViol(holdsat(meeting))));	
-						
-						//.send(synthesizer,tell,request(roomCapacityExceededViol, A, noViol));	
-						+conflict;
-						!leave_now;		
-					}
-					else
-					{
-						.print("I am not happy about this, but I am staying in the room");
-						?toenter(Rm,N);
-						skip_steps(N);
-						.abolish(toenter(Rm,N));
-						!leave_now;	
-					}
-						
-					//	.print(request(roomCapacityExceededViol, A, noViol));
-					
-					//TO DO -- include the logic to have them decide to move 
-						.
 
-
-+perm(leave(_,_)) :   not roomCapacityExceeded <- ?role(P,R);
-					
-					?room_entered(Rm); //fix to work with in_room belief instead.
-					
-					.print("I am in ",Rm," and my role is ", R, "  I will exit when ready"); 
-					
-					?toenter(Rm,N);
-					skip_steps(N);
-					.abolish(toenter(Rm,N));
-					!leave_now;	
-					
-					. 
-					* */
-					
-
-/* +!leave_now: true <- .print("Decided to leave, leaving now");
-					?room_entered(Rm);
-					.my_name(N);
-					leave(N,Rm); 
-					-+current_action(leave(N,Rm));
-					+perm(idle);
-					.	*/
 
 
 +!leave_now(Msg,St,Todo): true <- //.print("Decided to leave, leaving now");
@@ -403,18 +267,30 @@ failed_plans(0).
 
 +revisionFailed[source(Ag)]: true <- .print("Unfortunately, there is no solution to my problem.");
 									//attempt to enter another room OR remove plan to enter this room. 
+									.print("I really want to see the exhibit so I will retry my action.");
 									
 									//Temp action to remove plan to enter room  
-									 ?room_entered(Rm);
-									  ?cancelled_plans(C);
-									  -+cancelled_plans(C+1);
-									  -toenter(Rm,_);
+									// ?room_entered(Rm);
+									 ?entry_problems(C);
+									  -+entry_problems(C+1);
+									  //-toenter(Rm,_);
 									 
 									  
 									 -revisionFailed[source(Ag)];
 									// .abolish(revisionFailed);
 									 
 									// !enter_room;
+									if(C>=2)
+									{
+										!enter_vip_room;
+									}
+									else
+									{
+										?cancelled_plans(CP);
+										-+cancelled_plans(CP+1);
+										.print("I have tried entering twice with no luck and no solution to my problem, I am leaving now");
+									}
+									
 									 .
 
 +revisionSucceeded[source(Ag)]: true <- .print("My problem has a solution, message reveived from ", Ag);
@@ -441,3 +317,4 @@ failed_plans(0).
 									-waiting;
 									!enter_vip_room;
 									.*/
+

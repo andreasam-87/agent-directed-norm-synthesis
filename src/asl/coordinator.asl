@@ -16,6 +16,10 @@
 @getCoordinatorPermission[atomic]
 +getCoordinatorPermission(A,I)[source(Ag)]: not perm_requested <- .print("Received a coordinator permission request for revision consensus");
 												+perm_requested;
+												
+												//.concat("\"",A,"\"",Act);
+												//+active(Ag,Act,I);
+												
 												+active(Ag,A,I);
 												.send(Ag,tell,coor_permissiongranted);
 									
@@ -29,6 +33,8 @@
 
 @getCoordinatorPermission_a[atomic]
 +getCoordinatorPermission(A,I)[source(Ag)]: perm_requested <- .print("Received a coordinator permission request for revision consensus");
+										//.concat("\"",A,"\"",Act);
+										//+queue(Ag,Act,I);
 										+queue(Ag,A,I);
 										//.queue.add(Queue,Ag);
 										.print("Added to queue");
@@ -37,7 +43,7 @@
 
 +!checkIfMoreSynthesiserRequests: true <- .print("Checking if more requests are queued to be handled");
 									
-									.findall([A,Act,Inst],queue(A,Act,Inst),List); 
+									/* .findall([A,Act,Inst],queue(A,Act,Inst),List); 
 
 									.length(List,L);
 									
@@ -128,26 +134,40 @@
 											}
 											
 											
-										}*/
+										}
 									
 									}
 									else
 									{
 										.print("No more permission requests to handle");
 										-perm_requested;
-									}
+									}*/
 
 									.
 									
 
 @informCoordinatorComplete[atomic]									
-+informCoordinatorComplete[source(Ag)]: true <- //.print(Ag," has received consensus and institution updated");
++informCoordinatorComplete(Status)[source(Ag)]: true <- //.print(Ag," has received consensus and institution updated");
 											.print(Ag," has completed the revision task");
 											.findall([A,Act,Inst],queue(A,Act,Inst),List); 
 											
 											//checking the current revision
 											?revisionInProgress(Ag,A_R,A_A,E,Aa);
-										
+											
+											if(active(Ag,Y,Z))
+											{
+												.print("The revision had a discussion going on");
+												+remove_active;
+											}
+											else{
+												.print("No such active belief found");
+											   //?active(K,L,M);
+												//.print("------I am lost -----",K,L,M);
+												+grant_next;
+											}
+											if(not grant_next)
+											{
+												
 												//.length(Queue,L);
 												.length(List,L);
 												if(L>0)
@@ -168,14 +188,22 @@
 													.print('Found1: ',Agn, ' ',A_R1, ' ', A_A1, ' ', E1, ' ', Aa1);
 													room_experiment.checkSimilarRequest(A_R, A_A,E,A_R1,A_A1,E1,S);
 													
-													?active(Ag,Action1,Inst1)
+													?active(Ag,Action1,Inst1);
+													
+													//removing it from my beliefs
+													-active(_,_,_);
+													-remove_active;
 													//May need to check if the solutions are similar too, rather than just the original problem
 													if(S==1) //1 means they are similar
 													{
 														.print("Requests are not similar, let me grant permission to next synthesizer");
 														.send(Agn,tell,coor_permissiongranted);
-														
+														//.concat("\"",Action,"\"",Act1);
+														//+active(Agn,Act1,Inste);
 														+active(Agn,Action,Inste);
+														
+														//removing these beliefs that have been handled
+														-queue(Agn,Action,Inste);
 													}
 													else
 													{
@@ -186,16 +214,34 @@
 														{
 															.print("Solutions are different, let me grant permission to next synthesizer");
 															.send(Agn,tell,coor_permissiongranted);
-														
+															
+															//.concat("\"",Action,"\"",Act1);
+															//+active(Agn,Act1,Inste);
 															+active(Agn,Action,Inste);
+															
+															//removing these beliefs that have been handled
+															-queue(Agn,Action,Inste);
 															
 														}else //solution files are the same
 														{
-															.print("Solutions are same, inform next synthesizer solution is active");
-															.send(Agn,tell,revisionSuccessful(active));
+															//.print("Solutions are same, inform next synthesizer solution is active");
+															
+															if(Status=success)
+															{
+																.print("Solutions are same, inform next synthesizer solution is active");
+																.send(Agn,tell,revisionSuccessful(active));
+															}
+															else
+															{
+																.print("Solutions are same, inform next synthesizer solution has failed to be implemented");
+																.send(Agn,tell,revisionFailed);
+															}
+															
+															//removing these beliefs that have been handled
+															-queue(Agn,Action,Inste);
 														
 															//Moved these here since they only get removed if the requests are similar
-															+completed(Agn,Action,Inste);
+															+completed(Agn,Action,Inste,Status);
 															
 															+revisionCompleted(Agn,A_R1,A_A1,E1,Aa1);
 															
@@ -233,30 +279,48 @@
 //													-active(Ag,Action2,Inste2);
 //													+revisionCompleted(Ag,A_R,A_A,E,Aa);
 //													-revisionInProgress(Ag,A_R,A_A,E,Aa);
+													
+													if(remove_active)
+													{
+														//adding new beliefs for completed activities
+														?active(Ag,Action2,Inste2);
+														-active(Ag,Action2,Inste2);
+														+completed(Ag,Action2,Inste2,status);
+														-remove_active;
+													}
 												}
 												
 												//?revisionInProgress(Ag,A_R,A_A,E,Aa);
 												
 												
-												if(.ground(active(Ag,Y,Z)))
-												{
-													//adding new beliefs for completed activities
-													?active(Ag,Action2,Inste2);
-													-active(Ag,Action2,Inste2);
-													+completed(Ag,Action2,Inste2);
-												}
+											}	
+											//+completed(Agn,Action,Inste);
+											+revisionCompleted(Ag,A_R,A_A,E,Aa);
+											//+revisionCompleted(Agn,A_R1,A_A1,E1,A1);
+											
+											//removing these beliefs that have been handled
+											//-queue(Agn,Action,Inste);
+											
+											-revisionInProgress(Ag,A_R,A_A,E,Aa);
+											
+											-grant_next;	
+												
+												//?active(Ag,Action2,Inste2);
+												//-active(Ag,Action2,Inste2);
+												//+completed(Ag,Action2,Inste2,Status);
 												
 												//+completed(Agn,Action,Inste);
-												+revisionCompleted(Ag,A_R,A_A,E,Aa);
+												//+revisionCompleted(Ag,A_R,A_A,E,Aa);
 												//+revisionCompleted(Agn,A_R1,A_A1,E1,A1);
 												
 												//removing these beliefs that have been handled
-												-queue(Agn,Action,Inste);
-												-revisionInProgress(Ag,A_R,A_A,E,Aa);
+												//-queue(Agn,Action,Inste);
+												
+												//-revisionInProgress(Ag,A_R,A_A,E,Aa);
 												
 												
 												//removing this percept from the agent so I can receive another agent's percept
-												.abolish(informCoordinatorComplete);
+												.abolish(informCoordinatorComplete(Status));
 												
 												if(give_new_perm)
 												{
@@ -268,7 +332,8 @@
 
 +informCoordinatorHandlingRevision(ActRes,ActAtmpt,Exp,Ag)[source(Agn)]: true <- .print(Agn," has commenced handling a revision task");
 																			  +revisionInProgress(Agn,ActRes,ActAtmpt,Exp,Ag);
-																			  .abolish(informCoordinatorHandlingRevision(_,_,_,_));
+																			  -informCoordinatorHandlingRevision(ActRes,ActAtmpt,Exp,Ag)[source(Agn)];
+																			  //.abolish(informCoordinatorHandlingRevision(_,_,_,_));
 																			  .
 																			  
 

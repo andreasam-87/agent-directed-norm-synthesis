@@ -942,6 +942,9 @@ public class JsonExtractor {
 			}
 			
 			//Do I need the exogeneous or observable events 
+			
+			//not using the observable events for now - Aug 10, 2022
+			/*
 			modesh = getModesListXhail(exevents,'e');
 			for(String s: modesh)
 			{
@@ -951,6 +954,7 @@ public class JsonExtractor {
 				modeb.append("#modeb not observed("+s);
 			//	examplepattern.append("examplePattern((observed("+s);
 			}
+			*/
 			
 //			System.out.println("Checking out the initiates and generates");
 //			getModesListFromArray(initiates,'f');
@@ -1485,10 +1489,21 @@ public class JsonExtractor {
 		toModify = toModify.trim();
 		System.out.println("To modify /////////"+ toModify+"/////////// ");
 		StringBuilder ret=new StringBuilder();
-		
+		String temp="",subStr="";
 		int traceCount = 0;
 		int count = 0;
 		String forExamplesList="";
+		
+		
+		HashMap<String, ArrayList<String>> specialPercept = new HashMap<String, ArrayList<String>>();
+		specialPercept.put("original",new ArrayList<String>());
+		//specialPercept.put("modified",new ArrayList<String>());
+		specialPercept.put("examples",new ArrayList<String>());
+		specialPercept.put("agents",new ArrayList<String>());
+		
+		boolean found = false;
+		//agentsBySynthesizerInMAS.get("synthesizer1").add(ag);
+		//agentsBySynthesizerInMAS.put(ag,new ArrayList<String>());
 		
 		int countBrackets = StringUtils.countMatches(toModify, "(");
 		if(countBrackets>1)
@@ -1496,12 +1511,32 @@ public class JsonExtractor {
 		else
 			forExamplesList =StringUtils.substringBefore(toModify, "(").trim();
 		
-		if(forExamplesList.equals("perm"))
+		if(toModify.contains("|"))
 		{
 			forExamplesList= toModify;
+			//System.out.println()
+			//toAdd="";
+		}
+		else if(toModify.contains("missing"))
+		{
+			forExamplesList= toModify;
+			//toAdd="";
+		}else if(forExamplesList.equals("perm"))
+		{
+			forExamplesList= toModify;
+			toAdd="";
+		}
+		
+		if(forExamplesList.equals("occurred"))
+		{
+			forExamplesList= toModify;
+			temp=toAdd;
+			toAdd="";
 		}
 		
 		System.out.println("To modify 2 /////////"+ forExamplesList+"/////////// ");
+		
+	
 		
 		// Loop through to identify states to use
 		for (int find=(stateKey-howMuchStates);find<=(stateKey+howMuchStates);find++)
@@ -1548,13 +1583,103 @@ public class JsonExtractor {
 						
 						
 					//	System.out.println("CHECKING /////////"+ str+"/////////// for ///////" + forExamplesList + "/////////");
-						if(str.contains(forExamplesList))
+						
+						
+						//System.out.print("Contains capacaity exceeded - "+str);
+						if(forExamplesList.contains("|")) 
+						{
+							//System.out.println("Looking for "+ StringUtils.substringBefore(forExamplesList,"|"));
+							String early = StringUtils.substringBefore(forExamplesList,"|");
+							early =early.replace("\"", "");
+							if (str.contains(early) && factAboutAgent(str,subsetAgents))
+							{
+								System.out.println("I found this to add - "+str);
+								
+								str = "not "+str;
+								examples.append("#example "+str+".\n");
+								examp.add("#example "+str+".\n");
+							}
+							else if(str.contains("perm(enter") && factAboutAgent(str,subsetAgents))
+							{
+								/*int i = str.indexOf("perm(leave");
+								int l = "perm(leave".length();
+								subStr = StringUtils.substringBetween(str,"perm(leave", ")");
+								
+								examples.append("#example holdsat(in_room"+subStr+"),rooms,"+count+").\n");
+								examp.add("#example holdsat(in_room"+subStr+"),rooms,"+count+").\n");
+								
+					
+								ret.append(str+".\n");*/
+								String tempEx = "#example not "+str+".\n";
+								specialPercept.get("original").add(str+".\n");
+								specialPercept.get("examples").add(tempEx);
+								
+								//specialPercept.put("original",new ArrayList<String>());
+								//specialPercept.put("modified",new ArrayList<String>());
+								//specialPercept.put("examples",new ArrayList<String>());
+								
+								//boolean found = false;
+								//agentsBySynthesizerInMAS.get("synthesizer1").add(ag);
+								
+							}/*else if(str.contains("perm(enter") && !factAboutAgent(str,subsetAgents))
+							{
+								ret.append(str+".\n");
+								
+							}*/
+							else if(str.contains("in_room"))
+							{
+								String tempStr = StringUtils.substringBetween(str,"in_room(", ",");	
+								String tempStr2 = StringUtils.substringBetween(str,",", ")");	
+								specialPercept.get("agents").add(tempStr+","+tempStr2);
+								
+								ret.append(str+".\n");
+								
+							//holdsat(in_room(baseAgent6,room1),rooms,1)
+							}
+							else
+							{
+								if(!str.contains("revise"))
+								{
+									if(!str.contains("_create_"))
+									{
+										if(str.length()>0)
+										{
+											//Need to filter by the synthesiser//
+											if(factAboutAgent(str,allAgents))
+											{
+												//System.out.print("Fact about an agent - "+str+"\n");
+												
+												if(factAboutAgent(str,subsetAgents))
+												{
+														ret.append(str+".\n");
+												}
+												else if(str.contains("occurred") || str.contains("observed"))
+												{
+													ret.append(str+".\n");
+													
+												}
+													
+											}
+											else
+												ret.append(str+".\n");	
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+									
+						}
+						
+						
+						else if(str.contains(forExamplesList))
 						{
 							
-							//System.out.print("Contains capacaity exceeded - "+str);
 							if(str.contains(toModify) && find>=stateKey)
 							{
-								System.out.print("String we are putting in example file - "+str+" - tomodify is "+ toModify);
+								System.out.println("String we are putting in example file - "+str+" - tomodify is "+ toModify);
 								//str = "not "+str;
 								//examples.append("#example "+str+".\n");
 								//examp.add("#example "+str+".\n");
@@ -1564,15 +1689,15 @@ public class JsonExtractor {
 								{
 									int i = str.indexOf("perm(leave");
 									int l = "perm(leave".length();
-									String sub = StringUtils.substringBetween(str,"perm(leave", ")");
-									System.out.println("Substring to enter into examples "+sub);
+									subStr = StringUtils.substringBetween(str,"perm(leave", ")");
+									//System.out.println("Substring to enter into examples "+sub);
 									
-									examples.append("#example holdsat(in_room"+sub+"),"+count+").\n");
-									examp.add("#example holdsat(in_room"+sub+"),"+count+").\n");
+									examples.append("#example holdsat(in_room"+subStr+"),rooms,"+count+").\n");
+									examp.add("#example holdsat(in_room"+subStr+"),rooms,"+count+").\n");
 									
 									//still add the percept
 									ret.append(str+".\n");
-									toAdd="";
+									//toAdd="";
 									
 									/*
 									 * substringBetween(String str, String open, String close)
@@ -1581,10 +1706,38 @@ public class JsonExtractor {
 									
 								}else if(str.contains("perm(leave") && !factAboutAgent(str,subsetAgents))
 								{
-									//ret.append(str+".\n");
-									toAdd="";
+									ret.append(str+".\n");
+									//toAdd="";
 									
-								}else
+								}
+								else if(str.contains("deniedEntry") && factAboutAgent(str,subsetAgents))
+								{
+									//int i = str.indexOf("deniedEntry(");
+									//int l = "deniedEntry(".length();
+									subStr = StringUtils.substringBetween(str,"deniedEntry(", ")");
+									//System.out.println("Substring to enter into examples "+sub);
+									
+									if(subStr.contains("vip"))
+									{
+										str = "not "+str;
+										examples.append("#example "+str+".\n");
+										examp.add("#example "+str+".\n");
+										
+										examples.append("#example not "+temp+subStr+"),rooms,"+count+").\n");
+									}else
+									{
+										examples.append("#example "+str+".\n");
+										examp.add("#example "+str+".\n");
+										examples.append("#example "+temp+subStr+"),rooms,"+count+").\n");
+									}
+									
+									//examples.append("#example holdsat(in_room"+sub+"),rooms,"+count+").\n");
+									//examp.add("#example holdsat(in_room"+sub+"),rooms,"+count+").\n");
+									//ret.append(str+".\n");
+									//toAdd="";
+									
+								}
+								else
 								{
 									str = "not "+str;
 									//what to do normally
@@ -1597,8 +1750,8 @@ public class JsonExtractor {
 								 * */
 								if(toAdd.contains("occurred"))
 								{
-									examples.append("#example "+toAdd+","+count+").\n");
-									examp.add("#example "+toAdd+", "+count+").\n");
+									examples.append("#example "+toAdd+",rooms,"+count+").\n");
+									examp.add("#example "+toAdd+",rooms,"+count+").\n");
 								}
 								
 							}
@@ -1607,11 +1760,35 @@ public class JsonExtractor {
 								{
 									ret.append(str+".\n");
 									toAdd="";
+								}
+								else if(str.contains("denied"))
+								{
+									subStr = StringUtils.substringBetween(str,"deniedEntry(", ")");
+									if(subStr.contains("vip"))
+									{
+										str = "not "+str;
+										examples.append("#example "+str+".\n");
+										examp.add("#example "+str+".\n");
+										
+										examples.append("#example not "+temp+subStr+"),rooms,"+count+").\n");
+									}else
+									{
+										examples.append("#example "+str+".\n");
+										examp.add("#example "+str+".\n");
+										examples.append("#example "+temp+subStr+"),rooms,"+count+").\n");
+									}
+									
+									//examples.append("#example "+str+".\n");
+									//examp.add("#example "+str+".\n");
+									//subStr = StringUtils.substringBetween(str,"deniedEntry(", ")");
+									//examples.append("#example "+temp+subStr+"),rooms,"+count+").\n");
 								}else
 								{
 									examples.append("#example "+str+".\n");
 									examp.add("#example "+str+".\n");
 								}
+								
+								//examples.append("#example "+temp+sub+"),rooms,"+count+").\n");
 								
 							}
 						}
@@ -1630,7 +1807,9 @@ public class JsonExtractor {
 											
 											if(factAboutAgent(str,subsetAgents))
 											{
-												//System.out.print("Fact about an specific overseer agent - "+str+"\n");
+												if(toModify.contains("denied") && !str.contains("restrictAccess"))
+													ret.append(str+".\n");
+												else if(!toModify.contains("denied"))
 													ret.append(str+".\n");
 											}
 											else if(str.contains("occurred") || str.contains("observed"))
@@ -1670,6 +1849,50 @@ public class JsonExtractor {
 					//ret.append(modifyFact(str,forExamplesList,toModify,find,stateKey));	
 						
 						
+					}
+					if(toModify.contains("denied"))
+					{
+						toAdd="";
+					}
+					
+					if(toModify.contains("|"))
+					{
+						
+						//specialPercept.get("original").add(str+".\n");
+						//specialPercept.get("examples").add(tempEx);
+						for (String perms : specialPercept.get("original")) 
+						{ 
+							for(String agent : specialPercept.get("agents"))
+							{
+								String agn = StringUtils.substringBefore(agent,",");
+								String rm = StringUtils.substringAfter(agent,",");
+								if(perms.contains(agent))
+								{
+									for(String ex : specialPercept.get("examples"))
+									{
+										if(ex.contains(agn) & ex.contains(rm))
+										{
+											examples.append(ex);
+										}
+									}
+									//examples.append()
+									found = true;
+								}
+							}
+							if(!found)
+							{
+								ret.append(perms);
+							}
+							else
+							{
+								found = false;
+							}
+						    //statements using var;
+						}
+						
+						specialPercept.put("original",new ArrayList<String>());
+						specialPercept.put("examples",new ArrayList<String>());
+						specialPercept.put("agents",new ArrayList<String>());
 					}
 					// add a new fluent if necessary
 					if(find>=stateKey && !toAdd.isBlank())

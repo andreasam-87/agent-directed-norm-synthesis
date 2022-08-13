@@ -1,175 +1,313 @@
 [oracle] I am the Oracle....
 [sample] hello world. I am the basic agent
-[sample] Room chosen - room2
+[sample] Room chosen - room1
+[sample] Room in first position is - room1
 [coordinator] hello world. I am the coordinator
-[synthesizer2] hello world.
 [synthesizer1] hello world.
-[baseAgent5] My overseer is synthesizer1
-[baseAgent1] My overseer is synthesizer1
+[synthesizer2] hello world.
 [baseAgent4] My overseer is synthesizer2
-[baseAgent6] My overseer is synthesizer2
-[baseAgent3] My overseer is synthesizer1
-[baseAgent7] My overseer is synthesizer1
 [baseAgent8] My overseer is synthesizer2
+[baseAgent5] My overseer is synthesizer1
+[baseAgent3] My overseer is synthesizer1
 [baseAgent2] My boldness is 4
+[baseAgent7] My overseer is synthesizer1
+[baseAgent1] My overseer is synthesizer1
+[baseAgent6] My overseer is synthesizer2
+[baseAgent5] My boldness is 7
+[baseAgent4] My boldness is 6
+[baseAgent8] My boldness is 10
+[baseAgent3] My boldness is 5
+[baseAgent2] My overseer is synthesizer2
+[baseAgent5] hello world.
+[baseAgent7] My boldness is 9
+[baseAgent4] hello world.
+[baseAgent8] hello world.
 [baseAgent6] My boldness is 8
 [baseAgent1] My boldness is 3
-[baseAgent4] My boldness is 6
-[baseAgent5] My boldness is 7
-[baseAgent7] My boldness is 9
-[baseAgent3] My boldness is 5
-[baseAgent8] My boldness is 10
-[baseAgent1] hello world.
-[baseAgent4] hello world.
-[baseAgent7] hello world.
-[baseAgent6] hello world.
-[baseAgent5] hello world.
-[baseAgent2] My overseer is synthesizer2
 [baseAgent3] hello world.
-[baseAgent8] hello world.
 [baseAgent2] hello world.
-[baseAgent1] My overseer is synthesizer1
-[baseAgent4] My overseer is synthesizer2
-[baseAgent6] My overseer is synthesizer2
+[baseAgent7] hello world.
+[baseAgent1] hello world.
+[baseAgent6] hello world.
 [baseAgent5] My overseer is synthesizer1
-[baseAgent8] My overseer is synthesizer2
-[baseAgent3] My overseer is synthesizer1
+[baseAgent4] My overseer is synthesizer2
 [baseAgent7] My overseer is synthesizer1
-[baseAgent4] find out which rooms are available
+[baseAgent3] My overseer is synthesizer1
+[baseAgent1] My overseer is synthesizer1
+[baseAgent8] My overseer is synthesizer2
+[baseAgent6] My overseer is synthesizer2
 [baseAgent2] My overseer is synthesizer2
-[baseAgent1] find out which rooms are available
-[baseAgent6] find out which rooms are available
-[baseAgent2] find out which rooms are available
 [baseAgent5] find out which rooms are available
+[baseAgent2] find out which rooms are available
 [baseAgent3] find out which rooms are available
-[baseAgent7] find out which rooms are available
+[baseAgent4] find out which rooms are available
+[baseAgent1] find out which rooms are available
 [baseAgent8] find out which rooms are available
+[baseAgent7] find out which rooms are available
+[baseAgent6] find out which rooms are available
+[baseAgent1] rooms found, time to explore
+[baseAgent4] rooms found, time to explore
+[baseAgent2] rooms found, time to explore
+[baseAgent5] rooms found, time to explore
 [baseAgent8] rooms found, time to explore
+[baseAgent6] rooms found, time to explore
 [baseAgent7] rooms found, time to explore
 [baseAgent3] rooms found, time to explore
-[baseAgent5] rooms found, time to explore
-[baseAgent4] rooms found, time to explore
-[baseAgent6] rooms found, time to explore
-[baseAgent1] rooms found, time to explore
-[baseAgent2] rooms found, time to explore
-[baseAgent7] I found 2 rooms to explore
-[baseAgent3] I found 2 rooms to explore
-[baseAgent6] I found 2 rooms to explore
-[baseAgent8] I found 2 rooms to explore
-[baseAgent4] I found 2 rooms to explore
 [baseAgent1] I found 2 rooms to explore
-[baseAgent2] I found 2 rooms to explore
 [baseAgent5] I found 2 rooms to explore
+[baseAgent4] I found 2 rooms to explore
+[baseAgent8] I found 2 rooms to explore
+[baseAgent3] I found 2 rooms to explore
+[baseAgent7] I found 2 rooms to explore
+[baseAgent2] I found 2 rooms to explore
+[baseAgent6] I found 2 rooms to explore
 [baseAgent6] you can enter
-[baseAgent2] you can enter
-[baseAgent7] you can enter
-[baseAgent5] you can enter
-[baseAgent1] you can enter
-[baseAgent6] I am about to enter one room
 [baseAgent8] you can enter
-[baseAgent3] you can enter
-[baseAgent2] I am about to enter one room
+[baseAgent1] you can enter
+[baseAgent5] you can enter
+[baseAgent7] you can enter
 [baseAgent4] you can enter
-[baseAgent5] I am about to enter one room
+[baseAgent2] you can enter
+[baseAgent3] you can enter
 [baseAgent7] I am about to enter one room
-[baseAgent1] I am about to enter one room
 [baseAgent8] I am about to enter one room
+[baseAgent6] I am about to enter one room
+[baseAgent5] I am about to enter one room
+[baseAgent1] I am about to enter one room
 [baseAgent4] I am about to enter one room
 [baseAgent3] I am about to enter one room
+[baseAgent2] I am about to enter one room
 [baseAgent6] I still need to enter 2 rooms
-[baseAgent1] I still need to enter 2 rooms
-[baseAgent5] I still need to enter 2 rooms
 [baseAgent7] I still need to enter 2 rooms
-[baseAgent2] I still need to enter 2 rooms
+[baseAgent1] I still need to enter 2 rooms
 [baseAgent8] I still need to enter 2 rooms
+[baseAgent2] I still need to enter 2 rooms
+[baseAgent5] I still need to enter 2 rooms
 [baseAgent4] I still need to enter 2 rooms
 [baseAgent3] I still need to enter 2 rooms
-[baseAgent5] I have permission to leave the Room room1 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent3] I have permission to leave the Room room2 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent6] I have permission to leave the Room room1 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent7] I have permission to leave the Room room2 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent1] I have permission to leave the Room room2 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent8] I have permission to leave the Room room1 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent2] I have permission to leave the Room room1 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent4] I have permission to leave the Room room2 and my role is x but I do not believe I am in the room which is odd. I must report this
-[synthesizer2] Request received from baseAgent6 will handle
+[baseAgent6] I am in room2 and my role is x,  I will leave after 2 timesteps
+[baseAgent7] I am in room1 and my role is y,  I will leave after 2 timesteps
+[baseAgent8] I am in room1 and my role is x,  I will leave after 1 timesteps
+[baseAgent4] I am in room1 and my role is x,  I will leave after 2 timesteps
+[baseAgent5] I am in room1 and my role is y,  I will leave after 2 timesteps
+[baseAgent2] I am in room1 and my role is x,  I will leave after 2 timesteps
+[baseAgent6] Repeating 1
+[baseAgent3] I am in Room room2 and my role is y but there is an earlybird violation and extra permissions present
+[baseAgent2] Repeating 1
+[baseAgent4] Repeating 1
+[baseAgent1] I am in Room room1 and my role is y but there is an earlybird violation and extra permissions present
+[baseAgent7] Repeating 1
+[baseAgent5] Repeating 1
+[baseAgent8] Repeating 1
 [synthesizer1] Request received from baseAgent3 will handle
-[baseAgent5] Must leave now, leaving room
-[baseAgent7] Must leave now, leaving room
-[baseAgent6] Must leave now, leaving room
-[baseAgent4] Must leave now, leaving room
+[baseAgent7] Repeating 2
+[baseAgent2] Repeating 2
+[baseAgent4] Repeating 2
+[baseAgent5] Repeating 2
+[baseAgent6] Repeating 2
 [baseAgent3] Must leave now, leaving room
 [baseAgent1] Must leave now, leaving room
-[baseAgent2] Must leave now, leaving room
-[baseAgent8] Must leave now, leaving room
 [coordinator] synthesizer1 has commenced handling a revision task
-[coordinator] synthesizer2 has commenced handling a revision task
+[baseAgent8] Finished exploring this room
 [synthesizer1] Action attempted enter(baseAgent3,room2)
-[synthesizer2] Action attempted enter(baseAgent6,room1)
-[baseAgent4] Need to decide if to wait or try to explore another room
-[baseAgent5] Need to decide if to wait or try to explore another room
-[baseAgent8] Need to decide if to wait or try to explore another room
-[baseAgent7] Need to decide if to wait or try to explore another room
-[baseAgent3] Need to decide if to wait or try to explore another room
+[baseAgent8] Finished, leaving now
+[baseAgent5] Finished exploring this room
+[baseAgent2] Finished exploring this room
+[baseAgent7] Finished exploring this room
+[baseAgent4] Finished exploring this room
+[baseAgent6] Finished exploring this room
+[baseAgent5] Finished, leaving now
+[baseAgent2] Finished, leaving now
+[baseAgent7] Finished, leaving now
+[baseAgent4] Finished, leaving now
+[baseAgent6] Finished, leaving now
 [baseAgent1] Need to decide if to wait or try to explore another room
-[baseAgent2] Need to decide if to wait or try to explore another room
-[baseAgent6] Need to decide if to wait or try to explore another room
-[synthesizer1] Checking out other requests
-[synthesizer2] Checking out other requests
-[synthesizer2] Queued request for baseAgent8
-[synthesizer1] Queued request for baseAgent5
-[synthesizer2] Need to inform this agent baseAgent8
-[synthesizer1] Need to inform this agent baseAgent5
-[synthesizer1] Removed request from list
-[synthesizer2] Removed request from list
+[baseAgent3] Need to decide if to wait or try to explore another room
+[synthesizer1] Only 1 request to handle and currently handling
+[baseAgent2] I left so I am chillin
 [synthesizer1] Queued request for baseAgent1
-[synthesizer2] Queued request for baseAgent2
-[synthesizer1] Need to inform this agent baseAgent1
-[synthesizer2] Need to inform this agent baseAgent2
+[baseAgent8] I left so I am chillin
+[baseAgent7] I left so I am chillin
+[baseAgent5] I left so I am chillin
+[baseAgent4] I left so I am chillin
+[baseAgent6] I left so I am chillin
+[synthesizer1] Size: 0, Count: 0
+[synthesizer1] Adding a request to the official queue
 [synthesizer1] Removed request from list
-[synthesizer2] Removed request from list
-[synthesizer1] Queued request for baseAgent7
-[synthesizer2] Queued request for baseAgent4
-[synthesizer1] Need to inform this agent baseAgent7
-[baseAgent3] I am about to try to enter another room
-[baseAgent4] I am about to try to enter another room
-[baseAgent5] I am about to try to enter another room
-[synthesizer2] Need to inform this agent baseAgent4
-[baseAgent7] I am about to try to enter another room
-[baseAgent1] I am about to try to enter another room
-[baseAgent8] I am about to try to enter another room
-[baseAgent2] I am about to try to enter another room
-[baseAgent6] I am about to try to enter another room
-[synthesizer1] Removed request from list
-[synthesizer2] Removed request from list
 [synthesizer1] Attempting to revise norms
 [synthesizer1] What is happening - 0
-[synthesizer2] Attempting to revise norms
-[synthesizer2] What is happening - 0
-[baseAgent6] I have permission to leave the Room room2 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent8] I have permission to leave the Room room2 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent2] I have permission to leave the Room room2 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent3] I have permission to leave the Room room1 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent4] I have permission to leave the Room room1 and my role is x but I do not believe I am in the room which is odd. I must report this
-[baseAgent7] I have permission to leave the Room room1 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent1] I have permission to leave the Room room1 and my role is y but I do not believe I am in the room which is odd. I must report this
-[baseAgent5] I have permission to leave the Room room2 and my role is y but I do not believe I am in the room which is odd. I must report this
-[synthesizer2] Queued request for baseAgent2
-[synthesizer1] Queued request for baseAgent3
-[synthesizer2] Need to inform this agent baseAgent2
-[synthesizer1] Need to inform this agent baseAgent3
-[baseAgent2] Must leave now, leaving room
-[baseAgent6] Must leave now, leaving room
-[baseAgent3] Must leave now, leaving room
-[baseAgent8] Must leave now, leaving room
-[baseAgent5] Must leave now, leaving room
-[baseAgent1] Must leave now, leaving room
-[synthesizer1] Removed request from list
-[synthesizer2] Removed request from list
-[baseAgent7] Must leave now, leaving room
-[baseAgent4] Must leave now, leaving room
+[baseAgent8] I am about to enter one room
+[baseAgent8] I still need to enter 1 rooms
+[baseAgent3] I am about to try to enter another room
+[baseAgent1] I am about to try to enter another room
+[baseAgent2] I am about to enter one room
+[baseAgent5] I am about to enter one room
+[baseAgent7] I am about to enter one room
+[baseAgent2] I still need to enter 1 rooms
+[baseAgent7] I still need to enter 1 rooms
+[baseAgent5] I still need to enter 1 rooms
+[baseAgent6] I am about to enter one room
+[baseAgent4] I am about to enter one room
+[baseAgent6] I still need to enter 1 rooms
+[baseAgent4] I still need to enter 1 rooms
+[baseAgent8] I am in room2 and my role is x,  I will leave after 2 timesteps
+[baseAgent8] Repeating 1
+[baseAgent1] I am in Room room2 and my role is y but there is an earlybird violation and extra permissions present
+[baseAgent3] I am in Room room1 and my role is y but there is an earlybird violation and extra permissions present
+[baseAgent5] I am in room2 and my role is y,  I will leave after 2 timesteps
+[baseAgent2] I am in room2 and my role is x,  I will leave after 2 timesteps
+[baseAgent7] I am in room2 and my role is y,  I will leave after 2 timesteps
+[baseAgent8] Repeating 2
 [synthesizer1] Queued request for baseAgent1
-[synthesizer2] Queued request for baseAgent8
+[baseAgent7] Repeating 1
+[baseAgent5] Repeating 1
+[baseAgent2] Repeating 1
+[baseAgent5] Repeating 2
+[baseAgent7] Repeating 2
+[synthesizer1] Need to inform this agent baseAgent1
+[baseAgent1] Must leave now, leaving room
+[baseAgent3] Must leave now, leaving room
+[baseAgent8] Finished exploring this room
+[synthesizer1] Removed request from list
+[baseAgent6] I am in room1 and my role is x,  I will leave after 1 timesteps
+[baseAgent2] Repeating 2
+[baseAgent4] I am in room2 and my role is x,  I will leave after 1 timesteps
+[baseAgent8] Finished, leaving now
+[baseAgent7] Finished exploring this room
+[baseAgent6] Repeating 1
+[baseAgent4] Repeating 1
+[baseAgent5] Finished exploring this room
+[synthesizer1] Queued request for baseAgent3
+[baseAgent7] Finished, leaving now
+[baseAgent5] Finished, leaving now
+[baseAgent1] Need to decide if to wait or try to explore another room
 [baseAgent3] Need to decide if to wait or try to explore another room
-[baseAgent2] Need to decide if to wait or try to explore another room
-[baseAgent6] Need to decide if to wait or try to explore another room
+[baseAgent2] Finished exploring this room
+[baseAgent8] I left so I am chillin
+[baseAgent2] Finished, leaving now
+[baseAgent6] Finished exploring this room
+[baseAgent4] Finished exploring this room
+[baseAgent3] I will wait for word before acting again
+[baseAgent4] Finished, leaving now
+[baseAgent6] Finished, leaving now
+[baseAgent1] I will wait for word before acting again
+[synthesizer1] Size: 1, Count: 1
+[baseAgent8] I am about to enter one room
+[synthesizer1] Checking if this request is different from the queued request
+[baseAgent7] I left so I am chillin
+[baseAgent5] I left so I am chillin
+[baseAgent8] I still need to enter 0 rooms
+[synthesizer1] No need to add the request to the official queue, a similar request is already in the queue
+[baseAgent8] I am finished, I can leave the building now
+[baseAgent4] I left so I am chillin
+[baseAgent6] I left so I am chillin
+[baseAgent2] I left so I am chillin
+[synthesizer1] Removed request from list
+[synthesizer1] Log file received
+[synthesizer1] The revision was successful, let me begin the discussion
+[baseAgent5] I am about to enter one room
+[baseAgent7] Error likely with the delay function, continuing my plan
+[baseAgent7] I am about to enter one room
+[synthesizer1] A possble revision found, inform agents of change
+[baseAgent5] I still need to enter 0 rooms
+[baseAgent7] I still need to enter 0 rooms
+[baseAgent5] I am finished, I can leave the building now
+[baseAgent7] I am finished, I can leave the building now
+[coordinator] Received a coordinator permission request for revision consensus
+[synthesizer1] Received permission from coordinator to begin discussion
+[baseAgent6] I am about to enter one room
+[baseAgent6] I still need to enter 0 rooms
+[baseAgent6] I am finished, I can leave the building now
+[synthesizer2] synthesizer1 is seeking consensus to change the institution
+[synthesizer2] Using sense to see if this is an acceptable change
+[synthesizer2] about to try to sense the institution
+[synthesizer2] Values####### earlyBirdViol|additional_perm - noViol(none) ########
+[synthesizer2] Why am I stuck here ---> enter(sample,room2)
+[baseAgent4] Error likely with the delay function, continuing my plan
+[baseAgent2] I am about to enter one room
+[synthesizer2] I can accept the revision
+[baseAgent4] I am about to enter one room
+[baseAgent2] I still need to enter 0 rooms
+[synthesizer1] Permission granted
+[baseAgent2] I am finished, I can leave the building now
+[baseAgent4] I still need to enter 0 rooms
+[baseAgent4] I am finished, I can leave the building now
+[oracle] synthesizer1 has asked me to decide on a revision
+[oracle] The file to be checked rooms_revised_synthesizer1_16.ial
+[oracle] The revision log file rooms_revised_synthesizer1_16revLog
+[oracle] Revision acceptable, can be implemented
+[oracle] Must inform ------> synthesizer1
+[synthesizer1] Finally, the institution can be revised
+[coordinator] synthesizer1 has completed the revision task
+[coordinator] The revision had a discussion going on
+[synthesizer1] I'm about to update the institution
+[coordinator] No more permission requests to handle
+[baseAgent6] The institution has changed, message reveived from synthesizer1
+[baseAgent5] The institution has changed, message reveived from synthesizer1
+[baseAgent2] The institution has changed, message reveived from synthesizer1
+[baseAgent7] The institution has changed, message reveived from synthesizer1
+[baseAgent8] The institution has changed, message reveived from synthesizer1
+[baseAgent3] The institution has changed, message reveived from synthesizer1
+[baseAgent4] The institution has changed, message reveived from synthesizer1
+[baseAgent1] The institution has changed, message reveived from synthesizer1
+[synthesizer1] Informing relevant agents that a solution was found
+[baseAgent1] My problem has a solution, message reveived from synthesizer1
+[baseAgent3] My problem has a solution, message reveived from synthesizer1
+[synthesizer1] Removing relevant to_inform percepts
+[synthesizer1] Handling the others
+[synthesizer1] Number of to_handle beliefs found 1
+[synthesizer1] Count: 1
+[synthesizer1] Preparing to handle the first item in the list
+[coordinator] synthesizer1 has commenced handling a revision task
+[synthesizer1] handling next request
+[baseAgent3] I am about to enter one room
+[baseAgent1] I am about to enter one room
+[baseAgent3] I still need to enter 2 rooms
+[baseAgent1] I still need to enter 2 rooms
+[synthesizer1] Attempting to revise norms
+[synthesizer1] What is happening - 1
+[baseAgent3] I am in room1 and my role is y,  I will leave after 2 timesteps
+[baseAgent1] I am in room2 and my role is y,  I will leave after 1 timesteps
+[synthesizer1] Revision successful 
+[baseAgent3] Repeating 1
+[baseAgent1] Repeating 1
+[synthesizer1] A solution exists for your problem but it is currently active so no change required
+[synthesizer1] Action under review: enter(baseAgent1,room1)
+[synthesizer1] I have to inform 2 agents that the revision solution is currently active
+[coordinator] synthesizer1 has completed the revision task
+[baseAgent3] Repeating 2
+[coordinator] No such active belief found
+[baseAgent3] The solution to my problem is currently active but I am already exploring again so no need to do anything else
+[baseAgent1] Finished exploring this room
+[baseAgent1] The solution to my problem is currently active but I am already exploring again so no need to do anything else
+[baseAgent1] Finished, leaving now
+[synthesizer1] Handling the others
+[synthesizer1] Number of to_handle beliefs found 0
+[baseAgent3] Finished exploring this room
+[synthesizer1] Count: 0
+[baseAgent3] Finished, leaving now
+[synthesizer1] No events to handle
+[baseAgent3] I left so I am chillin
+[baseAgent1] I left so I am chillin
+[baseAgent1] I am about to enter one room
+[baseAgent3] I am about to enter one room
+[baseAgent1] I still need to enter 1 rooms
+[baseAgent3] I still need to enter 1 rooms
+[baseAgent3] I am in room2 and my role is y,  I will leave after 2 timesteps
+[baseAgent1] I am in room1 and my role is y,  I will leave after 2 timesteps
+[baseAgent3] Repeating 1
+[baseAgent1] Repeating 1
+[baseAgent3] Repeating 2
+[baseAgent1] Repeating 2
+[baseAgent3] Finished exploring this room
+[baseAgent1] Finished exploring this room
+[baseAgent3] Finished, leaving now
+[baseAgent1] Finished, leaving now
+[baseAgent3] I left so I am chillin
+[baseAgent1] I left so I am chillin
+[baseAgent3] I am about to enter one room
+[baseAgent1] I am about to enter one room
+[baseAgent3] I still need to enter 0 rooms
+[baseAgent1] I still need to enter 0 rooms
+[baseAgent3] I am finished, I can leave the building now
+[baseAgent1] I am finished, I can leave the building now

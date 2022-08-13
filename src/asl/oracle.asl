@@ -16,6 +16,7 @@
 												.print("The revision log file ",Change);
 												+giveFeedbackTo(Ag);
 												verifyRevisionAcceptable(File,Change);
+												//-decideRevision(File,Change)[source(Ag)];
 												.
 
 
@@ -23,7 +24,8 @@
  													?giveFeedbackTo(Ag);
 													.print("Must inform ------> ",Ag);
 													.send(Ag,tell,oraclePermissionGranted(RevFile));
-												
+												    -giveFeedbackTo(Ag);
+												 //   -revisionAcceptable(RevFile)[source(percept)];
 													.
 											
 
@@ -31,5 +33,7 @@
  													?giveFeedbackTo(Ag);
 													.print("Must inform ------> ",Ag);
 													.send(Ag,tell,oraclePermissionNotGranted(RevFile));
+													 -giveFeedbackTo(Ag);
+												  //  -revisionUnacceptable(RevFile)[source(percept)];
 												
 													.

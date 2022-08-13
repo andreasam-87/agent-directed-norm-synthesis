@@ -19,4 +19,7 @@ location(room2).
 					room_experiment.chooseRoom(Rooms,C);
 					.nth(C,Rooms,Item);
 					.print("Room chosen - ",Item);
+					
+					.nth(0,Rooms,Item2);
+					.print("Room in first position is - ",Item);
 					.
