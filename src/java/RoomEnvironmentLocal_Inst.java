@@ -2178,16 +2178,16 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		//includes.append("\nlocation(room1).\nlocation(room2).\nlocation(room3).\n"+
 		includes.append("\nlocation(room1).\nlocation(room2).\n"+
 				"holdsat(max(room1,8),rooms,0).\n" +
-				"holdsat(max(room2,8),rooms,0).\n");   // +
+				"holdsat(max(room2,8),rooms,0).\n" + //);   // +
 				//"holdsat(max(room3,2),rooms,0).\n" +
 				//"holdsat(vip_room(room1),rooms,0).\n" +
-				//"holdsat(vip_room(room2),rooms,0).\n");
+				"holdsat(vip_room(room2),rooms,0).\n");
 		
 		strRet.append("initially(max(room1,8),rooms)\n" +
-				"initially(max(room2,8),rooms)\n");   //+
+				"initially(max(room2,8),rooms)\n" + //);   //+
 				//"initially(max(room3,2),rooms)\n" +
 				//"initially(vip_room(room1),rooms)\n" +
-				//"initially(vip_room(room2),rooms)\n");
+				"initially(vip_room(room2),rooms)\n");
 		
 		ArrayList<String> allAgents = new ArrayList<String>();
 		//agentsBySynthesizerInMAS

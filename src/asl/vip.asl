@@ -280,7 +280,7 @@ entry_problems(0).
 									// .abolish(revisionFailed);
 									 
 									// !enter_room;
-									if(C>=2)
+									if(C<=2)
 									{
 										!enter_vip_room;
 									}

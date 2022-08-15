@@ -18,8 +18,4 @@ clause21(1..3).
 int26(26).
 clause26(1..1).
 #modeh del($int26,$clause26)=3.
-#modeh exception($int30,holdsat(earlyBirdViol(+person,+location),$inst,+instant))=1.
-int30(30).
-clause30(1..3).
-#modeh del($int30,$clause30)=3.
 
