@@ -1,0 +1,161 @@
+institution rooms;
+
+type Person;
+type Role;
+type Location;
+type Number;
+
+
+exogenous event enter(Person,Location);
+exogenous event leave(Person,Location);
+
+inst event arrive(Person,Location);
+inst event exit(Person,Location);
+%inst event barred(Person,Location);
+inst event deniedEntry(Person,Location);
+inst event deniedExit(Person,Location);
+
+fluent role(Person,Role);
+fluent vip_room(Location);
+fluent is_vip(Person);
+fluent in_room(Person,Location);
+fluent max(Location,Number);
+fluent bigger(Number,Number);
+fluent equal(Number,Number);
+%fluent capacityExceededViol(Location);
+fluent aggrCount(Number);
+fluent revise;
+
+noninertial fluent potential_occupant_conflict(Location);
+noninertial fluent potential_role_conflict(Location);
+%noninertial fluent room_conflict(Location);
+noninertial fluent permExit(Person,Location);
+noninertial fluent permEntry(Person,Location);
+noninertial fluent in_some_room(Person);
+noninertial fluent occupancy(Location,Number);
+noninertial fluent typeCount(Location,Role,Number);
+
+noninertial fluent capacityExceededViol(Location);
+noninertial fluent earlyBirdViol(Person,Location);
+noninertial fluent roomTypeConflictViol(Location);
+
+noninertial fluent restrictAccess(Person,Location);
+
+noninertial fluent vip_in_room(Location);
+noninertial fluent non_vip_in_vip_room(Location);
+
+
+
+%arrive is only generated if you are permitted to enter
+enter(P,L) generates arrive(P,L) if permEntry(P,L), revise;
+%enter(P,L) generates arrive(P,L) if permEntry(P,L),not vip_room(L),revise;
+
+
+
+%need it to learn 
+%enter(P,L) generates arrive(P,L) if permEntry(P,L), vip_room(L),is_vip(P), revise;
+
+enter(P,L) generates deniedEntry(P,L) if not permEntry(P,L);
+
+%enter(P,L) generates restrictedAccess(P,L) if permEntry(P,L),vip_room(L),revise;
+%enter(P,L) generates restrictedAccess(P,L) if not arrive(P,L),revise;
+
+
+%a rule for barred entry when someone attempts to enter a vip room
+%enter(P,L) generates barred(P,L) if vip_room(L), not is_vip(P);
+
+%barred(P,L) initiates 
+
+
+arrive(P,L) initiates in_room(P,L) if revise;
+arrive(P,L) initiates perm(leave(P,L));
+arrive(P,L) initiates pow(leave(P,L));
+arrive(P,L) initiates perm(exit(P,L));
+
+
+arrive(P,L) terminates perm(enter(P,L)) if revise;
+arrive(P,L) terminates pow(enter(P,L));
+arrive(P,L) terminates perm(arrive(P,L));
+
+
+%earlyBirdViol(P,L) when occupancy(L,X), equal(X,1), in_room(P,L), revise;
+
+
+in_some_room(P) when in_room(P,L);
+
+% this prevents you from having permission to enter any room if you are already in one.
+%permEntry(P,L) when not in_some_room(P);
+
+%trying this our for the VIP room restriction
+permEntry(P,L) when not in_some_room(P), not restrictAccess(P,L);
+
+%permEntry(P,L) when not vip_room(P);
+
+permExit(P,L) when in_room(P,L); 
+
+restrictAccess(P,L) when vip_room(L), revise;  
+
+
+leave(P,L) generates exit(P,L) if permExit(P,L);
+leave(P,L) generates deniedExit(P,L) if not permExit(P,L);
+
+exit(P,L) initiates perm(enter(P,L));
+exit(P,L) initiates pow(enter(P,L));
+exit(P,L) initiates perm(arrive(P,L));
+
+exit(P,L) terminates perm(leave(P,L));
+exit(P,L) terminates pow(leave(P,L));
+exit(P,L) terminates perm(exit(P,L));
+exit(P,L) terminates in_room(P,L);
+
+
+potential_occupant_conflict(L) when occupancy(L,3);
+
+%potential_role_conflict(L) when potential_occupant_conflict(L), in_room(A1,L),in_room(A2,L),in_room(A3,L), role(A1,x), role(A2,y), role(A3,y), A1 != A2, A2 != A3, A1 != A3; 
+potential_role_conflict(L) when potential_occupant_conflict(L), typeCount(L,R,2);
+
+occupancy(L,N) when aggrCount(N),in_room(P,L);
+typeCount(L,R,N) when aggrCount(N),in_room(P,L), role(P,R);
+
+
+capacityExceededViol(L) when occupancy(L,X), max(L,Y), bigger(X,Y), revise;
+%capacityExceededViol(L) when occupancy(L,X), max(L,Y), X>Y, revise;
+
+
+%room type conflict issue defined here when the occupancy is 2 and there is 1 of eahc role here
+%roomTypeConflictViol(L) when occupancy(L,2), typeCount(L,R,1), revise;
+
+%viol event initiates the viol fluent
+%capacityExceeded(L) initiates capacityExceededViol(L);
+
+%vip_in_room definition
+vip_in_room(L) when in_room(P,L), is_vip(P);
+
+%trying something for non_vip_entering_vip_room definition
+%non_vip_entering_vip_room(L) when vip_room(L), not is_vip(P);
+
+%alerting when a non_vip_in_vip_room definition
+non_vip_in_vip_room(L) when vip_room(L), in_room(P,L), not is_vip(P);
+
+initially perm(enter(P,L)), pow(enter(P,L)), perm(arrive(P,L)),perm(deniedEntry(P,L)),perm(deniedExit(P,L));
+%initially perm(restrictedAccess(P,L));
+%initially perm(barred(P,L));
+
+initially bigger(10,0), bigger(10,1), bigger(10,2), bigger(10,3), bigger(10,4), bigger(10,5), bigger(10,6), bigger(10,7), bigger(10,8), bigger(10,9);
+initially bigger(9,0), bigger(9,1), bigger(9,2), bigger(9,3), bigger(9,4), bigger(9,5), bigger(9,6), bigger(9,7), bigger(9,8);
+initially bigger(8,0), bigger(8,1), bigger(8,2), bigger(8,3), bigger(8,4), bigger(8,5), bigger(8,6), bigger(8,7);
+initially bigger(7,0), bigger(7,1), bigger(7,2), bigger(7,3), bigger(7,4), bigger(7,5), bigger(7,6);
+initially bigger(6,0), bigger(6,1), bigger(6,2), bigger(6,3), bigger(6,4), bigger(6,5);
+initially bigger(5,0), bigger(5,1), bigger(5,2), bigger(5,3), bigger(5,4);
+initially bigger(3,0), bigger(3,1), bigger(3,2);
+initially bigger(4,0), bigger(4,1), bigger(4,2), bigger(4,3);
+initially bigger(2,1), bigger(2,0);
+initially bigger(1,0);
+initially equal(1,1), equal(2,2),equal(3,3),equal(4,4),equal(5,5);
+
+%initially max(room1,1), max(room2,1);
+%initially vip_room(room1), is_vip(oracle);
+
+initially is_vip(oracle);
+
+initially revise;

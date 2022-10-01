@@ -1,236 +1,242 @@
 [oracle] I am the Oracle....
 [sample] hello world. I am the basic agent
-[sample] Room chosen - room2
-[sample] Room in first position is - room2
-[synthesizer1] hello world.
+[sample] Room chosen - room1
+[sample] Room in first position is - room1
 [synthesizer2] hello world.
+[synthesizer1] hello world.
 [coordinator] hello world. I am the coordinator
-[basePlannerVIP] My overseer is synthesizer1
-[basePlanner1] My boldness is 4
-[basePlanner3] My overseer is synthesizer2
-[basePlanner2] My overseer is synthesizer1
-[vip2] hello world. I am a VIP agent
-[vip1] hello world. I am a VIP agent
-[basePlanner1] My overseer is synthesizer2
-[basePlannerVIP] My boldness is 7
-[basePlanner2] My boldness is 5
-[basePlanner3] My boldness is 6
-[planner1] hello world. I have arrived and am ready to explore but there is a queue so I have to wait
-[planner2] hello world. I have arrived and am ready to explore but there is a queue so I have to wait
-[basePlanner1] hello world. I am hungry, will have some food before entering the exhibition
-[basePlanner3] hello world. I am hungry, will have some food before entering the exhibition
-[basePlanner2] hello world. I am hungry, will have some food before entering the exhibition
-[basePlannerVIP] hello world.
-[basePlanner3] My overseer is synthesizer2
-[vip2] Checking for VIP rooms to enter
-[vip1] Checking for VIP rooms to enter
-[basePlanner2] My overseer is synthesizer1
-[basePlanner1] My overseer is synthesizer2
-[basePlannerVIP] My overseer is synthesizer1
-[basePlannerVIP] you can enter
-[basePlannerVIP] I am about to enter one room
-[basePlannerVIP] I still need to enter 1 rooms
-[vip2] rooms found, time to explore
-[vip1] rooms found, time to explore
-[vip1] There are 1 rooms to explore
-[vip2] There are 1 rooms to explore
-[vip1] I have rooms to explore but the place is crowded so I will wait a bit
-[vip2] I have rooms to explore but the place is crowded so I will wait a bit
-[basePlannerVIP] I am in Room room1 and my role is y but there is an earlybird violation
-[synthesizer1] Request received from basePlannerVIP will handle
-[basePlannerVIP] Must leave now, leaving room
-[coordinator] synthesizer1 has commenced handling a revision task
-[synthesizer1] Action attempted enter(basePlannerVIP,room1)
-[basePlannerVIP] Need to decide if to wait or try to explore another room
-[basePlannerVIP] I will wait for word before acting again
-[synthesizer1] Checking out other requests
-[synthesizer1] Attempting to revise norms
-[synthesizer1] What is happening - 0
-[synthesizer1] The revision was successful, let me begin the discussion
-[synthesizer1] Log file received
-[synthesizer1] A possble revision found, inform agents of change
-[coordinator] Received a coordinator permission request for revision consensus
-[synthesizer1] Received permission from coordinator to begin discussion
-[synthesizer2] synthesizer1 is seeking consensus to change the institution
-[synthesizer2] Using sense to see if this is an acceptable change
-[synthesizer2] about to try to sense the institution
-[synthesizer2] Values####### earlyBirdViol - noViol(none) ########
-[synthesizer2] Why am I stuck here ---> enter(sample,room1)
-[synthesizer2] I can accept the revision
-[synthesizer1] Permission granted
-[oracle] synthesizer1 has asked me to decide on a revision
-[oracle] The file to be checked rooms_revised_synthesizer1_2.ial
-[oracle] The revision log file rooms_revised_synthesizer1_2revLog
-[oracle] Revision acceptable, can be implemented
-[oracle] Must inform ------> synthesizer1
-[synthesizer1] Finally, the institution can be revised
-[coordinator] synthesizer1 has completed the revision task
-[coordinator] The revision had a discussion going on
-[synthesizer1] I'm about to update the institution
-[basePlanner1] The institution has changed, message reveived from synthesizer1
-[planner2] The institution has changed, message reveived from synthesizer1
-[basePlanner2] The institution has changed, message reveived from synthesizer1
-[vip1] The institution has changed, message reveived from synthesizer1
-[vip2] The institution has changed, message reveived from synthesizer1
-[basePlanner3] The institution has changed, message reveived from synthesizer1
-[planner1] The institution has changed, message reveived from synthesizer1
-[basePlannerVIP] The institution has changed, message reveived from synthesizer1
-[coordinator] No more permission requests to handle
-[synthesizer1] Informing relevant agents that a solution was found
-[basePlannerVIP] My problem has a solution, message reveived from synthesizer1
-[synthesizer1] Removing relevant to_inform percepts
-[synthesizer1] Handling the others
-[synthesizer1] Number of to_handle beliefs found 0
-[synthesizer1] Count: 0
-[synthesizer1] No events to handle
-[basePlanner2] basePlannerVIP is waiting on us, let us go now'
-[basePlanner2] you can enter
-[basePlanner1] basePlannerVIP is waiting on us, let us go now'
-[basePlanner2] I am about to enter one room
-[basePlanner1] you can enter
-[basePlanner3] basePlannerVIP is waiting on us, let us go now'
-[basePlanner2] I still need to enter 1 rooms
-[basePlanner1] I am about to enter one room
-[basePlanner3] you can enter
-[basePlanner3] I am about to enter one room
-[basePlanner1] I still need to enter 1 rooms
-[basePlannerVIP] I am about to try to enter the room again
-[basePlanner3] I still need to enter 1 rooms
-[basePlanner2] I am in room1 and my role is y,  I will leave after 3 timesteps
-[basePlanner3] I am in room1 and my role is x,  I will leave after 3 timesteps
-[basePlanner1] I am in room1 and my role is x,  I will leave after 3 timesteps
-[basePlanner2] Repeating 1
-[basePlannerVIP] I am in room1 and my role is y,  I will leave after 3 timesteps
-[basePlanner3] Repeating 1
-[basePlanner1] Repeating 1
-[basePlannerVIP] Repeating 1
-[basePlanner2] Repeating 2
-[basePlanner1] Repeating 2
-[basePlannerVIP] Repeating 2
-[basePlanner3] Repeating 2
-[basePlanner1] Repeating 3
-[basePlanner2] Repeating 3
-[basePlanner3] Repeating 3
-[basePlannerVIP] Repeating 3
-[basePlanner1] Finished exploring this room
-[basePlanner3] Finished exploring this room
-[basePlannerVIP] Finished exploring this room
-[basePlanner2] Finished exploring this room
-[basePlanner3] Finished, leaving now
-[basePlannerVIP] Finished, leaving now
-[basePlanner2] Finished, leaving now
-[basePlanner1] Finished, leaving now
-[basePlanner2] I left so I am chillin
-[basePlanner1] I left so I am chillin
-[basePlanner3] I left so I am chillin
-[basePlannerVIP] I left so I am chillin
-[basePlanner3] I am about to enter one room
-[basePlanner3] I still need to enter 0 rooms
-[basePlanner3] I am finished, I can leave the building now
-[basePlannerVIP] basePlanner3has finished
-[basePlannerVIP] I am trying to find my friend to leave together
-[basePlanner2] I am about to enter one room
-[basePlanner1] Error likely with the delay function, continuing my plan
-[basePlannerVIP] I am about to enter one room
-[basePlanner1] I am about to enter one room
-[basePlanner2] I still need to enter 0 rooms
-[basePlanner2] I am finished, I can leave the building now
-[basePlanner1] I still need to enter 0 rooms
-[basePlannerVIP] I still need to enter 0 rooms
-[basePlanner1] I am finished, I can leave the building now
-[basePlannerVIP] basePlanner2has finished
-[basePlannerVIP] basePlanner1has finished
-[basePlannerVIP] I am finished, I can leave the building now
-[basePlannerVIP] I am trying to find my friend to leave together
-[basePlannerVIP] I am trying to find my friend to leave together
-[basePlannerVIP] I am trying to find my friend to leave together
-[vip2] People have left, let me explore
-[vip2] I am trying to enter the VIP now
-[vip2] People have left, let me explore
-[vip2] I am trying to enter the VIP now
-[vip2] People have left, let me explore
-[vip1] People have left, let me explore
-[vip2] I am trying to enter the VIP now
-[vip1] I am trying to enter the VIP now
-[vip1] People have left, let me explore
-[vip1] I am trying to enter the VIP now
-[vip2] I cannot enter, I am role - y I was trying to enter(vip2,room2)
-[vip1] I cannot enter, I am role - x I was trying to enter(vip1,room2)
-[synthesizer1] Request received from vip2 will handle
-[synthesizer2] Request received from vip1 will handle
-[coordinator] synthesizer1 has commenced handling a revision task
-[synthesizer1] Action attempted enter(vip2,room2)
+[baseAgent4] My overseer is synthesizer2
+[baseAgent1] My overseer is synthesizer1
+[baseAgent3] My overseer is synthesizer1
+[baseAgent6] My overseer is synthesizer2
+[baseAgent2] My boldness is 4
+[baseAgent7] My overseer is synthesizer1
+[baseAgent8] My overseer is synthesizer2
+[baseAgent5] My overseer is synthesizer1
+[baseAgent1] My boldness is 3
+[baseAgent3] My boldness is 5
+[baseAgent4] My boldness is 6
+[baseAgent6] My boldness is 8
+[baseAgent7] My boldness is 9
+[baseAgent1] hello world.
+[baseAgent2] My overseer is synthesizer2
+[baseAgent8] My boldness is 10
+[baseAgent5] My boldness is 7
+[baseAgent3] hello world.
+[baseAgent4] hello world.
+[baseAgent6] hello world.
+[baseAgent7] hello world.
+[baseAgent2] hello world.
+[baseAgent5] hello world.
+[baseAgent8] hello world.
+[baseAgent1] My overseer is synthesizer1
+[baseAgent3] My overseer is synthesizer1
+[baseAgent4] My overseer is synthesizer2
+[baseAgent7] My overseer is synthesizer1
+[baseAgent5] My overseer is synthesizer1
+[baseAgent6] My overseer is synthesizer2
+[baseAgent8] My overseer is synthesizer2
+[baseAgent2] My overseer is synthesizer2
+[baseAgent1] find out which rooms are available
+[baseAgent3] find out which rooms are available
+[baseAgent4] find out which rooms are available
+[baseAgent2] find out which rooms are available
+[baseAgent7] find out which rooms are available
+[baseAgent6] find out which rooms are available
+[baseAgent5] find out which rooms are available
+[baseAgent4] rooms found, time to explore
+[baseAgent8] find out which rooms are available
+[baseAgent3] rooms found, time to explore
+[baseAgent1] rooms found, time to explore
+[baseAgent4] I found 2 rooms to explore
+[baseAgent3] I found 2 rooms to explore
+[baseAgent1] I found 2 rooms to explore
+[baseAgent7] rooms found, time to explore
+[baseAgent2] rooms found, time to explore
+[baseAgent6] rooms found, time to explore
+[baseAgent5] rooms found, time to explore
+[baseAgent8] rooms found, time to explore
+[baseAgent5] I found 2 rooms to explore
+[baseAgent7] I found 2 rooms to explore
+[baseAgent6] I found 2 rooms to explore
+[baseAgent8] I found 2 rooms to explore
+[baseAgent2] I found 2 rooms to explore
+[baseAgent4] you can enter
+[baseAgent1] you can enter
+[baseAgent3] you can enter
+[baseAgent4] I am about to enter one room
+[baseAgent1] I am about to enter one room
+[baseAgent3] I am about to enter one room
+[baseAgent4] I still need to enter 2 rooms
+[baseAgent5] you can enter
+[baseAgent3] I still need to enter 2 rooms
+[baseAgent1] I still need to enter 2 rooms
+[baseAgent8] you can enter
+[baseAgent6] you can enter
+[baseAgent2] you can enter
+[baseAgent5] I am about to enter one room
+[baseAgent7] you can enter
+[baseAgent2] I am about to enter one room
+[baseAgent7] I am about to enter one room
+[baseAgent8] I am about to enter one room
+[baseAgent6] I am about to enter one room
+[baseAgent5] I still need to enter 2 rooms
+[baseAgent2] I still need to enter 2 rooms
+[baseAgent6] I still need to enter 2 rooms
+[baseAgent8] I still need to enter 2 rooms
+[baseAgent7] I still need to enter 2 rooms
+[baseAgent1] I am in room2 and my role is y,  I will leave after 1 timesteps
+[baseAgent4] I am in room1 and my role is x,  I will leave after 1 timesteps
+[baseAgent3] I am in room1 and my role is y,  I will leave after 1 timesteps
+[baseAgent1] Repeating 1
+[baseAgent3] Repeating 1
+[baseAgent4] Repeating 1
+[baseAgent1] Finished exploring this room
+[baseAgent4] Finished exploring this room
+[baseAgent3] Finished exploring this room
+[baseAgent8] I am in room2 and my role is x,  I will leave after 1 timesteps
+[baseAgent1] Finished, leaving now
+[baseAgent3] Finished, leaving now
+[baseAgent4] Finished, leaving now
+[baseAgent6] I am in Room room2 and my role is x but it is full, I need to leave the room
+[baseAgent8] Repeating 1
+[baseAgent2] I am in Room room1 and my role is x but it is full, I need to leave the room
+[baseAgent5] I am in Room room2 and my role is y but it is full, I need to leave the room
+[baseAgent7] I am in Room room1 and my role is y but it is full, I need to leave the room
+[synthesizer2] Request received from baseAgent6 will handle
+[synthesizer1] Request received from baseAgent7 will handle
+[baseAgent4] I left so I am chillin
+[baseAgent3] I left so I am chillin
+[baseAgent1] I left so I am chillin
+[baseAgent6] Must leave now, leaving room
 [coordinator] synthesizer2 has commenced handling a revision task
-[vip1] I cannot enter, I am role - x I was trying to enter(vip1,room2)
-[synthesizer2] Action attempted enter(vip1,room2)
-[vip2] I cannot enter, I am role - y I was trying to enter(vip2,room2)
-[vip2] I cannot enter, I am role - y I was trying to enter(vip2,room2)
-[planner2] I have just been let in
-[planner2] you can enter
-[planner2] I have just been let in
-[planner2] I tried to enter
-[planner2] I have just been let in
-[planner2] you can enter
-[planner2] I still need to enter 2 rooms
-[planner2] I tried to enter
-[planner2] you can enter
-[synthesizer2] Only 1 request to handle and currently handling
+[baseAgent8] Finished exploring this room
+[baseAgent2] Must leave now, leaving room
+[baseAgent7] Must leave now, leaving room
+[baseAgent5] Must leave now, leaving room
+[coordinator] synthesizer1 has commenced handling a revision task
+[baseAgent8] Finished, leaving now
+[synthesizer2] Action attempted enter(baseAgent6,room2)
+[synthesizer1] Action attempted enter(baseAgent7,room1)
+[baseAgent4] I am about to enter one room
+[baseAgent1] I am about to enter one room
+[baseAgent3] I am about to enter one room
+[baseAgent6] Need to decide if to wait or try to explore another room
+[baseAgent7] Need to decide if to wait or try to explore another room
+[baseAgent2] Need to decide if to wait or try to explore another room
+[baseAgent3] I still need to enter 1 rooms
+[baseAgent4] I still need to enter 1 rooms
+[baseAgent1] I still need to enter 1 rooms
+[baseAgent8] I left so I am chillin
+[baseAgent5] Need to decide if to wait or try to explore another room
 [synthesizer1] Only 1 request to handle and currently handling
-[synthesizer2] Queued request for vip1
-[synthesizer1] Queued request for vip2
-[planner2] I tried to enter
-[synthesizer2] Need to inform this agent vip1
-[synthesizer1] Need to inform this agent vip2
-[planner2] I still need to enter 2 rooms
-[synthesizer2] Removed request from list
+[synthesizer2] Only 1 request to handle and currently handling
+[synthesizer1] Queued request for baseAgent5
+[synthesizer2] Queued request for baseAgent2
+[baseAgent8] I am about to enter one room
+[baseAgent1] I am in room1 and my role is y,  I will leave after 2 timesteps
+[synthesizer1] Size: 0, Count: 0
+[baseAgent1] Repeating 1
+[synthesizer2] Size: 0, Count: 0
+[synthesizer1] Adding a request to the official queue
+[baseAgent3] I am in room2 and my role is y,  I will leave after 2 timesteps
+[baseAgent8] I still need to enter 1 rooms
+[synthesizer2] Adding a request to the official queue
+[baseAgent4] I am in room2 and my role is x,  I will leave after 1 timesteps
+[baseAgent3] Repeating 1
+[baseAgent4] Repeating 1
+[baseAgent1] Repeating 2
 [synthesizer1] Removed request from list
-[planner2] I still need to enter 2 rooms
-[synthesizer2] Attempting to revise norms
+[synthesizer2] Removed request from list
+[baseAgent3] Repeating 2
 [synthesizer1] Attempting to revise norms
+[synthesizer2] Attempting to revise norms
+[synthesizer1] What is happening - 0
 [synthesizer2] What is happening - 0
-[synthesizer1] What is happening - 1
-[planner2] I cannot enter, I am role - y I was trying to enter(planner2,room2)
-[planner1] I have just been let in
-[planner1] you can enter
-[synthesizer1] This is a restricted access request
-[planner1] I tried to enter
-[planner1] I have just been let in
-[planner2] Unfortunately I cannot enter a VIP room as I am not a VIP
-[planner1] I still need to enter 2 rooms
-[planner1] you can enter
-[planner1] I tried to enter
-[planner1] I still need to enter 2 rooms
-[planner2] I tried to enter
-[planner2] I still need to enter 1 rooms
-[basePlannerVIP] I have left the building now
-[basePlannerVIP] I have left the building now
-[planner1] I cannot enter, I am role - x I was trying to enter(planner1,room2)
-[basePlannerVIP] I have left the building now
-[synthesizer2] This is a restricted access request
-[planner1] Unfortunately I cannot enter a VIP room as I am not a VIP
-[planner2] I am in room1 and my role is y  I will exit when ready
-[planner1] I tried to enter
-[planner1] I still need to enter 1 rooms
-[planner1] I am in room1 and my role is x  I will exit when ready
-[planner2] Finished exploring this room
-[planner2] Finished, leaving now
-[planner2] I left so I am chillin
-[planner1] Finished exploring this room
-[planner1] Finished, leaving now
-[planner2] I tried to enter
-[planner1] I left so I am chillin
-[planner2] I still need to enter 0 rooms
-[planner2] I am finished, I can leave the building now
-[planner1] I tried to enter
-[planner1] I still need to enter 0 rooms
-[planner1] I am finished, I can leave the building now
-[synthesizer1] The revision was successful, let me begin the discussion
-[synthesizer1] Log file received
-[synthesizer1] A possble revision found, inform agents of change
-[coordinator] Received a coordinator permission request for revision consensus
-[synthesizer1] Received permission from coordinator to begin discussion
-[synthesizer2] synthesizer1 is seeking consensus to change the institution
-[synthesizer2] Using sense to see if this is an acceptable change
-[synthesizer2] about to try to sense the institution
-[synthesizer2] Values####### deniedEntry - allowedAccess(vip) ########
-[synthesizer2] Why am I stuck here ---> enter(sample,room2)
+[baseAgent4] Finished exploring this room
+[baseAgent1] Finished exploring this room
+[baseAgent6] I am about to try to enter another room
+[baseAgent4] Finished, leaving now
+[baseAgent7] I am about to try to enter another room
+[baseAgent1] Finished, leaving now
+[baseAgent3] Finished exploring this room
+[baseAgent8] I am in room1 and my role is x,  I will leave after 2 timesteps
+[baseAgent2] I am about to try to enter another room
+[baseAgent3] Finished, leaving now
+[baseAgent8] Repeating 1
+[baseAgent5] I am about to try to enter another room
+[baseAgent1] I left so I am chillin
+[baseAgent4] I left so I am chillin
+[baseAgent6] I am in room1 and my role is x,  I will leave after 1 timesteps
+[baseAgent7] I am in room2 and my role is y,  I will leave after 2 timesteps
+[baseAgent8] Repeating 2
+[baseAgent7] Repeating 1
+[baseAgent6] Repeating 1
+[baseAgent3] I left so I am chillin
+[baseAgent2] I am in room2 and my role is x,  I will leave after 2 timesteps
+[baseAgent5] I am in Room room1 and my role is y but it is full, I need to leave the room
+[baseAgent7] Repeating 2
+[baseAgent2] Repeating 1
+[synthesizer1] Queued request for baseAgent5
+[baseAgent6] Finished exploring this room
+[baseAgent8] Finished exploring this room
+[baseAgent6] Finished, leaving now
+[synthesizer1] Need to inform this agent baseAgent5
+[baseAgent8] Finished, leaving now
+[baseAgent2] Repeating 2
+[baseAgent5] Must leave now, leaving room
+[synthesizer1] Removed request from list
+[baseAgent7] Finished exploring this room
+[baseAgent4] I am about to enter one room
+[baseAgent1] I am about to enter one room
+[baseAgent7] Finished, leaving now
+[baseAgent3] I am about to enter one room
+[baseAgent6] I left so I am chillin
+[baseAgent8] I left so I am chillin
+[baseAgent2] Finished exploring this room
+[baseAgent4] I still need to enter 0 rooms
+[baseAgent1] I still need to enter 0 rooms
+[baseAgent2] Finished, leaving now
+[baseAgent3] I still need to enter 0 rooms
+[baseAgent4] I am finished, I can leave the building now
+[baseAgent1] I am finished, I can leave the building now
+[baseAgent3] I am finished, I can leave the building now
+[baseAgent5] Need to decide if to wait or try to explore another room
+[baseAgent5] I will wait for word before acting again
+[baseAgent7] I left so I am chillin
+[baseAgent2] I left so I am chillin
+[baseAgent6] I am about to enter one room
+[baseAgent8] I am about to enter one room
+[baseAgent8] I still need to enter 0 rooms
+[baseAgent6] I still need to enter 1 rooms
+[baseAgent8] I am finished, I can leave the building now
+[baseAgent7] I am about to enter one room
+[baseAgent2] I am about to enter one room
+[baseAgent7] I still need to enter 1 rooms
+[baseAgent2] I still need to enter 1 rooms
+[baseAgent6] I am in room2 and my role is x,  I will leave after 2 timesteps
+[baseAgent6] Repeating 1
+[baseAgent6] Repeating 2
+[baseAgent7] I am in room1 and my role is y,  I will leave after 1 timesteps
+[baseAgent7] Repeating 1
+[baseAgent7] Finished exploring this room
+[baseAgent6] Finished exploring this room
+[baseAgent2] I am in room1 and my role is x,  I will leave after 2 timesteps
+[baseAgent7] Finished, leaving now
+[baseAgent6] Finished, leaving now
+[baseAgent2] Repeating 1
+[baseAgent2] Repeating 2
+[baseAgent7] I left so I am chillin
+[baseAgent6] I left so I am chillin
+[baseAgent2] Finished exploring this room
+[baseAgent2] Finished, leaving now
+[baseAgent6] I am about to enter one room
+[baseAgent7] I am about to enter one room
+[baseAgent2] I left so I am chillin
+[baseAgent7] I still need to enter 0 rooms
+[baseAgent6] I still need to enter 0 rooms
+[baseAgent7] I am finished, I can leave the building now
+[baseAgent6] I am finished, I can leave the building now
+[baseAgent2] I am about to enter one room
+[baseAgent2] I still need to enter 0 rooms
+[baseAgent2] I am finished, I can leave the building now

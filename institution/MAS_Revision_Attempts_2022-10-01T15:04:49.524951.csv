@@ -1,0 +1,3 @@
+synthesiser,action,problem,status,time,instState,timestep
+synthesizer1,"enter(baseAgent7,room1)","capacityExceededViol",start,15:05:42.970704,20,22
+synthesizer2,"enter(baseAgent6,room2)","capacityExceededViol",start,15:05:42.970759,20,22

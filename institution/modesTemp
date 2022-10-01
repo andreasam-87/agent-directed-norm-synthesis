@@ -1,0 +1,22 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   INDUCTIVE BIAS    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% unification in head %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NOTE: xhail bug if type pred ocurs twice in mode!
+person2(X) :- person(X).
+location2(X) :- location(X).
+
+:- initiated(F,In,E,I),not occurred(E,In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+:- initiated(F,In,E,I), occurred(viol(E),In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+:- initiated(F,In,E,I), not holdsat(live(In),In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+eql(E,E) :- event(E).
+
+
+<<modes>>
+
+<<exception>>

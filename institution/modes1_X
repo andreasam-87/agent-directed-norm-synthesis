@@ -1,0 +1,29 @@
+#modeh occurred(arrive(+person,+location),+inst,+instant).
+#modeh occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeh terminated(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeh holdsat(permEntry(+person,+location),+inst,+instant).
+#modeh terminated(perm(arrive(+person,+location)),+inst,+instant).
+#modeh occurred(exit(+person,+location),+inst,+instant).
+#modeh terminated(perm(enter(+person,+location)),+inst,+instant).
+#modeh initiated(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeh initiated(perm(enter(+person,+location)),+inst,+instant).
+#modeh initiated(perm(arrive(+person,+location)),+inst,+instant).
+
+#modeb holdsat(permEntry(+person,+location),+inst,+instant).
+#modeb not holdsat(perm(enter(+person,+location)),+inst,+instant).
+#modeb not holdsat(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeb not holdsat(permEntry(+person,+location),+inst,+instant).
+#modeb occurred(arrive(+person,+location),+inst,+instant).
+#modeb occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeb not occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeb holdsat(perm(enter(+person,+location)),+inst,+instant).
+#modeb not occurred(exit(+person,+location),+inst,+instant).
+#modeb holdsat(perm(arrive(+person,+location)),+inst,+instant).
+#modeb not occurred(arrive(+person,+location),+inst,+instant).
+#modeb not holdsat(perm(arrive(+person,+location)),+inst,+instant).
+#modeb occurred(exit(+person,+location),+inst,+instant).
+#modeb holdsat(perm(deniedEntry(+person,+location)),+inst,+instant).
+
+
+#modeb holdsat(meeting(+location),$inst, +instant).
+#modeb not holdsat(meeting(+location), $inst, +instant).

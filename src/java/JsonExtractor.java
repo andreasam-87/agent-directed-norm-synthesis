@@ -1924,11 +1924,14 @@ public class JsonExtractor {
 						if(!toAdd.contains("occurred"))
 							ret.append(add+".\n");
 					}
-					count++;
-					traceCount++;
+					//count++;
+					//traceCount++;
 				
 				//using all the traces available
 				}
+				//trying something where the number is the correct sequence
+				count++;
+				traceCount++;
 				ret.append("\n\n");
 				examples.append("\n\n");
 				examp.add("\n");

@@ -1,0 +1,20 @@
+#example holdsat(capacityExceededViol(room1),rooms,0).
+
+
+
+
+
+
+#example not holdsat(capacityExceededViol(room2),rooms,3).
+#example holdsat(capacityExceededViol(room1),rooms,3).
+
+
+
+
+
+
+#example not holdsat(capacityExceededViol(room2),rooms,6).
+#example holdsat(capacityExceededViol(room1),rooms,6).
+
+
+%%%For 1st agent

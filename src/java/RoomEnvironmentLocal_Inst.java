@@ -66,6 +66,7 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	String inst_file;// = "rooms.ial"; //which institutional file we will be running
 	String files_directory;
 	String temp_files_directory;
+	String instal_path,local_inst_path;
 	String mas2jfile;
 	
 	String curInstRuleSet="";// = "rooms.ial"; //which institutional file we will be running
@@ -107,18 +108,22 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		files_directory = domainConf.get("filespath").toString();
 		temp_files_directory = domainConf.get("tempfilespath").toString();
 		mas2jfile = domainConf.get("mas2jfile").toString();
+		instal_path = domainConf.get("instalpath").toString();
+		local_inst_path = domainConf.get("localinst").toString();
 		
 		instHandle = new InstitutionHandler("rules.json","modRulesDict.json");
 		//String rule_set = "R1-R31";
-		String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28";
+		/*String rule_set = "R1;R2;R3;R4;R5;R6;R7;R8;R9;R10;R11;R12;R13;R14;R15;R16;R17;R18;R19;R20;R21;R22;R23;R24;R24;R25;R26;R27;R28";
 		String str =instHandle.reviseInst(rule_set);
 
 		try {
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/rules.txt"), str.getBytes());
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/rules.txt"), str.getBytes());
+			Files.write(Paths.get(files_directory+"rules.txt"), str.getBytes());
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		date = LocalDateTime.now();
 		//time = LocalTime.now();
@@ -748,8 +753,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							//final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
 							//"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
 
-							final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + modeAdd;
+							//final String modesX = new JsonExtractor().getModesFileXhail("/Users/andreasamartin/Documents/InstalExamples/rooms/dict.txt","enter") + modeAdd;
+							final String modesX = new JsonExtractor().getModesFileXhail(files_directory+"dict.txt","enter") + modeAdd;
 
+							
 							//modesX = modesX + "\n\n#modeb holdsat(meeting(+location),$inst, +instant).\n" + 
 							//		"#modeb not holdsat(meeting(+location), $inst, +instant).\n";
 															
@@ -761,16 +768,20 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 							
 							//writing to the modes file is what is required so that the ILP can access this file
 							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), modesX.getBytes());
+							Files.write(Paths.get(files_directory+"modes"+trace_count+"_X"), modesX.getBytes());
 							
 							
 							System.out.println("Updating modes file for Xhail");
 							
-							String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/modesTemp";
+							//String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/modesTemp";
+							String path = files_directory+"modesTemp";
 							List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
 							
 							String add = Files.readString(Paths.get("modesappend"), Charset.defaultCharset());
-							String add1 = Files.readString(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), Charset.defaultCharset());
+							//String add1 = Files.readString(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/modes"+trace_count+"_X"), Charset.defaultCharset());
+							String add1 = Files.readString(Paths.get(files_directory+"modes"+trace_count+"_X"), Charset.defaultCharset());
+							
 							String content="";
 					    	for (String line : lines) {
 					    		if(line.contains("<<exception>>"))
@@ -1179,7 +1190,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 						
 						
 						String line = "";
-						String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+						//String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+						String path = files_directory+"roomsFacts.iaf";
 						try {
 							
 							// Editing the facts file
@@ -1192,8 +1204,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 					    	}
 							line+=add;
 							
-							Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+							//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+							Files.write(Paths.get(files_directory+"roomsFacts.iaf"), line.toString().getBytes());
 
+							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -1305,7 +1319,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			}
 			//initially(perm(enter(agent6,room2)),rooms)
 			String line = "";
-			String file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			//String file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			
+			String file = files_directory+"roomsFacts.iaf";
+			
 			try {
 				
 				// Editing the facts file
@@ -1320,8 +1337,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 				//System.out.println("New facts file: \n"+line);
 				
 				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
-				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
-			
+				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+				Files.write(Paths.get(files_directory+"roomsFacts.iaf"), line.toString().getBytes());
+				
+				
 				//Must edit the config file to include the new agent names. 
 			
 				//errors adding an agent from here. 
@@ -1335,7 +1354,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 				
 				// updating the config file
-				file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc";
+				//file = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc";
+				file = files_directory+"roomsConf.idc";
 				lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
 				line="";
 		    	for (String line2 : lines) {
@@ -1347,8 +1367,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		    	}
 		
 				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), add.toString().getBytes(),StandardOpenOption.APPEND);
-				Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), line.toString().getBytes());
-			
+				//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), line.toString().getBytes());
+				Files.write(Paths.get(files_directory+"roomsConf.idc"), line.toString().getBytes());
+				
+				
 				System.out.println("Agent added");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -1368,7 +1390,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String add = "initially(meeting("+room+"),rooms)\n";
 			
 			String line = "";
-			String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			//String path = "/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf";
+			String path = files_directory+"roomsFacts.iaf";
 			boolean contains = false;
 			try {
 				
@@ -1387,7 +1410,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		    	{
 		    		line += add;
 					
-					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), line.toString().getBytes());
+					Files.write(Paths.get(files_directory+"roomsFacts.iaf"), line.toString().getBytes());
 
 				
 		    	}
@@ -1419,7 +1443,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	private String compileXHAIL()
 	{
 	//	String cmd = "python3 /Users/andreasamartin/InstalStable/istable/code/instal-stable/compiler.py compile_ial test.txt";
-		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/compiler.py compile_ial /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt";
+		//String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/compiler.py compile_ial /Users/andreasamartin/Documents/InstalExamples/rooms/outDict.txt";
+		
+		String cmd = "python3 "+ files_directory+"compiler.py compile_ial "+files_directory+"outDict.txt";
+		
 		
 		//String output;
 		try {
@@ -1631,7 +1658,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		{
 			room=StringUtils.substringBetween(action, ",", ")");
 			avoid = avoid + "("+room+ ")";
-			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
+			//Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
+			Updatefile(files_directory+"roomsFacts.iaf","","initially(meeting("+room+"),rooms)\n", "capacityExceededViol");
 
 		}
 		else if(avoid.contains("early"))
@@ -1639,7 +1667,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			room=StringUtils.substringBetween(action, ",", ")");
 			String person = StringUtils.substringBetween(action, "(", ",");
 			avoid = avoid + "("+person+","+room+ ")";
-			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+			//Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+			Updatefile(files_directory+"roomsFacts.iaf","","", "earlyBirdViol");
 
 		}
 		else if(avoid.contains("roomType"))
@@ -1647,7 +1676,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			room=StringUtils.substringBetween(action, ",", ")");
 			String person = StringUtils.substringBetween(action, "(", ",");
 			avoid = avoid + "("+room+ ")";
-			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "roomTypeConflictViol");
+			//Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "roomTypeConflictViol");
+			Updatefile(files_directory+"roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "roomTypeConflictViol");
 			
 		}
 		else if(avoid.contains("denied"))
@@ -1656,7 +1686,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String person = StringUtils.substringBetween(action, "(", ",");
 			//System.out.println("person is "+person);
 			avoid = "occurred("+avoid + "("+person+","+room+ "))";
-			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "restrictAccess("+person+","+room+")");
+			//Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "restrictAccess("+person+","+room+")");
+			Updatefile(files_directory+"roomsFacts.iaf","","initially(is_vip("+person+"),rooms)\n", "restrictAccess("+person+","+room+")");
 			
 		}
 		else if(avoid.contains("|"))
@@ -1666,8 +1697,10 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String person = StringUtils.substringBetween(action, "(", ",");
 			avoid = "earlyBirdViol("+person+","+room+ ")";
 			temp = "perm(enter("+person+","+room+ ")";
-			Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+			//Updatefile("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf","","", "earlyBirdViol");
+			Updatefile(files_directory+"roomsFacts.iaf","","", "earlyBirdViol");
 
+			
 		}
 		
 		System.out.println("I am trying to avoid after change: "+avoid);
@@ -1694,17 +1727,22 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		*/
 		try {
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"),act.getBytes());
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"),act.getBytes());
+			Files.write(Paths.get(files_directory+"roomsQuery.iaq"),act.getBytes());
 
 
-			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
-		
+			//String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			String cmd = instal_path+local_inst_path+":/workdir instal-stable solve $*"+ "-i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			
+			
 			String output = Processes.runShellCmdRes(cmd);
 			
 			ArrayList<Literal> inst_sense = new ArrayList<Literal>();
 			
 			//what occurred this timestep
-			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
+			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
+			getJSONObjectFromFile(files_directory+"out.json","occurred",1);
+			
 			String occurred = strRet.toString();
 		
 		//	getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","observed",1);
@@ -1728,7 +1766,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			{
 				avoid = "Cannotfind";
 			}
-			getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
+			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","holdsat",1);
+			getJSONObjectFromFile(files_directory+"out.json","holdsat",1);
 
 	
 			String[] percepts = strRet.toString().split("\n");
@@ -1841,7 +1880,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			//how to call local instal without files or how to get files from these variables and placed in the appropriate place
 			//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
 			System.out.println("#######"+current_action+"########");
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"), current_action.getBytes());
+			
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"), current_action.getBytes());
+			Files.write(Paths.get(files_directory+"roomsQuery.iaq"), current_action.getBytes());
 
 //	    	System.out.println("Query file: ");
 //	    	List<String> lines = Files.readAllLines(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsQuery.iaq"), Charset.defaultCharset());
@@ -1854,7 +1895,13 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			
 			String fileContents = Files.readString(Paths.get(files_directory+"roomsFacts.iaf"), Charset.defaultCharset());
 			
-			String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			//String cmd = "/usr/local/bin/docker run -v /Users/andreasamartin/Documents/InstalExamples/rooms:/workdir instal-stable solve $* -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			String cmd = instal_path+local_inst_path+":/workdir instal-stable solve $*"+ " -i /workdir/"+ inst_file +" -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v";
+			// /usr/local/bin/docker run -v institution:/workdir instal-stable solve $*  -i /workdir/roomsInst.ial -f /workdir/roomsFacts.iaf -d /workdir/roomsConf.idc -q /workdir/roomsQuery.iaq -j /workdir/out.json -v
+			//cmd="pwd";
+			//  /Users/andreasamartin/eclipse-workspace/roomsMAS
+			
+			//System.out.println("CMD----"+cmd);
 			//Processes.runShellCmd(cmd);
 
 			String output = Processes.runShellCmdRes(cmd);
@@ -1870,13 +1917,15 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			{
 				String test = Files.readString(Paths.get(files_directory+"out.json"), Charset.defaultCharset());
 				
-				Files.write(Paths.get(files_directory+"test_"+inst_state), test.toString().getBytes());
+				//Files.write(Paths.get(files_directory+"test_"+inst_state), test.toString().getBytes());
 				
 			}
 			
 			
 			
-			String instalOut = "/Users/andreasamartin/Documents/InstalExamples/rooms/out.json";
+			//String instalOut = "/Users/andreasamartin/Documents/InstalExamples/rooms/out.json";
+			String instalOut = files_directory+"out.json";
+			
 			
 			//what occurred this timestep
 			//getJSONObjectFromFile("/Users/andreasamartin/Documents/InstalExamples/rooms/out.json","occurred",1);
@@ -1910,8 +1959,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 			String stateToCheck2 = "State "+inst_state+"\n"+occurred+"\n"+observed+"\nAction attempted:"+current_action+"\n"+stateFacts+"\n/////////\n";
 			
 			
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck"), stateToCheck.toString().getBytes(),StandardOpenOption.APPEND);
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/StateCheck2"), stateToCheck2.toString().getBytes(),StandardOpenOption.APPEND);
 
 			
 			//get feedback for the agents as percepts
@@ -2177,17 +2226,17 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		//includes.append("\nlocation(room1).\nlocation(room2).\nlocation(room3).\n"+
 		includes.append("\nlocation(room1).\nlocation(room2).\n"+
-				"holdsat(max(room1,8),rooms,0).\n" +
-				"holdsat(max(room2,8),rooms,0).\n" + //);   // +
+				"holdsat(max(room1,2),rooms,0).\n" +
+				"holdsat(max(room2,2),rooms,0).\n");   // +
 				//"holdsat(max(room3,2),rooms,0).\n" +
 				//"holdsat(vip_room(room1),rooms,0).\n" +
-				"holdsat(vip_room(room2),rooms,0).\n");
+				//"holdsat(vip_room(room2),rooms,0).\n");
 		
-		strRet.append("initially(max(room1,8),rooms)\n" +
-				"initially(max(room2,8),rooms)\n" + //);   //+
+		strRet.append("initially(max(room1,2),rooms)\n" +
+				"initially(max(room2,2),rooms)\n");   //+
 				//"initially(max(room3,2),rooms)\n" +
 				//"initially(vip_room(room1),rooms)\n" +
-				"initially(vip_room(room2),rooms)\n");
+				//"initially(vip_room(room2),rooms)\n");
 		
 		ArrayList<String> allAgents = new ArrayList<String>();
 		//agentsBySynthesizerInMAS
@@ -2268,11 +2317,14 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 
 
 		try {
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), config.toString().getBytes());
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsConf.idc"), config.toString().getBytes());
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+			Files.write(Paths.get(files_directory+"roomsConf.idc"), config.toString().getBytes());
+			Files.write(Paths.get(files_directory+"roomsFacts.iaf"), strRet.toString().getBytes());
 			
 			
-			String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/narTemp";
+			//String path = "/Users/andreasamartin/Desktop/Sharing_Virtual/narTemp";
+			String path = files_directory+"narTemp";
 			List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
 			
 			String content="";
@@ -2283,7 +2335,8 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 	    		else
 	    			content+=line+"\n";
 	    	}
-			Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), content.getBytes());
+			//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/narX"), content.getBytes());
+			Files.write(Paths.get(files_directory+"narX"), content.getBytes());
 			
 
 			//	Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes(),StandardOpenOption.APPEND);
@@ -2387,7 +2440,9 @@ public class RoomEnvironmentLocal_Inst extends StepSynchedEnvironment {
 		
 		System.out.println(("Run XHAIL to commence revision on input files...."));
 		
-		String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " "+narrativefile+ " > "+output ;
+		//String cmd = "python3 /Users/andreasamartin/Desktop/Sharing_Virtual/xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " "+narrativefile+ " > "+output ;
+		String cmd = "python3 " +files_directory+"xhail.py "+aspfile+ " "+ preludefile+ " "+ tracefile+ " "+ modesfile+ " "+examplefile+ " "+narrativefile+ " > "+output ;
+		
 		
 		String processOut="";
 		try {
@@ -2574,7 +2629,9 @@ print("Analysis complete.")
 				}
 				if (flag==0)
 				{
-					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), strRet.toString().getBytes());
+					Files.write(Paths.get(files_directory+"roomsFacts.iaf"), strRet.toString().getBytes());
+					
 					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
 					facts_store.add(strRet.toString());
 					
@@ -2660,7 +2717,8 @@ print("Analysis complete.")
 				}
 				if (flag==0)
 				{
-					Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), retStr.toString().getBytes());
+					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts.iaf"), retStr.toString().getBytes());
+					Files.write(Paths.get(files_directory+"roomsFacts.iaf"), retStr.toString().getBytes());
 					//Files.write(Paths.get("/Users/andreasamartin/Documents/InstalExamples/rooms/roomsFacts1.txt"), strRet.toString().getBytes());
 					facts_store.add(retStr.toString());
 					

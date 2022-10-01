@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   INDUCTIVE BIAS    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% unification in head %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NOTE: xhail bug if type pred ocurs twice in mode!
+person2(X) :- person(X).
+location2(X) :- location(X).
+
+:- initiated(F,In,E,I),not occurred(E,In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+:- initiated(F,In,E,I), occurred(viol(E),In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+:- initiated(F,In,E,I), not holdsat(live(In),In,I),ifluent(F,In),event(E),inst(In), instant(I).
+
+eql(E,E) :- event(E).
+
+
+#modeh occurred(arrive(+person,+location),+inst,+instant).
+#modeh occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeh terminated(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeh holdsat(permEntry(+person,+location),+inst,+instant).
+#modeh terminated(perm(arrive(+person,+location)),+inst,+instant).
+#modeh occurred(exit(+person,+location),+inst,+instant).
+#modeh terminated(perm(enter(+person,+location)),+inst,+instant).
+#modeh initiated(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeh initiated(perm(enter(+person,+location)),+inst,+instant).
+#modeh initiated(perm(arrive(+person,+location)),+inst,+instant).
+
+#modeb holdsat(permEntry(+person,+location),+inst,+instant).
+#modeb not holdsat(perm(enter(+person,+location)),+inst,+instant).
+#modeb not holdsat(perm(deniedEntry(+person,+location)),+inst,+instant).
+#modeb not holdsat(permEntry(+person,+location),+inst,+instant).
+#modeb occurred(arrive(+person,+location),+inst,+instant).
+#modeb occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeb not occurred(deniedEntry(+person,+location),+inst,+instant).
+#modeb holdsat(perm(enter(+person,+location)),+inst,+instant).
+#modeb not occurred(exit(+person,+location),+inst,+instant).
+#modeb holdsat(perm(arrive(+person,+location)),+inst,+instant).
+#modeb not occurred(arrive(+person,+location),+inst,+instant).
+#modeb not holdsat(perm(arrive(+person,+location)),+inst,+instant).
+#modeb occurred(exit(+person,+location),+inst,+instant).
+#modeb holdsat(perm(deniedEntry(+person,+location)),+inst,+instant).
+
+
+#modeb holdsat(meeting(+location),$inst, +instant).
+#modeb not holdsat(meeting(+location), $inst, +instant).
+ 
+
+#modeh exception($int4,occurred(arrive(+person,+location),$inst,+instant))=1.
+int4(4).
+clause4(1..3).
+#modeh del($int4,$clause4)=3.
+#modeh exception($int11,initiated(in_room(+person,+location),$inst,arrive(+person2,+location2),+instant))=1.
+int11(11).
+clause11(1..3).
+#modeh del($int11,$clause11)=3.
+#modeh exception($int18,terminated(perm(enter(+person,+location)),$inst,arrive(+person2,+location2),+instant))=1.
+int18(18).
+clause18(1..3).
+#modeh del($int18,$clause18)=3.
+#modeh exception($int21,holdsat(capacityExceededViol(+location),$inst,+instant))=1.
+int21(21).
+clause21(1..3).
+#modeh del($int21,$clause21)=3.
+#modeh exception($int26,holdsat(restrictAccess(+person,+location),$inst,+instant))=1.
+int26(26).
+clause26(1..1).
+#modeh del($int26,$clause26)=3.
+
+ 

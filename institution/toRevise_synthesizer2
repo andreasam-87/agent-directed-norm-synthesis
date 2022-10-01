@@ -1,0 +1,859 @@
+
+
+
+ %
+% -------------------------------PART 1-------------------------------
+%
+%
+% Standard prelude for rooms
+%
+% Standard prelude now dealt with in InstalModel.
+%
+% Rules for Institution rooms
+%
+  ifluent(live(rooms), rooms).
+  fluent(live(rooms), rooms).
+  inst(rooms).
+  :- not _preludeLoaded. 
+
+%
+% Exogenous events
+% Event: enter (type: ex)
+  event(enter(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(enter(Person0,Location1),rooms,ex) :- person(Person0),location(Location1).
+  evinst(enter(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(pow(enter(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(enter(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(pow(enter(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(enter(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(enter(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(enter(Person0,Location1)), rooms, viol) :- person(Person0),location(Location1).
+  evinst(viol(enter(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+% Event: leave (type: ex)
+  event(leave(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(leave(Person0,Location1),rooms,ex) :- person(Person0),location(Location1).
+  evinst(leave(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(pow(leave(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(leave(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(pow(leave(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(leave(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(leave(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(leave(Person0,Location1)), rooms, viol) :- person(Person0),location(Location1).
+  evinst(viol(leave(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+%
+% null event for unknown events
+% Event: null (type: ex)
+  event(null).
+  evtype(null,rooms,ex).
+  evinst(null,rooms).
+  ifluent(pow(null),rooms).
+  ifluent(perm(null),rooms).
+  fluent(pow(null),rooms).
+  fluent(perm(null),rooms).
+  event(viol(null)).
+  evtype(viol(null),rooms,viol).
+  evinst(viol(null),rooms).
+% Institutional events
+% Event: deniedExit (type: in)
+  event(deniedExit(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(deniedExit(Person0,Location1),rooms,inst) :- person(Person0),location(Location1).
+  evinst(deniedExit(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(deniedExit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(deniedExit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(deniedExit(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(deniedExit(Person0,Location1)),rooms,viol) :- person(Person0),location(Location1).
+  evinst(viol(deniedExit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+% Event: arrive (type: in)
+  event(arrive(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(arrive(Person0,Location1),rooms,inst) :- person(Person0),location(Location1).
+  evinst(arrive(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(arrive(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(arrive(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(arrive(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(arrive(Person0,Location1)),rooms,viol) :- person(Person0),location(Location1).
+  evinst(viol(arrive(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+% Event: deniedEntry (type: in)
+  event(deniedEntry(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(deniedEntry(Person0,Location1),rooms,inst) :- person(Person0),location(Location1).
+  evinst(deniedEntry(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(deniedEntry(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(deniedEntry(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(deniedEntry(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(deniedEntry(Person0,Location1)),rooms,viol) :- person(Person0),location(Location1).
+  evinst(viol(deniedEntry(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+% Event: exit (type: in)
+  event(exit(Person0,Location1)) :- person(Person0),location(Location1).
+  evtype(exit(Person0,Location1),rooms,inst) :- person(Person0),location(Location1).
+  evinst(exit(Person0,Location1),rooms) :- person(Person0),location(Location1).
+  ifluent(perm(exit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  fluent(perm(exit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+  event(viol(exit(Person0,Location1))) :- person(Person0),location(Location1).
+  evtype(viol(exit(Person0,Location1)),rooms,viol) :- person(Person0),location(Location1).
+  evinst(viol(exit(Person0,Location1)),rooms) :- person(Person0),location(Location1).
+%
+% Violation events
+%
+%
+% Creation events
+%
+%
+% Dissolution events
+%
+%
+% dissolve events
+%
+%
+% inertial fluents
+%
+ifluent(vip_room(Location0),rooms) :-
+  location(Location0).
+fluent(vip_room(Location0),rooms) :-
+  location(Location0).
+
+ifluent(bigger(Number0,Number1),rooms) :-
+  number(Number0),number(Number1).
+fluent(bigger(Number0,Number1),rooms) :-
+  number(Number0),number(Number1).
+
+ifluent(revise,rooms) :-
+  true.
+fluent(revise,rooms) :-
+  true.
+
+ifluent(in_room(Person0,Location1),rooms) :-
+  person(Person0),location(Location1).
+fluent(in_room(Person0,Location1),rooms) :-
+  person(Person0),location(Location1).
+
+ifluent(role(Person0,Role1),rooms) :-
+  person(Person0),role(Role1).
+fluent(role(Person0,Role1),rooms) :-
+  person(Person0),role(Role1).
+
+ifluent(aggrCount(Number0),rooms) :-
+  number(Number0).
+fluent(aggrCount(Number0),rooms) :-
+  number(Number0).
+
+ifluent(max(Location0,Number1),rooms) :-
+  location(Location0),number(Number1).
+fluent(max(Location0,Number1),rooms) :-
+  location(Location0),number(Number1).
+
+ifluent(is_vip(Person0),rooms) :-
+  person(Person0).
+fluent(is_vip(Person0),rooms) :-
+  person(Person0).
+
+ifluent(equal(Number0,Number1),rooms) :-
+  number(Number0),number(Number1).
+fluent(equal(Number0,Number1),rooms) :-
+  number(Number0),number(Number1).
+
+%
+% noninertial fluents
+%
+nifluent(roomTypeConflictViol(Location0), rooms) :-
+  location(Location0).
+fluent(roomTypeConflictViol(Location0), rooms) :-
+  location(Location0).
+
+nifluent(potential_role_conflict(Location0), rooms) :-
+  location(Location0).
+fluent(potential_role_conflict(Location0), rooms) :-
+  location(Location0).
+
+nifluent(capacityExceededViol(Location0), rooms) :-
+  location(Location0).
+fluent(capacityExceededViol(Location0), rooms) :-
+  location(Location0).
+
+nifluent(permExit(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+fluent(permExit(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+
+nifluent(typeCount(Location0,Role1,Number2), rooms) :-
+  location(Location0),role(Role1),number(Number2).
+fluent(typeCount(Location0,Role1,Number2), rooms) :-
+  location(Location0),role(Role1),number(Number2).
+
+nifluent(occupancy(Location0,Number1), rooms) :-
+  location(Location0),number(Number1).
+fluent(occupancy(Location0,Number1), rooms) :-
+  location(Location0),number(Number1).
+
+nifluent(non_vip_in_vip_room(Location0), rooms) :-
+  location(Location0).
+fluent(non_vip_in_vip_room(Location0), rooms) :-
+  location(Location0).
+
+nifluent(potential_occupant_conflict(Location0), rooms) :-
+  location(Location0).
+fluent(potential_occupant_conflict(Location0), rooms) :-
+  location(Location0).
+
+nifluent(restrictAccess(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+fluent(restrictAccess(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+
+nifluent(vip_in_room(Location0), rooms) :-
+  location(Location0).
+fluent(vip_in_room(Location0), rooms) :-
+  location(Location0).
+
+nifluent(permEntry(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+fluent(permEntry(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+
+nifluent(earlyBirdViol(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+fluent(earlyBirdViol(Person0,Location1), rooms) :-
+  person(Person0),location(Location1).
+
+nifluent(in_some_room(Person0), rooms) :-
+  person(Person0).
+fluent(in_some_room(Person0), rooms) :-
+  person(Person0).
+
+%
+% violation fluents (to be implemented)
+
+%
+% obligation fluents
+%
+%
+% -------------------------------PART 2-------------------------------
+%
+%
+% ---------------------------------------------------------------- 
+%  Pre-processing: generates rules
+% ---------------------------------------------------------------- 
+%
+% Translation of leave(P,L) generates deniedExit(P,L) if ['not', ['permExit', ['P', 'L']]] in 
+% Rule ID: 1 
+occurred(deniedExit(P,L),rooms,I) :- occurred(leave(P,L),rooms,I),not occurred(viol(leave(P,L)),rooms,I),
+
+   not
+   holdsat(permExit(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of leave(P,L) generates exit(P,L) if ['permExit', ['P', 'L']] in 
+% Rule ID: 2 
+occurred(exit(P,L),rooms,I) :- occurred(leave(P,L),rooms,I),not occurred(viol(leave(P,L)),rooms,I),
+
+   holdsat(permExit(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of enter(P,L) generates deniedEntry(P,L) if ['not', ['permEntry', ['P', 'L']]] in 
+% Rule ID: 3 
+occurred(deniedEntry(P,L),rooms,I) :- occurred(enter(P,L),rooms,I),not occurred(viol(enter(P,L)),rooms,I),
+
+   not
+   holdsat(permEntry(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of enter(P,L) generates arrive(P,L) if ['and', ['permEntry', ['P', 'L']], ['revise', []]]
+% Rule ID: 4 
+occurred(arrive(P,L),rooms,I) :- try(4, 1, occurred(enter(P,L),rooms,I)),
+   try(4, 2, not_occurred(viol(enter(P,L)),rooms,I)),
+   try(4, 3, holdsat(permEntry(P,L),rooms,I)),
+   not exception(4,occurred(arrive(P,L),rooms,I)),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+try(4, 1, occurred(enter(P,L),rooms,I)) :- not del(4, 1), occurred(enter(P,L),rooms,I), person(P), location(L), instant(I).
+
+try(4, 1, occurred(enter(P,L),rooms,I)) :- del(4, 1), person(P), location(L), instant(I).
+
+try(4, 2, not_occurred(viol(enter(P,L)),rooms,I)) :- not del(4, 2), not occurred(viol(enter(P,L)),rooms,I), person(P), location(L), instant(I).
+
+try(4, 2, not_occurred(viol(enter(P,L)),rooms,I)) :- del(4, 2), person(P), location(L), instant(I).
+
+try(4, 3, holdsat(permEntry(P,L),rooms,I)) :- not del(4, 3), holdsat(permEntry(P,L),rooms,I), person(P), location(L), instant(I).
+
+try(4, 3, holdsat(permEntry(P,L),rooms,I)) :- del(4, 3), person(P), location(L), instant(I).
+
+%
+% ---------------------------------------------------------------- 
+%  Pre-processing: initiates rules
+% ---------------------------------------------------------------- 
+%
+%
+% Translation of exit(P,L) initiates ['perm', ['arrive', ['P', 'L']]] if []
+% Rule ID: 5
+%
+initiated(perm(arrive(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of exit(P,L) initiates ['pow', ['enter', ['P', 'L']]] if []
+% Rule ID: 6
+%
+initiated(pow(enter(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of exit(P,L) initiates ['perm', ['enter', ['P', 'L']]] if []
+% Rule ID: 7
+%
+initiated(perm(enter(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) initiates ['perm', ['exit', ['P', 'L']]] if []
+% Rule ID: 8
+%
+initiated(perm(exit(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) initiates ['pow', ['leave', ['P', 'L']]] if []
+% Rule ID: 9
+%
+initiated(pow(leave(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) initiates ['perm', ['leave', ['P', 'L']]] if []
+% Rule ID: 10
+%
+initiated(perm(leave(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) initiates ['in_room', ['P', 'L']] if ['revise', []]
+% Rule ID: 11 
+initiated(in_room(P,L),rooms,arrive(P,L),I) :-
+   try(11, 1, occurred(arrive(P,L),rooms,I)),
+   try(11, 2, not_occurred(viol(arrive(P,L)),rooms,I)),
+   try(11, 3, holdsat(live(rooms),rooms,I)),
+   not exception(11,initiated(in_room(P,L),rooms,arrive(P,L),I)),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+try(11, 1, occurred(arrive(P,L),rooms,I)) :- not del(11, 1), occurred(arrive(P,L),rooms,I), person(P), location(L), instant(I).
+
+try(11, 1, occurred(arrive(P,L),rooms,I)) :- del(11, 1), person(P), location(L), instant(I).
+
+try(11, 2, not_occurred(viol(arrive(P,L)),rooms,I)) :- not del(11, 2), not occurred(viol(arrive(P,L)),rooms,I), person(P), location(L), instant(I).
+
+try(11, 2, not_occurred(viol(arrive(P,L)),rooms,I)) :- del(11, 2), person(P), location(L), instant(I).
+
+try(11, 3, holdsat(live(rooms),rooms,I)) :- not del(11, 3), holdsat(live(rooms),rooms,I), instant(I).
+
+try(11, 3, holdsat(live(rooms),rooms,I)) :- del(11, 3), instant(I).
+
+%
+% ---------------------------------------------------------------- 
+%  Pre-processing: terminates rules
+% ---------------------------------------------------------------- 
+%
+%
+% Translation of exit(P,L) terminates ['in_room', ['P', 'L']] if []
+% Rule ID: 12
+%
+terminated(in_room(P,L),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of exit(P,L) terminates ['perm', ['exit', ['P', 'L']]] if []
+% Rule ID: 13
+%
+terminated(perm(exit(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of exit(P,L) terminates ['pow', ['leave', ['P', 'L']]] if []
+% Rule ID: 14
+%
+terminated(pow(leave(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of exit(P,L) terminates ['perm', ['leave', ['P', 'L']]] if []
+% Rule ID: 15
+%
+terminated(perm(leave(P,L)),rooms,exit(P,L),I) :-
+   occurred(exit(P,L),rooms,I),
+   not occurred(viol(exit(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) terminates ['perm', ['arrive', ['P', 'L']]] if []
+% Rule ID: 16
+%
+terminated(perm(arrive(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) terminates ['pow', ['enter', ['P', 'L']]] if []
+% Rule ID: 17
+%
+terminated(pow(enter(P,L)),rooms,arrive(P,L),I) :-
+   occurred(arrive(P,L),rooms,I),
+   not occurred(viol(arrive(P,L)),rooms,I),
+   holdsat(live(rooms),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of arrive(P,L) terminates ['perm', ['enter', ['P', 'L']]] if ['revise', []]
+% Rule ID: 18 
+terminated(perm(enter(P,L)),rooms,arrive(P,L),I) :-
+   try(18, 1, occurred(arrive(P,L),rooms,I)),
+   try(18, 2, not_occurred(viol(arrive(P,L)),rooms,I)),
+   try(18, 3, holdsat(live(rooms),rooms,I)),
+   not exception(18,terminated(perm(enter(P,L)),rooms,arrive(P,L),I)),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+try(18, 1, occurred(arrive(P,L),rooms,I)) :- not del(18, 1), occurred(arrive(P,L),rooms,I), person(P), location(L), instant(I).
+
+try(18, 1, occurred(arrive(P,L),rooms,I)) :- del(18, 1), person(P), location(L), instant(I).
+
+try(18, 2, not_occurred(viol(arrive(P,L)),rooms,I)) :- not del(18, 2), not occurred(viol(arrive(P,L)),rooms,I), person(P), location(L), instant(I).
+
+try(18, 2, not_occurred(viol(arrive(P,L)),rooms,I)) :- del(18, 2), person(P), location(L), instant(I).
+
+try(18, 3, holdsat(live(rooms),rooms,I)) :- not del(18, 3), holdsat(live(rooms),rooms,I), instant(I).
+
+try(18, 3, holdsat(live(rooms),rooms,I)) :- del(18, 3), instant(I).
+
+%
+% ---------------------------------------------------------------- 
+%  Pre-processing: noninertial rules
+% ---------------------------------------------------------------- 
+%
+% noninertial rules
+%
+% Translation of non_vip_in_vip_room(L) when ['and', ['and', ['vip_room', ['L']], ['in_room', ['P', 'L']]], ['not', ['is_vip', ['P']]]]
+% Rule ID: 19 
+holdsat(non_vip_in_vip_room(L),rooms,I) :-
+   holdsat(vip_room(L),rooms,I),
+   holdsat(in_room(P,L),rooms,I),
+   not
+   holdsat(is_vip(P),rooms,I),
+   location(L),
+   person(P),
+   inst(rooms), instant(I).
+
+%
+% Translation of vip_in_room(L) when ['and', ['in_room', ['P', 'L']], ['is_vip', ['P']]]
+% Rule ID: 20 
+holdsat(vip_in_room(L),rooms,I) :-
+   holdsat(in_room(P,L),rooms,I),
+   holdsat(is_vip(P),rooms,I),
+   location(L),
+   person(P),
+   inst(rooms), instant(I).
+
+%
+% Translation of capacityExceededViol(L) when ['and', ['and', ['and', ['occupancy', ['L', 'X']], ['max', ['L', 'Y']]], ['bigger', ['X', 'Y']]], ['revise', []]]
+% Rule ID: 21 
+holdsat(capacityExceededViol(L),rooms,I) :-
+   try(21, 1, holdsat(occupancy(L,X),rooms,I)),
+   try(21, 2, holdsat(max(L,Y),rooms,I)),
+   try(21, 3, holdsat(bigger(X,Y),rooms,I)),
+   not exception(21,holdsat(capacityExceededViol(L),rooms,I)),
+   location(L),
+   number(X),
+   number(Y),
+   instant(I).
+
+try(21, 1, holdsat(occupancy(L,X),rooms,I)) :- not del(21, 1), holdsat(occupancy(L,X),rooms,I), location(L), number(X), instant(I).
+
+try(21, 1, holdsat(occupancy(L,X),rooms,I)) :- del(21, 1), location(L), number(X), instant(I).
+
+try(21, 2, holdsat(max(L,Y),rooms,I)) :- not del(21, 2), holdsat(max(L,Y),rooms,I), location(L), number(Y), instant(I).
+
+try(21, 2, holdsat(max(L,Y),rooms,I)) :- del(21, 2), location(L), number(Y), instant(I).
+
+try(21, 3, holdsat(bigger(X,Y),rooms,I)) :- not del(21, 3), holdsat(bigger(X,Y),rooms,I), number(X), number(Y), instant(I).
+
+try(21, 3, holdsat(bigger(X,Y),rooms,I)) :- del(21, 3), number(X), number(Y), instant(I).
+
+%
+% Translation of typeCount(L,R,N) when ['and', ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]], ['role', ['P', 'R']]] inclusive of new predicate definitions if necessary 
+% Rule ID: 22 
+
+
+ nifluent(typeCount1(R,P,L),rooms) :- person(P),role(R),location(L). 
+ 
+
+ fluent(typeCount1(R,P,L),rooms) :- person(P),role(R),location(L). 
+ 
+
+ holdsat(typeCount1(R,P,L),rooms,I) :- holdsat(in_room(P,L),rooms,I), holdsat(role(P,R),rooms,I),person(P),role(R),location(L). 
+ 
+
+ holdsat(typeCount(L,R,N),rooms,I) :- N =  #count {holdsat(typeCount1(R,P,L),rooms,I) : person(P)} , 
+   location(L),
+   role(R),
+   number(N),
+   inst(rooms), instant(I).
+%
+% Translation of occupancy(L,N) when ['and', ['aggrCount', ['N']], ['in_room', ['P', 'L']]] inclusive of new predicate definitions if necessary 
+% Rule ID: 23 
+
+holdsat(occupancy(L,N),rooms,I) :- N = #count {
+ holdsat(in_room(P,L),rooms,I) :
+   person(P) 
+ }, 
+   location(L),
+   number(N),
+   inst(rooms), instant(I).
+%
+% Translation of potential_role_conflict(L) when ['and', ['potential_occupant_conflict', ['L']], ['typeCount', ['L', 'R', '2']]]
+% Rule ID: 24 
+holdsat(potential_role_conflict(L),rooms,I) :-
+   holdsat(potential_occupant_conflict(L),rooms,I),
+   holdsat(typeCount(L,R,2),rooms,I),
+   location(L),
+   role(R),
+   inst(rooms), instant(I).
+
+%
+% Translation of potential_occupant_conflict(L) when ['occupancy', ['L', '3']]
+% Rule ID: 25 
+holdsat(potential_occupant_conflict(L),rooms,I) :-
+   holdsat(occupancy(L,3),rooms,I),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of restrictAccess(P,L) when ['and', ['vip_room', ['L']], ['revise', []]]
+% Rule ID: 26 
+holdsat(restrictAccess(P,L),rooms,I) :-
+   try(26, 1, holdsat(vip_room(L),rooms,I)),
+   not exception(26,holdsat(restrictAccess(P,L),rooms,I)),
+   person(P),
+   location(L),
+   instant(I).
+
+try(26, 1, holdsat(vip_room(L),rooms,I)) :- not del(26, 1), holdsat(vip_room(L),rooms,I), location(L), instant(I).
+
+try(26, 1, holdsat(vip_room(L),rooms,I)) :- del(26, 1), location(L), instant(I).
+
+%
+% Translation of permExit(P,L) when ['in_room', ['P', 'L']]
+% Rule ID: 27 
+holdsat(permExit(P,L),rooms,I) :-
+   holdsat(in_room(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of permEntry(P,L) when ['and', ['not', ['in_some_room', ['P']]], ['not', ['restrictAccess', ['P', 'L']]]]
+% Rule ID: 28 
+holdsat(permEntry(P,L),rooms,I) :-
+   not
+   holdsat(in_some_room(P),rooms,I),
+   not
+   holdsat(restrictAccess(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% Translation of in_some_room(P) when ['in_room', ['P', 'L']]
+% Rule ID: 29 
+holdsat(in_some_room(P),rooms,I) :-
+   holdsat(in_room(P,L),rooms,I),
+   person(P),
+   location(L),
+   inst(rooms), instant(I).
+
+%
+% -------------------------------PART 3-------------------------------
+%
+%
+% initially
+%
+% no creation event
+holdsat(live(rooms),rooms,I) :- start(I), inst(rooms).
+holdsat(perm(null),rooms,I) :- start(I), inst(rooms).
+holdsat(pow(null),rooms,I) :- start(I), inst(rooms).
+% initially: perm(enter(P,L))
+holdsat(perm(enter(P,L)),rooms,I) :- not holdsat(live(rooms),rooms),
+   person(P),
+   location(L),
+   inst(rooms), start(I).
+% initially: pow(enter(P,L))
+holdsat(pow(enter(P,L)),rooms,I) :- not holdsat(live(rooms),rooms),
+   person(P),
+   location(L),
+   inst(rooms), start(I).
+% initially: perm(arrive(P,L))
+holdsat(perm(arrive(P,L)),rooms,I) :- not holdsat(live(rooms),rooms),
+   person(P),
+   location(L),
+   inst(rooms), start(I).
+% initially: perm(deniedEntry(P,L))
+holdsat(perm(deniedEntry(P,L)),rooms,I) :- not holdsat(live(rooms),rooms),
+   person(P),
+   location(L),
+   inst(rooms), start(I).
+% initially: perm(deniedExit(P,L))
+holdsat(perm(deniedExit(P,L)),rooms,I) :- not holdsat(live(rooms),rooms),
+   person(P),
+   location(L),
+   inst(rooms), start(I).
+% initially: bigger(10,0)
+holdsat(bigger(10,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,1)
+holdsat(bigger(10,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,2)
+holdsat(bigger(10,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,3)
+holdsat(bigger(10,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,4)
+holdsat(bigger(10,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,5)
+holdsat(bigger(10,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,6)
+holdsat(bigger(10,6),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,7)
+holdsat(bigger(10,7),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,8)
+holdsat(bigger(10,8),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(10,9)
+holdsat(bigger(10,9),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,0)
+holdsat(bigger(9,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,1)
+holdsat(bigger(9,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,2)
+holdsat(bigger(9,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,3)
+holdsat(bigger(9,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,4)
+holdsat(bigger(9,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,5)
+holdsat(bigger(9,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,6)
+holdsat(bigger(9,6),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,7)
+holdsat(bigger(9,7),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(9,8)
+holdsat(bigger(9,8),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,0)
+holdsat(bigger(8,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,1)
+holdsat(bigger(8,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,2)
+holdsat(bigger(8,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,3)
+holdsat(bigger(8,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,4)
+holdsat(bigger(8,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,5)
+holdsat(bigger(8,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,6)
+holdsat(bigger(8,6),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(8,7)
+holdsat(bigger(8,7),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,0)
+holdsat(bigger(7,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,1)
+holdsat(bigger(7,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,2)
+holdsat(bigger(7,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,3)
+holdsat(bigger(7,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,4)
+holdsat(bigger(7,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,5)
+holdsat(bigger(7,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(7,6)
+holdsat(bigger(7,6),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,0)
+holdsat(bigger(6,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,1)
+holdsat(bigger(6,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,2)
+holdsat(bigger(6,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,3)
+holdsat(bigger(6,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,4)
+holdsat(bigger(6,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(6,5)
+holdsat(bigger(6,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(5,0)
+holdsat(bigger(5,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(5,1)
+holdsat(bigger(5,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(5,2)
+holdsat(bigger(5,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(5,3)
+holdsat(bigger(5,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(5,4)
+holdsat(bigger(5,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(3,0)
+holdsat(bigger(3,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(3,1)
+holdsat(bigger(3,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(3,2)
+holdsat(bigger(3,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(4,0)
+holdsat(bigger(4,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(4,1)
+holdsat(bigger(4,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(4,2)
+holdsat(bigger(4,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(4,3)
+holdsat(bigger(4,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(2,1)
+holdsat(bigger(2,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(2,0)
+holdsat(bigger(2,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: bigger(1,0)
+holdsat(bigger(1,0),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: equal(1,1)
+holdsat(equal(1,1),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: equal(2,2)
+holdsat(equal(2,2),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: equal(3,3)
+holdsat(equal(3,3),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: equal(4,4)
+holdsat(equal(4,4),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: equal(5,5)
+holdsat(equal(5,5),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: is_vip(oracle)
+holdsat(is_vip(oracle),rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+% initially: revise
+holdsat(revise,rooms,I) :- not holdsat(live(rooms),rooms),
+   inst(rooms), start(I).
+%
+% End of file
+%
+
